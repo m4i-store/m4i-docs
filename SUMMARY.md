@@ -30,6 +30,14 @@
     - [Exports](scripts/_template/exports.md)
     - [Troubleshooting](scripts/_template/troubleshooting.md)
     - [Changelog](scripts/_template/changelog.md)
+  - m4i_identity
+    - [Introduction](scripts/m4i_identity/introduction.md)
+    - [Installation](scripts/m4i_identity/installation.md)
+    - [Configuration](scripts/m4i_identity/configuration.md)
+    - [Integration](scripts/m4i_identity/integration.md)
+    - [Exports](scripts/m4i_identity/exports.md)
+    - [Troubleshooting](scripts/m4i_identity/troubleshooting.md)
+    - [Changelog](scripts/m4i_identity/changelog.md)
 
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)
