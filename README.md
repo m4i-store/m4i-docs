@@ -4,49 +4,35 @@
 
 This repository is the single source of truth for:
 
-- M4I core platform documentation
+- M4I core systems documentation
 - M4I script documentation
-- M4I integration standards
+- shared standards and integration rules
 - operational and support guidance
 
-## Why this hub exists
+## Documentation policy
 
-M4I documentation is no longer maintained as many full standalone doc sets across individual script resources.
+- Full documentation lives in this hub.
+- Individual script/resource repositories should keep a short README and link to this hub.
+- New script docs must be added under `scripts/<script_name>/` using `scripts/_template/` as the baseline.
 
-Instead:
-
-- full docs live in this hub
-- script/resource repos keep a short README and link back here
-- standards are shared and enforced from one place
-
-This keeps docs consistent, reduces drift, and scales cleanly as new scripts are added.
-
-## GitBook and Git Sync
-
-This project is GitBook-ready:
-
-- root `README.md` is the docs landing page
-- root `SUMMARY.md` defines navigation
-- root `.gitbook.yaml` defines structure mapping
-
-Recommended workflow:
-
-1. Connect this repository to GitBook via Git Sync.
-2. Treat pull requests in this repo as the docs change control path.
-3. Update script docs here first, then link from script repos.
-
-## Repository structure
+## Structure
 
 - `introduction/`: onboarding and documentation model
-- `core/`: core M4I systems (starting with `m4i_bridge`)
-- `scripts/`: script docs and reusable script template
-- `shared/`: cross-project standards and policies
+- `core/`: core M4I systems (for example `m4i_bridge`)
+- `scripts/`: script documentation and reusable template
+- `shared/`: standards, conventions, and support policy
 
-## Maintainer note
+## GitBook / Git Sync
 
-When adding a new M4I script:
+This repository is GitBook-ready:
 
-1. create `scripts/<script_name>/`
-2. copy from `scripts/_template/`
-3. add navigation entries in `SUMMARY.md`
-4. update script repo README to link to this hub
+- root README: `README.md`
+- navigation: `SUMMARY.md`
+- GitBook config: `.gitbook.yaml`
+
+## Quick links
+
+- [Welcome](introduction/welcome.md)
+- [m4i_bridge docs](core/m4i_bridge/introduction.md)
+- [Script template](scripts/_template/introduction.md)
+- [Integration rules](shared/integration-rules.md)
