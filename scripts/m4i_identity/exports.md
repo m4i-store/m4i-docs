@@ -78,6 +78,12 @@ Returns lightweight runtime operational snapshot:
         rejectAll = boolean,
         placeholderDelayMs = number
     },
+    webhooks = {
+        enabled = boolean,
+        configuredEndpoints = number,
+        hasDefault = boolean,
+        hasRoutes = boolean
+    },
     timestamp = number
 }
 ```

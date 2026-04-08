@@ -30,3 +30,15 @@
 - Export contracts documented with read-only boundaries.
 - Bridge-compatible read-only consumption guidance formalized.
 - Resource README aligned to centralized docs-hub workflow.
+
+## 0.3.2-webhook-standard-adoption
+
+- Added dedicated `webhook_service` with key/category-based routing.
+- Added `Config.Webhooks` standard categories and script event keys.
+- Added safe webhook fallback behavior (`key -> route -> default -> skip`).
+- Added non-breaking webhook emission on important identity events:
+  - identity created/updated
+  - join accepted/rejected
+  - language selection/fallback
+  - throttle rejections
+- Added webhook snapshot visibility in `GetIdentityDebugSnapshot()`.

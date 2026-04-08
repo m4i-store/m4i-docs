@@ -74,6 +74,17 @@ print(json.encode(snap))
 
 This helps verify current runtime count, throttle load, and queue mode quickly.
 
+## Webhook Not Sending
+
+Check:
+
+- `Config.Webhooks.Enabled = true`
+- target endpoint configured either directly (`IdentityCreated`, `JoinRejected`, etc.) or via category route
+- `Default` configured when relying on fallback
+- server connectivity to Discord webhook URL
+
+Webhook delivery failures are non-breaking by design and will surface in operational logs.
+
 ## Internal Error Reject
 
 Reason code: `INTERNAL_ERROR`

@@ -20,3 +20,11 @@ This hub follows these standards:
 - examples must reflect real supported behavior
 - pages must stay lightweight and readable
 - terminology must stay consistent across sections
+
+### Localization System
+
+M4I uses a unified JSON-based localization system.
+
+Before integrating or creating any script, developers must consult:
+
+- `M4I_LANGUAGE_INTEGRATION_PLAYBOOK.md`

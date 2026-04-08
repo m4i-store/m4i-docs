@@ -45,6 +45,19 @@ If `m4i_bridge` consumes identity:
 - never treat bridge as identity write owner
 - never mirror identity table writes in bridge
 
+## Webhook Integration Guidance
+
+`m4i_identity` owns a dedicated `server/services/webhook_service.lua`.
+
+Other scripts should follow the same pattern for important events:
+
+- do not scatter raw webhook HTTP calls in business files
+- keep URLs in `Config.Webhooks`
+- emit by event key/category
+- keep webhook delivery non-blocking and non-breaking
+
+For identity specifically, webhook write/dispatch ownership remains inside `m4i_identity`.
+
 ## Intentionally Not Exposed
 
 Not exposed for external write access:

@@ -90,3 +90,38 @@ Reject reason for threshold/cooldown is `TOO_MANY_ATTEMPTS`.
 : Default category for logger fallback formatting.
 
 Bridge logger is used when available; local structured logging is used otherwise.
+
+## Webhooks
+
+`Webhooks` block defines dedicated webhook routing for important identity events.
+
+Minimum categories:
+
+- `Enabled`
+- `Default`
+- `Important`
+- `Security`
+- `Admin`
+- `Audit`
+
+Script-specific keys used by `m4i_identity`:
+
+- `IdentityCreated`
+- `IdentityUpdated`
+- `JoinAccepted`
+- `JoinRejected`
+- `LanguageSelected`
+- `ThrottleRejected`
+
+Optional routing table:
+
+- `Webhooks.Routes[eventKey] = "<CategoryName>"`
+
+Routing behavior:
+
+1. direct webhook key (for example `IdentityCreated`) if configured
+2. category route via `Webhooks.Routes`
+3. fallback to `Default`
+4. safe skip when no endpoint is configured
+
+Webhook send failures are always non-breaking.

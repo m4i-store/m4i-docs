@@ -13,6 +13,8 @@ Document how the script integrates with:
 - validate all external input before side effects
 - include failure handling for callback timeout/error branches
 - use bridge logging for operational visibility
+- use a dedicated `server/services/webhook_service.lua` for important events
+- never scatter raw webhook HTTP calls in gameplay/business handlers
 
 ## Example sections to include
 
@@ -20,3 +22,9 @@ Document how the script integrates with:
 - client flow
 - callback contract(s)
 - dependency map
+
+## Localization reference requirement
+
+Before implementing localization, refer to:
+
+- `M4I_LANGUAGE_INTEGRATION_PLAYBOOK.md`

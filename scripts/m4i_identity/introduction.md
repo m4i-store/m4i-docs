@@ -15,6 +15,7 @@ M4I needs one authoritative place for identity decisions so every script follows
 - language policy
 - reconnect throttling
 - runtime identity state
+- important-event webhook emission through a dedicated service
 
 ## Ownership Boundaries
 
