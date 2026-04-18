@@ -27,6 +27,26 @@
 - `SyncLicenseWithDiscord` (`boolean`)
 : Allows license refresh on connect for matched Discord identities.
 
+- `PlayersLicenseSync` (`table`)
+: Optional one-way sync to framework `players` table by Discord match.
+
+`PlayersLicenseSync` fields:
+
+- `Enabled` (`boolean`)
+: Enables players-table license sync.
+
+- `TableName` (`string`)
+: Target table name. Default: `players`.
+
+- `DiscordColumn` (`string`)
+: Discord column used for match. Default: `discordid`.
+
+- `LicenseColumn` (`string`)
+: License column to update. Default: `license`.
+
+- `OnlyIfLicenseMissing` (`boolean`)
+: If true, updates only rows where license is NULL/empty (first-time fill only).
+
 ## Language Behavior
 
 - `EnableLanguageSelection` (`boolean`)

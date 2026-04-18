@@ -34,5 +34,6 @@ This repository is GitBook-ready:
 
 - [Welcome](introduction/welcome.md)
 - [m4i_bridge docs](core/m4i_bridge/introduction.md)
+- [m4i_interface docs](scripts/m4i_interface/introduction.md)
 - [Script template](scripts/_template/introduction.md)
 - [Integration rules](shared/integration-rules.md)
