@@ -1,50 +1,64 @@
 # m4i_interface Introduction
 
-`m4i_interface` is the M4I gameplay interface/HUD resource running in bridge-only mode.
+`m4i_interface` is the UI/presentation resource for M4I gameplay experience in **bridge-first mode**.
 
-It owns client UI rendering for:
+It is responsible for:
 
-- main HUD and vehicle HUD
-- progress bar flow
-- typed notifications (`system`, `event`, `dm`, `moderation`, `job`, `video`)
-- seatbelt and cinematic helpers
-- text UI compatibility events
+- HUD and vehicle HUD rendering
+- Progress bar rendering
+- Typed notification rendering and overlay pipelines
+- Text UI compatibility routing
+- Interface-focused commands and exports
+
+## Typed Notification Renderers
+
+Current implemented typed renderers:
+
+- `system`
+- `event`
+- `dm`
+- `moderation`
+- `job`
+- `video`
+
+Each type is routed through the unified notify foundation, but rendered through its own pipeline/UI behavior.
+
+## Relationship to m4i_bridge
+
+`m4i_interface` consumes runtime data via `m4i_bridge` exports and does not own framework adapters directly.
+
+Bridge boundary config lives in:
+
+- `shared/config.lua` -> `Config.Bridge.Resource`
+- `shared/config.lua` -> `Config.Bridge.Exports`
 
 ## Ownership Boundaries
 
 `m4i_interface` owns:
 
-- NUI state and HUD rendering
-- notification queue/overlay rendering
-- interface-facing exports and UI events
+- NUI state + rendering
+- notification normalization/routing on client
+- queue/timer/cleanup behavior for UI overlays
+- integration exports/events for interface presentation
 
-`m4i_interface` does not own:
+`m4i_interface` does **not** own:
 
-- framework/business data persistence
-- identity ownership logic
-- framework adapters outside bridge boundary
-
-## Relationship to m4i_bridge
-
-`m4i_interface` consumes runtime data from `m4i_bridge` exports only.
-
-Required bridge boundary is configured via:
-
-- `shared/config.lua` -> `Config.Bridge.Resource`
-- `shared/config.lua` -> `Config.Bridge.Exports`
-
-Recommended start order:
-
-1. `ox_lib`
-2. `m4i_bridge`
-3. `m4i_identity` (optional, language ownership)
-4. `m4i_interface`
+- framework persistence/business logic
+- identity data ownership policy
+- gameplay/job/economy orchestration
+- moderation backend policy
 
 ## Runtime Diagnostics
 
-Server commands:
+Useful runtime commands:
 
 - `/m4i_interface:diag`
 - `/m4i_interface:locale <server_id>`
 
-Use these commands first when checking bridge/locale/runtime health.
+Use these first when verifying bridge health and locale context before deeper script debugging.
+
+## Read Next
+
+- [Installation](installation.md)
+- [Configuration](configuration.md)
+- [Integration](integration.md)

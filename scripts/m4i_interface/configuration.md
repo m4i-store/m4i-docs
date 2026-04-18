@@ -1,34 +1,20 @@
 # Configuration
 
-`m4i_interface` configuration lives in:
+Primary config file:
 
 - `m4i_interface/shared/config.lua`
 
-## Core Runtime
+Modular notification domain files:
 
-- `Config.Locale`
-: Legacy fallback locale. Primary per-player locale can come from `m4i_identity`.
+- `m4i_interface/config/config_notify_core.lua`
+- `m4i_interface/config/config_notify_staff.lua`
+- `m4i_interface/config/config_notify_jobs.lua`
+- `m4i_interface/config/config_notify_events.lua`
+- `m4i_interface/config/config_notify_video.lua`
 
-- `Config.Bridge`
-: Bridge boundary and export-name mapping.
+## 1) NotifyFoundation (Core Notification Runtime)
 
-- `Config.Logging`
-: Runtime log level (`debug`, `info`, `warn`, `error`, `none`).
-
-## UI Entry Points
-
-- `Config.ConfigurationMenu`
-: Enables the HUD/configuration menu flow.
-
-- `Config.ConfigureHudCommand`
-: Command name used to open configure UI (default `configure_hud`).
-
-- `Config.MenuKeybind`
-: Keybind for configure command (`false` disables keybind registration).
-
-## Notification Foundation
-
-`Config.NotifyFoundation` controls typed notifications.
+`Config.NotifyFoundation` controls normalized typed notification behavior.
 
 Global keys:
 
@@ -37,14 +23,15 @@ Global keys:
 - `DefaultDuration`
 - `DefaultPosition`
 - `StackGap`
-- `Animation.EnterMs`, `Animation.ExitMs`
+- `Animation.EnterMs` / `Animation.ExitMs`
 - `DefaultPriority`
 - `DefaultAccent`
 - `DefaultIcon`
+- `DefaultSound`
 - `CategoryLabels`
 - `CategoryAccents`
 
-Typed blocks:
+Typed pipeline blocks:
 
 - `EventBanner`
 - `DMAlert`
@@ -52,70 +39,126 @@ Typed blocks:
 - `JobAnnouncement`
 - `VideoBroadcast`
 
-Each type has its own `Enabled`, duration, queue, accent, and animation policy.
+Each typed block has isolated queue/timer/render settings.
 
-## Money Indicators (Displayers)
+## 2) VideoBroadcast Safety Config
 
-`Config.MoneyIndicators` controls displayers visibility behavior:
+`Config.NotifyFoundation.VideoBroadcast` is intentionally conservative.
 
-- hide-by-default flags (`HideCashByDefault`, `HideBankByDefault`, `HideJobByDefault`, `HideIdByDefault`, `HideOnlineByDefault`)
-- temporary show duration (`DurationMs`)
-- command names (`CashCommand`, `BankCommand`, `JobCommand`, `IdCommand`, `OnlineCommand`)
-- editor behavior (`ShowAllInEditor`)
+Important keys:
 
-## Theme Lock
+- `Enabled` (default `false`)
+- `DefaultDuration`
+- `MaxVisible` (expected `1`)
+- `QueueLimit`
+- `DefaultMode` (`windowed` or `fullscreen`)
+- `AllowFullscreen`
+- `DefaultMuted`
+- `AllowSkip`
+- `AutoCloseOnEnd`
+- `AllowedExtensions` (default `mp4`, `webm`)
+- `AllowedProtocols` (default `https`)
+- `AllowedDomains` (`{}` means no domain restriction beyond protocol+extension)
+- `RateLimit.Enabled`, `RateLimit.WindowMs`, `RateLimit.MaxEvents`
 
-`Config.ThemeLock` can force one global color:
+### Production-Safe Video Recommendation
+
+Use this baseline:
+
+```lua
+Config.NotifyFoundation.VideoBroadcast = {
+    Enabled = false,
+    AllowFullscreen = false,
+    DefaultMuted = true,
+    AllowedProtocols = { 'https' },
+    AllowedExtensions = { 'mp4', 'webm' },
+    AllowedDomains = {},
+    RateLimit = {
+        Enabled = true,
+        WindowMs = 5000,
+        MaxEvents = 5
+    }
+}
+```
+
+## 3) Modular Notify Domains (`Config.NotifyModules`)
+
+Each domain file populates:
+
+```lua
+Config.NotifyModules = Config.NotifyModules or {}
+```
+
+Domain shape:
+
+```lua
+Config.NotifyModules.<Domain> = {
+    Defaults = { ... },
+    Presets = {
+        <PresetName> = { ... }
+    }
+}
+```
+
+Built-in domain names in current implementation:
+
+- `Core`
+- `Staff`
+- `Jobs`
+- `Events`
+- `Video`
+
+`Notify(payload)` supports optional `module` and `preset`.
+
+Merge order:
+
+1. domain defaults
+2. preset values
+3. payload values
+
+Payload values always override defaults/preset values.
+
+If `module` or `preset` is invalid, resolution fails safely without runtime crash.
+
+## 4) Debug/Test Commands
+
+`Config.Debug.TestCommands` controls built-in test commands.
+
+Keys:
 
 - `Enabled`
-- `Color`
-- `HideThemeSelector`
-- `Command`
+- `RequireAdmin`
+- `AllowedGroups`
+- `EnableVideoTestCommand`
+- `ShowChatSuggestion`
 
-## External HUD Composer
+Recommended:
 
-`Config.ExternalHud` supports mode switching:
+- Enable in dev/staging only
+- Keep `RequireAdmin = true`
+- Disable in production
 
-- `m4i`
-- `ps_hud`
-- `gd_hud2`
-- `uz_purehud`
+## 5) Related Interface Runtime Areas
 
-Config keys:
+Other high-impact config areas:
 
-- `Enabled`
-- `Mode`
-- `PersistWithKvp`
-- `Command`
-- `NotifyOnModeChange`
+- `Config.ConfigureHudCommand`, `Config.MenuKeybind`, `Config.ConfigurationMenu`
+- `Config.ThemeLock` (global color + selector visibility + runtime command)
+- `Config.MoneyIndicators` (`/cash`, `/bank`, `/job`, `/id`, `/online`)
+- `Config.ExternalHud` (switching among `m4i`, `ps_hud`, `gd_hud2`, `uz_purehud`)
+- `Config.QBCoreNotifyCompat`, `Config.QBCoreProgressCompat`
 
-## Music Controls
+## 6) What to Keep Out of Notify Module Files
 
-`Config.MenuMusic`:
+Keep only notification-related values:
 
-- runtime enable/disable
-- persisted track/volume
-- command names (`TrackCommand`, `VolumeCommand`)
+- display defaults
+- presets/templates
+- labels/accents/icons/durations
+- renderer-facing metadata
 
-Track sources:
+Do not place:
 
-- `Config.MusicPath`
-- `Config.Music`
-
-## Framework Compatibility Flags
-
-- `Config.QBCoreNotifyCompat`
-: Routes QBCore notify to m4i_interface notify pipeline.
-
-- `Config.QBCoreProgressCompat`
-: Routes QBCore progressbar to m4i_interface progress pipeline.
-
-## Gameplay HUD Options
-
-Examples:
-
-- `Config.Stress`, `Config.StressChance`, `Config.MinimumStress`
-- `Config.Units` (`kmh`/`mph`)
-- `Config.HideRadar`
-- `Config.EnableCinematicMode`
-- `Config.VoiceChat`
+- business/job economy logic
+- database orchestration
+- permission system ownership rules unrelated to notify display

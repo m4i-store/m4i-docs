@@ -44,6 +44,7 @@
     - [Configuration](scripts/m4i_interface/configuration.md)
     - [Integration](scripts/m4i_interface/integration.md)
     - [Exports](scripts/m4i_interface/exports.md)
+    - [Testing](scripts/m4i_interface/testing.md)
     - [Troubleshooting](scripts/m4i_interface/troubleshooting.md)
     - [Changelog](scripts/m4i_interface/changelog.md)
 

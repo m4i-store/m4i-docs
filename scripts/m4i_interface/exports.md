@@ -1,144 +1,120 @@
 # Exports
 
-All exports below are client-side exports from `m4i_interface`.
+All exports below are **client exports** from `m4i_interface`.
 
-## Core HUD
-
-### Initialize
+Use bracket syntax:
 
 ```lua
-exports.m4i_interface:Initialize()
+exports['m4i_interface']:Notify(payload)
 ```
 
-Starts UI initialization flow.
+## Notification Exports
 
-### ToggleHud
+### `Notify(payload)`
 
-```lua
-exports.m4i_interface:ToggleHud(state)
-```
+Unified typed entrypoint.
 
-- `state` (`boolean`)
+Supported `type` values:
 
-Shows/hides HUD.
+- `system`
+- `event`
+- `dm`
+- `moderation`
+- `job`
+- `video`
 
-## Notifications
+### `AddNotify(textOrPayload, header, time, icon)`
 
-### Notify
+Legacy-friendly alias path that routes to the normalized notify flow.
 
-```lua
-exports.m4i_interface:Notify(payload)
-```
+### Typed wrapper exports
 
-Unified typed notify entry.
+- `ShowEventBanner(payload)`
+- `ShowDMAlert(payload)`
+- `ShowModerationAlert(payload)`
+- `ShowJobAnnouncement(payload)`
+- `ShowVideoBroadcast(payload)`
 
-Common payload keys:
+These enforce their matching typed route.
 
-- `id`
-- `type` (`system`, `event`, `dm`, `moderation`, `job`, `video`)
-- `title`
-- `message`
-- `duration`
-- `icon`
-- `accent`
-- `priority`
-- `metadata`
+## Progress Exports
 
-### AddNotify
+- `ProgressBar(data)`
+- `progress(data)` (alias)
+- `CancelProgress()`
+- `ProgressActive()`
 
-```lua
-exports.m4i_interface:AddNotify(textOrPayload, header, time, icon)
-```
+`data` supports duration/label/cancel rules/control disable/animation/props.
 
-Legacy-friendly alias to `Notify`.
+## HUD and UI Exports
 
-### ShowEventBanner / ShowDMAlert / ShowModerationAlert / ShowJobAnnouncement / ShowVideoBroadcast
+- `Initialize()`
+- `ToggleHud(state)`
+- `HasHudConfigured()`
 
-```lua
-exports.m4i_interface:ShowEventBanner(payload)
-exports.m4i_interface:ShowDMAlert(payload)
-exports.m4i_interface:ShowModerationAlert(payload)
-exports.m4i_interface:ShowJobAnnouncement(payload)
-exports.m4i_interface:ShowVideoBroadcast(payload)
-```
+## Text UI Exports
 
-Typed wrappers that force the matching notification type.
+- `OpenTextUI(message, color, position)`
+- `CloseTextUI()`
+- `Open(message, color, position)` (alias)
+- `Close()` (alias)
 
-## Progress
+## Cinematic Exports
 
-### ProgressBar / progress
+- `StartCinematicCam()`
+- `StopCinematicCam()`
+- `IsCinematicActive()`
 
-```lua
-exports.m4i_interface:ProgressBar(data)
-exports.m4i_interface:progress(data)
-```
+## Seatbelt Exports
 
-`data` supports duration, label, cancel rules, disabled controls, animation, and prop attachments.
-
-### CancelProgress
-
-```lua
-exports.m4i_interface:CancelProgress()
-```
-
-Cancels active progress.
-
-### ProgressActive
-
-```lua
-exports.m4i_interface:ProgressActive()
-```
-
-Returns `true` when progress is active.
-
-## Text UI
-
-### OpenTextUI / CloseTextUI
-
-```lua
-exports.m4i_interface:OpenTextUI(message, color, position)
-exports.m4i_interface:CloseTextUI()
-```
-
-Aliases:
-
-```lua
-exports.m4i_interface:Open(message, color, position)
-exports.m4i_interface:Close()
-```
-
-## Cinematic
-
-```lua
-exports.m4i_interface:StartCinematicCam()
-exports.m4i_interface:StopCinematicCam()
-exports.m4i_interface:IsCinematicActive()
-```
-
-## Seatbelt
-
-```lua
-exports.m4i_interface:HasHarness()
-exports.m4i_interface:IsSeatbeltOn()
-exports.m4i_interface:ToggleSeatbelt(state)
-```
+- `HasHarness()`
+- `IsSeatbeltOn()`
+- `ToggleSeatbelt(state)`
 
 `ToggleSeatbelt` returns `(ok, currentState)`.
 
-## External HUD Mode
+## External HUD Mode Exports
 
-```lua
-exports.m4i_interface:IsExternalHudModeEnabled()
-exports.m4i_interface:GetHudMode()
-exports.m4i_interface:SetHudMode(mode, persist)
-```
+- `IsExternalHudModeEnabled()`
+- `GetHudMode()`
+- `SetHudMode(mode, persist)`
 
-`mode` values: `m4i`, `ps_hud`, `gd_hud2`, `uz_purehud`.
+Supported modes:
 
-## UI Configuration State
+- `m4i`
+- `ps_hud`
+- `gd_hud2`
+- `uz_purehud`
 
-```lua
-exports.m4i_interface:HasHudConfigured()
-```
+## Event Names (for TriggerEvent/TriggerClientEvent)
 
-Returns current UI configured state after initialization.
+Primary:
+
+- `m4i_interface:notify`
+
+Typed notify aliases:
+
+- `m4i_interface:notify:system`
+- `m4i_interface:notify:event`
+- `m4i_interface:notify:dm`
+- `m4i_interface:notify:moderation`
+- `m4i_interface:notify:job`
+- `m4i_interface:notify:video`
+
+Typed direct aliases:
+
+- `m4i_interface:eventBanner`
+- `m4i_interface:event:banner`
+- `m4i_interface:dm`
+- `m4i_interface:dm:alert`
+- `m4i_interface:moderation`
+- `m4i_interface:moderation:alert`
+- `m4i_interface:job`
+- `m4i_interface:job:announcement`
+- `m4i_interface:video`
+- `m4i_interface:video:broadcast`
+
+Legacy compatibility:
+
+- `interface:notification`
+- `m4i_interface:notification`

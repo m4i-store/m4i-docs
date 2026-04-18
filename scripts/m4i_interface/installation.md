@@ -2,44 +2,58 @@
 
 ## Requirements
 
-- FiveM server (Lua 5.4)
+- FiveM server with Lua 5.4 enabled
 - `ox_lib`
 - `m4i_bridge`
-- `m4i_interface` files installed
-- `m4i_identity` optional (for per-player language)
+- `m4i_interface`
+- Optional: `m4i_identity` (per-player language context)
 
-## Dependencies
-
-`m4i_interface/fxmanifest.lua` requires:
-
-- `ox_lib`
-- `m4i_bridge`
-
-`m4i_bridge` must be started before `m4i_interface`.
+`m4i_interface/fxmanifest.lua` depends on `ox_lib` and `m4i_bridge`.
 
 ## Recommended Start Order
 
 1. `ox_lib`
-2. `oxmysql` (if your stack uses it)
+2. `oxmysql` (if used in your stack)
 3. `m4i_bridge`
 4. `m4i_identity` (optional)
 5. `m4i_interface`
 
-## First Setup Checklist
+## First Boot Checklist
 
-1. Confirm `m4i_bridge` is started with no critical provider errors.
-2. Configure `m4i_interface/shared/config.lua` for your server policy.
-3. Start `m4i_interface`.
-4. Run `/m4i_interface:diag` and verify bridge mode is healthy.
-5. Test UI open command (`/configure_hud` by default).
-6. Test one notification via:
-   - `TriggerEvent('m4i_interface:notify', { title = 'Test', message = 'OK' })`
+1. Start server and confirm `m4i_bridge` has no blocking provider failures.
+2. Start `m4i_interface`.
+3. Run `/m4i_interface:diag` in server console.
+4. Validate locale sync with `/m4i_interface:locale <server_id>` (optional but recommended).
+5. In-game, open HUD config with `/<Config.ConfigureHudCommand>` (default `/configure_hud`).
+6. Trigger a system notify test:
 
-## Optional Compatibility
+```lua
+TriggerEvent('m4i_interface:notify', {
+    type = 'system',
+    title = 'Boot Check',
+    message = 'm4i_interface loaded successfully.',
+    duration = 4000
+})
+```
 
-If you use QBCore wrappers:
+## Staging vs Production
 
-- keep `Config.QBCoreNotifyCompat = true` to route `QBCore.Functions.Notify`
-- keep `Config.QBCoreProgressCompat = true` to route `QBCore.Functions.Progressbar`
+Recommended baseline:
 
-If disabled, QBCore uses its native handlers.
+- Staging/Dev:
+  - `Config.Debug.TestCommands.Enabled = true`
+  - `Config.Debug.TestCommands.RequireAdmin = true`
+  - `Config.NotifyFoundation.VideoBroadcast.Enabled = true` only for controlled testing
+- Production:
+  - `Config.Debug.TestCommands.Enabled = false`
+  - Keep `Config.Debug.Interface = false` unless actively diagnosing
+  - Keep video conservative (`VideoBroadcast.Enabled` only when fully validated)
+
+## Optional QBCore Compatibility Routing
+
+If you want QBCore wrappers routed through `m4i_interface`:
+
+- `Config.QBCoreNotifyCompat = true`
+- `Config.QBCoreProgressCompat = true`
+
+If set to `false`, QBCore native behavior remains in place.
