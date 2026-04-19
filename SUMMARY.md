@@ -43,6 +43,7 @@
     - [Installation](scripts/m4i_interface/installation.md)
     - [Configuration](scripts/m4i_interface/configuration.md)
     - [Integration](scripts/m4i_interface/integration.md)
+    - [Modify Notify](scripts/m4i_interface/modify-notify.md)
     - [Exports](scripts/m4i_interface/exports.md)
     - [Testing](scripts/m4i_interface/testing.md)
     - [Troubleshooting](scripts/m4i_interface/troubleshooting.md)
