@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.1.95
+
+### Added
+
+- Minimap runtime positioning command:
+  - `/m4i_map show`
+  - `/m4i_map move left|right|up|down [amount]`
+  - `/m4i_map set <x> <y>`
+  - `/m4i_map reset`
+- Video broadcast command enhancements:
+  - `/m4i_video_broadcast` opens in-game menu when no args
+  - `/m4i_video_broadcast near <radius_m> <url> [duration_ms] [windowed|fullscreen] [title ...]`
+  - `/m4i_video_broadcast <radius_m> <url> [duration_ms] [windowed|fullscreen] [title ...]`
+  - `/m4i_video_broadcast stop`
+  - `/m4i_video_broadcast_stop`
+- New video control events:
+  - `m4i_interface:video:broadcast:clear`
+  - `m4i_interface:video:clear`
+  - `m4i_interface:video:broadcast:openMenu`
+  - `m4i_interface:video:broadcast:request`
+
+### Changed
+
+- Radar behavior now supports always-visible mode when `Config.HideRadar = false`.
+- Minimap position offsets are persisted per client using KVP.
+- Video command system now supports global broadcast, radius broadcast, menu-driven payload creation, and global stop.
+
 ## 1.1.94
 
 ### Added

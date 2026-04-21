@@ -5,10 +5,16 @@
 It is responsible for:
 
 - HUD and vehicle HUD rendering
+- Radar/minimap runtime behavior and placement controls
 - Progress bar rendering
 - Typed notification rendering and overlay pipelines
 - Text UI compatibility routing
 - Interface-focused commands and exports
+
+Recent runtime command additions:
+
+- `/m4i_map` for minimap positioning and reset
+- `/m4i_video_broadcast` with menu/global/radius/stop flows
 
 ## Typed Notification Renderers
 

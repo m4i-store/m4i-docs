@@ -148,7 +148,54 @@ Other high-impact config areas:
 - `Config.ExternalHud` (switching among `m4i`, `ps_hud`, `gd_hud2`, `uz_purehud`)
 - `Config.QBCoreNotifyCompat`, `Config.QBCoreProgressCompat`
 
-## 6) What to Keep Out of Notify Module Files
+## 6) Minimap and Radar Runtime Controls
+
+Minimap/radar behavior is controlled in `shared/config.lua`.
+
+Important keys:
+
+- `Config.HideRadar`
+  - `true`: radar hides on foot and shows in vehicle
+  - `false`: radar stays visible on foot and in vehicle
+- `Config.MinimapPositionCommand`
+  - command name for runtime minimap movement (default: `m4i_map`)
+- `Config.MinimapPositionStep`
+  - default move step for `/m4i_map move ...` (default `0.005`)
+- `Config.MinimapOffsetLimits`
+  - clamp range for X/Y offsets, for example `{ min = -0.25, max = 0.25 }`
+
+The runtime command supports:
+
+- `/m4i_map show`
+- `/m4i_map move left|right|up|down [amount]`
+- `/m4i_map set <x> <y>`
+- `/m4i_map reset`
+
+Offsets are persisted per client (KVP).
+
+## 7) Video Broadcast Command Controls
+
+Video command behavior is configurable via:
+
+- `Config.VideoBroadcastCommand.Command`
+- `Config.VideoBroadcastCommand.StopCommand`
+- `Config.VideoBroadcastCommand.OpenMenuWhenNoArgs`
+- `Config.VideoBroadcastCommand.DefaultRadius`
+- `Config.VideoBroadcastCommand.MaxRadius`
+
+Recommended baseline:
+
+```lua
+Config.VideoBroadcastCommand = {
+    Command = 'm4i_video_broadcast',
+    StopCommand = 'm4i_video_broadcast_stop',
+    OpenMenuWhenNoArgs = true,
+    DefaultRadius = 30.0,
+    MaxRadius = 250.0
+}
+```
+
+## 8) What to Keep Out of Notify Module Files
 
 Keep only notification-related values:
 

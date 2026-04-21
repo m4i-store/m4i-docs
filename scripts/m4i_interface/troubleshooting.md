@@ -125,3 +125,39 @@ If locale looks wrong:
 
 - run `/m4i_interface:locale <server_id>`
 - ensure `m4i_identity` is running (if used)
+
+## 9) Minimap Command Not Working
+
+Check:
+
+- `Config.MinimapPositionCommand` matches the command you run (default: `/m4i_map`)
+- `Config.HideRadar = false` if you want radar visible on foot
+- `Config.MinimapOffsetLimits` not too restrictive for your intended move
+
+Validate with:
+
+- `/m4i_map show`
+- `/m4i_map move right 0.01`
+- `/m4i_map reset`
+
+If movement does not appear:
+
+- ensure resource restarted after config/script changes
+- verify no external HUD script is overriding minimap component positions
+
+## 10) Video Broadcast Stop/Radius Issues
+
+If stop command does not work:
+
+- use `/m4i_video_broadcast stop` or `/m4i_video_broadcast_stop`
+- ensure player has ACE:
+  - `command.m4i_video_broadcast`
+  - `command.m4i_video_broadcast_stop` (when using dedicated stop command)
+
+If near/radius broadcast does not work:
+
+- command must be used by an in-game player (not server console)
+- test syntax:
+  - `/m4i_video_broadcast near 30 <url>`
+  - `/m4i_video_broadcast 30 <url>`
+- radius value must be within configured max (`Config.VideoBroadcastCommand.MaxRadius`)

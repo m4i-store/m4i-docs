@@ -113,6 +113,13 @@ Typed direct aliases:
 - `m4i_interface:job:announcement`
 - `m4i_interface:video`
 - `m4i_interface:video:broadcast`
+- `m4i_interface:video:broadcast:clear`
+- `m4i_interface:video:clear`
+
+Video command menu/request events:
+
+- `m4i_interface:video:broadcast:openMenu`
+- `m4i_interface:video:broadcast:request`
 
 Legacy compatibility:
 

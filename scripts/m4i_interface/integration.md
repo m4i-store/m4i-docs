@@ -68,6 +68,16 @@ Typed notify aliases are also available:
 - `m4i_interface:notify:job`
 - `m4i_interface:notify:video`
 
+Video runtime control aliases:
+
+- `m4i_interface:video:broadcast:clear`
+- `m4i_interface:video:clear`
+
+Video command-menu bridge events:
+
+- client -> server: `m4i_interface:video:broadcast:request`
+- server -> client: `m4i_interface:video:broadcast:openMenu`
+
 ## Module + Preset Resolution
 
 `Notify(payload)` supports:
@@ -166,3 +176,21 @@ Optional compatibility routing:
 
 - `QBCore.Functions.Notify` -> `m4i_interface` (`Config.QBCoreNotifyCompat = true`)
 - `QBCore.Functions.Progressbar` -> `m4i_interface` (`Config.QBCoreProgressCompat = true`)
+
+## Runtime Commands
+
+Video command:
+
+- `/m4i_video_broadcast` (opens menu in-game when no args)
+- `/m4i_video_broadcast <url> [duration_ms] [windowed|fullscreen] [title ...]`
+- `/m4i_video_broadcast near <radius_m> <url> [duration_ms] [windowed|fullscreen] [title ...]`
+- `/m4i_video_broadcast <radius_m> <url> [duration_ms] [windowed|fullscreen] [title ...]`
+- `/m4i_video_broadcast stop`
+- `/m4i_video_broadcast_stop`
+
+Minimap command:
+
+- `/m4i_map show`
+- `/m4i_map move left|right|up|down [amount]`
+- `/m4i_map set <x> <y>`
+- `/m4i_map reset`
