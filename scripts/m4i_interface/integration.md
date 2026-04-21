@@ -194,3 +194,54 @@ Minimap command:
 - `/m4i_map move left|right|up|down [amount]`
 - `/m4i_map set <x> <y>`
 - `/m4i_map reset`
+
+## Full Command Inventory (Current Runtime)
+
+This list reflects commands currently registered in `m4i_interface`.
+
+Always available (or config-driven):
+
+- `/<Config.ConfigureHudCommand>` (default `/configure_hud`, when `Config.ConfigurationMenu = true`)
+- `/m4i_interface_status`
+- `/openui`
+- `/closeui`
+- `/<Config.MinimapPositionCommand>` (default `/m4i_map`)
+- `/<Config.ExternalHud.Command>` (default `/m4i_hud_mode`)
+- `/toggleseatbelt`
+- `/interface:cancelProgress`
+- `/<Config.MoneyIndicators.CashCommand>` (default `/cash`)
+- `/<Config.MoneyIndicators.BankCommand>` (default `/bank`)
+- `/<Config.MoneyIndicators.JobCommand>` (default `/job`)
+- `/<Config.MoneyIndicators.IdCommand>` (default `/id`)
+- `/<Config.MoneyIndicators.OnlineCommand>` (default `/online`)
+- `/omline` (legacy alias kept in runtime)
+- `/<Config.MenuMusic.TrackCommand>` (default `/m4i_music`)
+- `/<Config.MenuMusic.VolumeCommand>` (default `/m4i_music_volume`)
+- `/<Config.NotifyFoundation.VideoBroadcast.AudioControl.Command>` (default `/m4i_video_sound`)
+- `/<Config.NotifyFoundation.VideoBroadcast.AudioControl.VolumeCommand>` (default `/m4i_video_volume`)
+- `/m4i_video_audio_reset`
+- `/m4i_video_beep`
+- `/<Config.ThemeLock.Command>` (default `/m4i_theme_lock`)
+- `/<Config.VideoBroadcastCommand.Command>` (default `/m4i_video_broadcast`)
+- `/<Config.VideoBroadcastCommand.StopCommand>` (default `/m4i_video_broadcast_stop`)
+- `/m4i_interface:diag`
+- `/m4i_interface:locale <server_id>`
+
+Debug-only commands:
+
+- `/m4i_refresh_locale` (only when interface debug mode is enabled)
+- `/reset_hud_config` (only when interface debug mode is enabled)
+- `/close_configure_hud` (only when interface debug mode is enabled)
+- `/cinematic` (only when interface debug mode is enabled)
+- `/stopcinematic` (only when interface debug mode is enabled)
+
+Test commands (`Config.Debug.TestCommands.Enabled = true`):
+
+- `/m4i_test_notify`
+- `/m4i_test_event`
+- `/m4i_test_dm`
+- `/m4i_test_moderation`
+- `/m4i_test_job`
+- `/m4i_test_progress`
+- `/m4i_test_all`
+- `/m4i_test_video [url]` (only when `EnableVideoTestCommand = true`)

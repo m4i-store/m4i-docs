@@ -59,6 +59,13 @@ These enforce their matching typed route.
 - `Open(message, color, position)` (alias)
 - `Close()` (alias)
 
+## Video Audio Preference Exports
+
+- `SetVideoAudioMuted(state)`
+- `GetVideoAudioMuted()`
+- `SetVideoAudioVolume(value)`
+- `GetVideoAudioVolume()`
+
 ## Cinematic Exports
 
 - `StartCinematicCam()`
