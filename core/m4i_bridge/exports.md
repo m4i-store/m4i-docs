@@ -1,35 +1,14 @@
 # Exports
 
-## Usage patterns
+## Integration rule
 
-### 1) Always treat bridge as the integration boundary
+M4I gameplay resources should use `m4i_bridge` exports instead of direct framework/provider calls.
 
-Use bridge exports from scripts instead of direct framework/inventory/UI calls.
+For core/framework state, prefer the Universal Core Contract v4 exports when the capability exists.
 
-### 2) Handle structured errors
+## System / API
 
-Some exports return a third value with structured error data:
-
-```lua
-local ok, msg, err = exports.m4i_bridge:RegisterMiddleware(...)
-if not ok then
-    print(msg)
-    if err then
-        print(err.code, err.message)
-    end
-end
-```
-
-### 3) Use trace IDs for correlation
-
-```lua
-local traceId = exports.m4i_bridge:NewTraceId()
-exports.m4i_bridge:Log("info", "my_script", "started", { traceId = traceId })
-```
-
-## Server exports
-
-### System and API
+Server and client expose platform/runtime helpers such as:
 
 ```lua
 exports.m4i_bridge:IsReady()
@@ -40,15 +19,70 @@ exports.m4i_bridge:GetMetricsSnapshot()
 exports.m4i_bridge:GetDebugState()
 ```
 
-### Player and permissions
+## Universal Core Contract v4 — server
+
+Current additive contract version:
+
+```lua
+exports.m4i_bridge:GetFrameworkContractVersion()
+exports.m4i_bridge:GetFrameworkCapabilities()
+```
+
+### Canonical identity
+
+```lua
+exports.m4i_bridge:GetCharacterId(sourceId)
+```
+
+### Money
+
+```lua
+exports.m4i_bridge:GetMoney(sourceId, account)
+exports.m4i_bridge:AddMoney(sourceId, account, amount, reason, operationId)
+exports.m4i_bridge:RemoveMoney(sourceId, account, amount, reason, operationId)
+exports.m4i_bridge:SetMoney(sourceId, account, amount, reason, operationId)
+```
+
+`operationId` is optional at the call site but must only be used when the provider capability supports durable idempotency. The bridge does not silently discard an operation ID.
+
+### Jobs / duty
+
+```lua
+exports.m4i_bridge:GetJob(sourceId)
+exports.m4i_bridge:SetJob(sourceId, jobName, grade)
+exports.m4i_bridge:SetDuty(sourceId, onDuty)
+```
+
+### Metadata / groups
+
+```lua
+exports.m4i_bridge:GetMetadata(sourceId, key)
+exports.m4i_bridge:SetMetadata(sourceId, key, value)
+exports.m4i_bridge:GetGroups(sourceId)
+```
+
+See [Universal Core Contract v4](universal-core-contract-v4.md) for provider-dependent semantics.
+
+## Player compatibility exports — server
 
 ```lua
 exports.m4i_bridge:GetPlayerData(sourceId)
+exports.m4i_bridge:GetIdentifier(sourceId)
+exports.m4i_bridge:GetJobName(sourceId)
+exports.m4i_bridge:GetJobLabel(sourceId)
+exports.m4i_bridge:GetPlayers()
+exports.m4i_bridge:GetOnlinePlayerCount()
+exports.m4i_bridge:GetStatus(sourceId, statusName)
+exports.m4i_bridge:GetStress(sourceId)
+exports.m4i_bridge:UpdateStress(sourceId, value)
+exports.m4i_bridge:IsAdmin(sourceId)
 exports.m4i_bridge:HasPermission(sourceId, permission)
 exports.m4i_bridge:HasAcePermission(sourceId, permission)
 ```
 
-### Inventory
+These compatibility helpers remain available alongside v4.
+
+## Inventory — server
 
 ```lua
 exports.m4i_bridge:HasItem(sourceId, itemName, amount, metadata)
@@ -57,31 +91,27 @@ exports.m4i_bridge:AddItem(sourceId, itemName, amount, metadata, slot)
 exports.m4i_bridge:RemoveItem(sourceId, itemName, amount, metadata, slot)
 ```
 
-### Notify and progress
+## Notify / progress / dispatch — server
 
 ```lua
 exports.m4i_bridge:NotifyPlayer(sourceId, payload)
 exports.m4i_bridge:NotifyAll(payload)
 exports.m4i_bridge:StartProgress(sourceId, payload)
-```
-
-### Dispatch
-
-```lua
 exports.m4i_bridge:SendDispatch(payload)
 ```
 
-### Callback
+## Callbacks — server
 
 ```lua
 exports.m4i_bridge:RegisterCallback(name, handler)
 exports.m4i_bridge:UnregisterCallback(name)
 exports.m4i_bridge:TriggerClientCallback(sourceId, name, args, timeoutMs)
 exports.m4i_bridge:TriggerClientCallbackPromise(sourceId, name, args, timeoutMs, options)
+exports.m4i_bridge:TriggerClientCallbackAsync(sourceId, name, args, timeoutMs, completion, options)
 exports.m4i_bridge:SyncCallbackToken(sourceId)
 ```
 
-### Database
+## Database — server
 
 ```lua
 exports.m4i_bridge:DBScalar(query, params)
@@ -92,24 +122,30 @@ exports.m4i_bridge:DBUpdate(query, params)
 exports.m4i_bridge:DBTransaction(queries, params)
 ```
 
-### Logging
+These exports are for approved script-owned persistence.
+
+**Do not use them to mutate core/framework-owned player, money, job, group, or identity tables.** Use the framework/core bridge contracts instead so provider memory and persistence cannot diverge.
+
+See [M4I Data Access Policy](../../shared/data-access-policy.md).
+
+## Logging
 
 ```lua
 exports.m4i_bridge:Log(level, category, message, contextData)
 exports.m4i_bridge:NewTraceId()
 ```
 
-Legacy compatibility (deprecated, still available):
+Deprecated compatibility helpers remain available for older scripts:
 
 ```lua
-exports.m4i_bridge:LogDebug(category, message, contextData)
-exports.m4i_bridge:LogInfo(category, message, contextData)
-exports.m4i_bridge:LogWarn(category, message, contextData)
-exports.m4i_bridge:LogError(category, message, contextData)
-exports.m4i_bridge:LogFatal(category, message, contextData)
+exports.m4i_bridge:LogDebug(...)
+exports.m4i_bridge:LogInfo(...)
+exports.m4i_bridge:LogWarn(...)
+exports.m4i_bridge:LogError(...)
+exports.m4i_bridge:LogFatal(...)
 ```
 
-### Security
+## Security
 
 ```lua
 exports.m4i_bridge:CheckCooldown(bucket, actor, durationMs)
@@ -118,7 +154,7 @@ exports.m4i_bridge:GetRiskScore(sourceId)
 exports.m4i_bridge:IsSourceBlocked(sourceId)
 ```
 
-### Plugin, hook, middleware, container
+## Plugins / hooks / middleware / container
 
 ```lua
 exports.m4i_bridge:RegisterPlugin(pluginDefinition)
@@ -137,27 +173,16 @@ exports.m4i_bridge:GetMiddlewareState(scope)
 exports.m4i_bridge:ResolveService(name, options)
 ```
 
-## Client exports
-
-### System and API
-
-```lua
-exports.m4i_bridge:IsReady()
-exports.m4i_bridge:GetApiVersion()
-exports.m4i_bridge:GetApiInfo()
-exports.m4i_bridge:GetProvider(domain)
-exports.m4i_bridge:GetMetricsSnapshot()
-exports.m4i_bridge:GetDebugState()
-```
-
-### Player
+## Client player exports
 
 ```lua
 exports.m4i_bridge:GetPlayerData()
 exports.m4i_bridge:IsLoggedIn()
 ```
 
-### UI, notify, progress
+The selected framework client adapter is responsible for normalized client state. M4I scripts should not infer the active framework from returned data.
+
+## Client UI / inventory / target / dispatch
 
 ```lua
 exports.m4i_bridge:Notify(payload)
@@ -165,64 +190,25 @@ exports.m4i_bridge:Progress(payload)
 exports.m4i_bridge:RegisterContext(contextDefinition)
 exports.m4i_bridge:ShowContext(contextId)
 exports.m4i_bridge:InputDialog(title, rows, options)
-```
 
-### Inventory and target
-
-```lua
 exports.m4i_bridge:HasItem(itemName, amount, metadata)
 exports.m4i_bridge:GetItemCount(itemName, metadata)
 exports.m4i_bridge:AddTargetBoxZone(options)
 exports.m4i_bridge:RemoveTargetZone(zoneId)
+exports.m4i_bridge:SendDispatch(payload)
 ```
 
-### Dispatch and callback
+## Client callbacks
 
 ```lua
-exports.m4i_bridge:SendDispatch(payload)
 exports.m4i_bridge:RegisterCallback(name, handler)
 exports.m4i_bridge:UnregisterCallback(name)
 exports.m4i_bridge:TriggerServerCallback(name, args, timeoutMs)
 exports.m4i_bridge:TriggerServerCallbackPromise(name, args, timeoutMs, options)
 ```
 
-### Plugin, hook, middleware, container
+## Error handling
 
-```lua
-exports.m4i_bridge:RegisterPlugin(pluginDefinition)
-exports.m4i_bridge:UnregisterPlugin(pluginName)
-exports.m4i_bridge:ListPlugins()
-exports.m4i_bridge:GetPluginState(pluginName)
+Always handle explicit `nil/false, reason` results for provider-dependent operations.
 
-exports.m4i_bridge:RegisterHook(eventName, handler, options)
-exports.m4i_bridge:UnregisterHook(eventName, hookId)
-exports.m4i_bridge:GetHookState(eventName)
-
-exports.m4i_bridge:RegisterMiddleware(scope, name, handler, options)
-exports.m4i_bridge:UnregisterMiddleware(scope, name)
-exports.m4i_bridge:GetMiddlewareState(scope)
-
-exports.m4i_bridge:ResolveService(name, options)
-exports.m4i_bridge:NewTraceId()
-```
-
-## Example: safe callback call
-
-```lua
-local ok, data, err, traceId = exports.m4i_bridge:TriggerServerCallback("m4i:test", { value = 42 }, 4000)
-if not ok then
-    print(("callback failed [%s]: %s"):format(tostring(traceId), tostring(err)))
-    return
-end
-
-print("callback data", json.encode(data))
-```
-
-## Example: service resolution
-
-```lua
-local logging, err = exports.m4i_bridge:ResolveService("logging")
-if logging then
-    logging:info("my_script", "resolved logging service")
-end
-```
+Do not assume an unsupported provider capability will be emulated.

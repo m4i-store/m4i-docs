@@ -4,35 +4,32 @@
 
 Minimum runtime requirements:
 
-- FiveM server artifact with Lua 5.4 support
-- OneSync enabled (recommended for modern server stacks)
-- `oxmysql` resource installed and started (database provider)
-- At least one provider available per enabled domain (framework, inventory, UI, target, notify, progress, dispatch)
+- FiveM artifact with Lua 5.4 support
+- required provider resources for every enabled domain
+- `oxmysql` when the bridge database domain is enabled
 
-Provider resources depend on your configuration. Example:
+Framework provider examples:
 
-- `qbx_core` for `framework = "qbox"`
-- `qb-core` for `framework = "qbcore"`
-- `es_extended` for `framework = "esx"`
-- `ox_core` for `framework = "ox_core"`
-- `ox_inventory` or `qb-inventory`
-- `ox_lib` and/or `qb-menu`
-- `ox_target` and/or `qb-target`
+- `m4i` -> resource `m4i_core`
+- `qbox` -> `qbx_core`
+- `qbcore` -> `qb-core`
+- `esx` -> `es_extended`
+- `ox_core` -> Ox Core resource stack
+
+Other domains may require `ox_inventory`, `qb-inventory`, `ox_lib`, `qb-menu`, `ox_target`, `qb-target`, dispatch resources, and so on according to configuration.
 
 ## Resource setup
 
-1. Place `m4i_bridge` in your resources folder.
-2. Keep the folder name exactly `m4i_bridge`.
-3. Ensure config files are edited before first production boot:
-- `config/default.lua`
-- `config/providers.lua`
-- `config/features.lua`
+1. place `m4i_bridge` in the resources folder
+2. keep the folder name exactly `m4i_bridge`
+3. review `config/default.lua`, `config/providers.lua`, and `config/features.lua`
+4. confirm every selected provider resource exists with the expected exact name
 
 ## Start order
 
-`m4i_bridge` should start after its required provider resources and before any scripts that depend on bridge exports.
+The selected providers must be available before bridge-dependent M4I gameplay resources.
 
-Example `server.cfg` segment:
+### Qbox example
 
 ```cfg
 ensure oxmysql
@@ -40,31 +37,54 @@ ensure ox_lib
 ensure qbx_core
 ensure ox_inventory
 ensure ox_target
-
 ensure m4i_bridge
 
-ensure m4i_jobs
-ensure m4i_garage
-ensure m4i_housing
+ensure m4i_example
 ```
+
+### Native M4I Core example
+
+```cfg
+ensure oxmysql
+ensure m4i_core
+ensure m4i_bridge
+
+ensure m4i_example
+```
+
+`m4i_core` must start before `m4i_bridge` when it is the selected framework provider.
+
+## Current production default
+
+The repository currently selects `qbox` as the framework by default and disables autodetect.
+
+Do not assume this alone prevents every possible M4I fallback: review the configured framework priority list and whether `m4i_core` is running before a production staging/cutover.
 
 ## First boot checklist
 
-1. Confirm selected providers in `config/providers.lua` match installed resources.
-2. Start server and check console for startup validation errors.
-3. Run `/m4i:debug` (server console or in-game with permission) to inspect:
-- provider resolution
-- domain status
-- service status
-- plugin/hook/middleware state
-- metrics state
-4. Confirm no domain is unexpectedly soft-disabled.
-5. Trigger one callback and one notify/progress flow from a test script.
+1. verify selected providers match installed resources
+2. start server and check startup validation
+3. inspect `/m4i:debug`
+4. confirm framework provider and domain/service states
+5. inspect `GetFrameworkCapabilities()` for v4 framework semantics
+6. test one callback
+7. test notify/progress/inventory/target paths required by the server
+8. verify provider stop/restart behavior in staging
+
+## M4I Core migration warning
+
+Installing `m4i_bridge` does not migrate an existing framework to `m4i_core`.
+
+A native-core cutover can require identity, money, jobs, ownership, vehicles, licenses, housing, inventory references, and third-party schema migration.
+
+Use the [m4i_core Production Rollout](../m4i_core/production-rollout.md) procedure.
 
 ## Common mistakes
 
-- Starting `m4i_bridge` before provider resources.
-- Selecting a provider that is not installed or named differently.
-- Assuming autodetect is primary control (it is fallback only when enabled).
-- Using direct framework APIs in scripts instead of bridge exports.
-- Enabling strict/safe flags in production without validating dependent scripts first.
+- starting bridge before required providers
+- selecting the wrong resource/provider name
+- assuming all framework capabilities are identical
+- bypassing bridge from M4I gameplay code
+- mutating framework/core-owned DB tables directly
+- running `m4i_core` automatic migrations against production without a backup
+- switching a framework with connected players

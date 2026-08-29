@@ -2,77 +2,87 @@
 
 ## What is `m4i_bridge`
 
-`m4i_bridge` is the internal integration platform for M4I FiveM resources.
+`m4i_bridge` is the universal integration and compatibility boundary for M4I FiveM resources.
 
-It standardizes how scripts interact with:
+It standardizes how M4I scripts interact with:
 
-- framework data
+- framework/player data
+- money, jobs, groups, duty, metadata, and canonical character identity
 - inventory operations
 - UI and notifications
 - progress flows
 - target interactions
 - dispatch integrations
 - callbacks
-- database access
+- approved database access for script-owned persistence
 - logging and security helpers
 - runtime extensibility (plugins, hooks, middleware)
 
-Instead of each script binding directly to framework-specific APIs, scripts use one stable bridge API.
+Instead of each M4I script binding directly to QBCore, Qbox, ESX, Ox Core, or `m4i_core`, scripts use one stable bridge API.
+
+## What the bridge is not
+
+`m4i_bridge` is **not** a replacement database/cache for every framework.
+
+When QBCore/Qbox/ESX/Ox Core is selected, that provider remains responsible for its own player cache, persistence, schema, and data behavior.
+
+There is no M4I Data Proxy layered over another framework.
+
+When `m4i_core` is selected, the native M4I Data Layer lives inside `m4i_core`, behind the same bridge boundary.
 
 ## Why it exists
 
-FiveM stacks are often mixed (QBCore/Qbox/ESX/ox_core, ox_inventory/qb-inventory, ox_lib/qb-menu, and so on). Direct integration in every script creates:
+FiveM stacks are often mixed. Direct integration in every script creates:
 
-- duplicated compatibility logic
+- duplicated framework compatibility code
 - fragile migration paths
-- inconsistent security and logging quality
-- harder maintenance as servers evolve
+- inconsistent security/logging behavior
+- framework lock-in
+- harder maintenance as the server evolves
 
-`m4i_bridge` solves this by centralizing adapters, validation, and runtime behavior behind one contract.
+`m4i_bridge` centralizes adapters, validation, capability reporting, callbacks, security, and provider resolution behind one contract.
+
+## Framework portability
+
+The additive Universal Core Contract v4 allows M4I-owned scripts to use normalized framework operations such as:
+
+- canonical `characterId`
+- money reads/mutations
+- job and duty
+- metadata
+- groups
+- capability reporting
+
+Supported framework provider targets include:
+
+- `m4i` (`m4i_core` resource)
+- `qbox`
+- `qbcore`
+- `esx`
+- `ox_core`
+
+Provider semantics are not assumed to be identical. Unsupported behavior must fail explicitly rather than be silently faked.
 
 ## Design philosophy
-
-`m4i_bridge` is designed around these principles:
 
 - explicit over implicit
 - modular over monolithic
 - safe defaults over permissive defaults
-- compatibility without hidden magic
+- compatibility without hidden data ownership
+- capability reporting instead of false equivalence
 - observability as a first-class requirement
 
-Key guarantees:
+## M4I script rule
 
-- stable public API surface
-- adapter-based provider abstraction
-- strict input validation and structured errors
-- centralized security and callback controls
-- low-overhead observability with optional profiling
+M4I-owned gameplay scripts depend on `m4i_bridge`.
 
-## What problems it solves
+If a needed framework capability is missing, extend the bridge contract/adapter instead of importing a concrete framework inside gameplay business logic.
 
-### For server owners
+## Read next
 
-- switch providers with config instead of rewriting scripts
-- consistent startup checks and provider health handling
-- production flags for strict/safe/performance behavior
-
-### For developers
-
-- one predictable API for all scripts
-- typed, documented exports
-- plugin/hook/middleware extension model
-- unified logging/trace/error model
-
-### For the M4I team
-
-- long-term maintainable architecture
-- easier rollout of security and platform updates
-- reduced drift across internal scripts
-
-## Who should read what
-
-- Server setup: [installation.md](installation.md) and [configuration.md](configuration.md)
-- Platform internals: [architecture.md](architecture.md) and [providers.md](providers.md)
-- Script integration: [script-development-guide.md](script-development-guide.md)
-- Extension systems: [plugin-system.md](plugin-system.md), [hook-system.md](hook-system.md), [middleware-system.md](middleware-system.md)
-- Operations: [security.md](security.md), [observability.md](observability.md), [troubleshooting.md](troubleshooting.md)
+- [Architecture](architecture.md)
+- [Providers](providers.md)
+- [Universal Core Contract v4](universal-core-contract-v4.md)
+- [Exports](exports.md)
+- [Script Development Guide](script-development-guide.md)
+- [M4I Data Access Policy](../../shared/data-access-policy.md)
