@@ -2,12 +2,12 @@
 
 ## Contract direction
 
-`m4i_core` exposes a provider surface that `m4i_bridge` consumes.
+The FiveM resource `m4i_core` implements framework provider `m4i` and exposes the provider surface that `m4i_bridge` consumes.
 
 M4I gameplay scripts should consume the **bridge** contract, not this provider surface directly.
 
 ```text
-M4I gameplay script -> m4i_bridge -> m4i_core provider exports
+M4I gameplay script -> m4i_bridge -> provider m4i -> m4i_core resource
 ```
 
 ## Universal Core Contract
@@ -18,10 +18,11 @@ Current additive bridge contract version:
 4.0.0-alpha.1
 ```
 
-The native M4I framework provider uses the FiveM resource name exactly:
+The native provider key and resource name are different:
 
 ```text
-m4i_core
+provider key: m4i
+resource:     m4i_core
 ```
 
 ## Required server provider surface
@@ -55,7 +56,7 @@ GetGroups(sourceId)
 
 `GetPlayerData` is part of the required normalized surface. A resource that exposes only `GetPlayer` must not be treated as a healthy native M4I provider.
 
-`IsReady()` must return `true` before the bridge advertises the native provider as ready.
+`IsReady()` must return `true` before the bridge advertises provider `m4i` as ready.
 
 ## Additional native core exports
 
@@ -87,7 +88,7 @@ The owning client receives its snapshot through targeted events. Sensitive full 
 
 ## Money operation IDs
 
-The native M4I provider supports durable idempotent money operation IDs.
+Provider `m4i`, implemented by `m4i_core`, supports durable idempotent money operation IDs.
 
 A stable operation ID may be supplied to:
 
@@ -113,6 +114,6 @@ Do not infer a capability merely from the selected provider name. Use the report
 
 ## Data ownership
 
-When the bridge provider is `m4i`, core-owned player data belongs to `m4i_core`.
+When bridge provider `m4i` is selected, core-owned player data belongs to the implementing `m4i_core` resource.
 
 M4I gameplay scripts must not update native `m4i_*` core tables directly. Use bridge exports so the in-memory state, persistence rules, events, idempotency, and security remain consistent.
