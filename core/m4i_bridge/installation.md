@@ -42,7 +42,7 @@ ensure m4i_bridge
 ensure m4i_example
 ```
 
-### Native M4I Core example
+### Native M4I provider example
 
 ```cfg
 ensure oxmysql
@@ -52,13 +52,13 @@ ensure m4i_bridge
 ensure m4i_example
 ```
 
-`m4i_core` must start before `m4i_bridge` when it is the selected framework provider.
+When framework provider `m4i` is selected, its implementing resource `m4i_core` must start before `m4i_bridge`.
 
 ## Current production default
 
-The repository currently selects `qbox` as the framework by default and disables autodetect.
+The repository currently selects `qbox` as the framework provider by default and disables autodetect.
 
-Do not assume this alone prevents every possible M4I fallback: review the configured framework priority list and whether `m4i_core` is running before a production staging/cutover.
+Do not assume this alone prevents every possible M4I fallback: review the configured framework priority list and whether the `m4i_core` resource is running before a production staging/cutover.
 
 ## First boot checklist
 
@@ -73,7 +73,7 @@ Do not assume this alone prevents every possible M4I fallback: review the config
 
 ## M4I Core migration warning
 
-Installing `m4i_bridge` does not migrate an existing framework to `m4i_core`.
+Installing `m4i_bridge` does not migrate an existing framework to provider `m4i` / `m4i_core`.
 
 A native-core cutover can require identity, money, jobs, ownership, vehicles, licenses, housing, inventory references, and third-party schema migration.
 
