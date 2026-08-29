@@ -2,7 +2,7 @@
 
 ## Goal
 
-The M4I Data Layer is the native data architecture of `m4i_core`.
+The M4I Data Layer is the native data architecture of the `m4i_core` resource, which implements framework provider `m4i`.
 
 Its purpose is to keep database I/O out of the gameplay hot path whenever correctness allows, while preserving strong persistence guarantees for money and other critical state.
 
@@ -34,7 +34,7 @@ Example concept:
        m4i_bridge
             |
             v
-       m4i_core
+  provider m4i / m4i_core
             |
             v
      in-memory state
@@ -43,7 +43,7 @@ Example concept:
        no SQL read
 ```
 
-The bridge may receive many logical calls, but those calls do not become one SQL query per getter when `m4i_core` is the provider.
+The bridge may receive many logical calls, but those calls do not become one SQL query per getter when provider `m4i` is selected and implemented by `m4i_core`.
 
 ### Critical write path
 
