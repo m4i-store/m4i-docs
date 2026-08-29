@@ -21,10 +21,14 @@ When the selected framework provider is `m4i` and `m4i_core` exposes the shipped
 - owner is delegated to `m4i_core` through the trusted native contract
 - public unsubscribe is owner-only
 - gameplay-resource stop removes its bridge-side records
-- Core restart invalidates old native tokens and active records are rebound after Core/provider readiness
+- Core restart invalidates old native tokens and active gameplay-owned records are rebound after Core/provider readiness
+- subscriptions owned by the old `m4i_core` runtime are removed on Core stop and are not inherited by the replacement Core process
 - the authoritative `m4i_core:server:ready` signal retriggers bounded recovery even if the initial resource-start retry window expired
+- overlapping lifecycle recovery signals are coalesced into bounded work
+- read-only capability polling does not start or extend subscription recovery
 - failed explicit Core unsubscribe preserves the bridge record/token for retry instead of orphaning a Core callback/quota slot
 - finite positive-integer validation is enforced for bulk snapshot limits
+- native player source IDs are validated as finite positive integers before provider forwarding
 
 ### Architecture boundary
 
