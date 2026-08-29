@@ -18,7 +18,7 @@ It standardizes how M4I scripts interact with:
 - logging and security helpers
 - runtime extensibility (plugins, hooks, middleware)
 
-Instead of each M4I script binding directly to QBCore, Qbox, ESX, Ox Core, or `m4i_core`, scripts use one stable bridge API.
+Instead of each M4I script binding directly to QBCore, Qbox, ESX, Ox Core, or the native `m4i_core` resource, scripts use one stable bridge API.
 
 ## What the bridge is not
 
@@ -28,7 +28,7 @@ When QBCore/Qbox/ESX/Ox Core is selected, that provider remains responsible for 
 
 There is no M4I Data Proxy layered over another framework.
 
-When `m4i_core` is selected, the native M4I Data Layer lives inside `m4i_core`, behind the same bridge boundary.
+When framework provider `m4i` is selected, the native M4I Data Layer lives inside the implementing `m4i_core` resource, behind the same bridge boundary.
 
 ## Why it exists
 
