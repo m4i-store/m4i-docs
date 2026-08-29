@@ -22,7 +22,7 @@ Read the full [M4I Data Access Policy](data-access-policy.md).
 
 ## Provider responsibility
 
-When `m4i_core` is selected, the native M4I Data Layer owns M4I framework persistence/state behavior.
+When framework provider `m4i` is selected, its implementing `m4i_core` resource owns the native M4I Data Layer and framework persistence/state behavior.
 
 When another framework is selected, that framework owns its own data architecture. `m4i_bridge` translates APIs but does not create a second Data Proxy/cache source of truth over it.
 
