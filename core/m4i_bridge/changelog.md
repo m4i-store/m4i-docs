@@ -2,6 +2,34 @@
 
 This changelog tracks major bridge milestones.
 
+## Native M4I Data Layer Contract — additive
+
+### Added
+
+When the selected framework provider is `m4i` and `m4i_core` exposes the shipped Data Layer contract, the bridge provides native-only capabilities for:
+
+- `GetPlayerSnapshot`
+- `GetPlayersSnapshot`
+- `GetDataLayerState`
+- `SubscribeData`
+- `UnsubscribeData`
+- dynamic capability flags for native Data Layer/snapshots/subscriptions
+
+### Ownership and lifecycle
+
+- bridge captures the invoking gameplay resource as subscription owner
+- owner is delegated to `m4i_core` through the trusted native contract
+- public unsubscribe is owner-only
+- gameplay-resource stop removes its bridge-side records
+- Core restart invalidates old native tokens and active records are rebound after Core/provider readiness
+- the authoritative `m4i_core:server:ready` signal retriggers bounded recovery even if the initial resource-start retry window expired
+- failed explicit Core unsubscribe preserves the bridge record/token for retry instead of orphaning a Core callback/quota slot
+- finite positive-integer validation is enforced for bulk snapshot limits
+
+### Architecture boundary
+
+These APIs are **not** emulated for Qbox/QBCore/ESX/Ox Core. Their native Data Layer capability flags remain unsupported/false. There is no M4I Data Proxy, cache, write-behind queue or DB interception layered over another framework.
+
 ## Universal Core Contract v4 — alpha / additive
 
 ### Added
@@ -89,6 +117,6 @@ Review-driven hardening included fixes for:
 ## Notes
 
 - stable legacy bridge API remains available
-- Universal Core Contract v4 is additive
+- Universal Core Contract v4 and the native M4I Data Layer contract are additive
 - provider capability differences must be explicit
 - framework switching remains a controlled migration/deployment operation
