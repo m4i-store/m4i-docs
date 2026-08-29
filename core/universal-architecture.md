@@ -7,7 +7,7 @@ M4I is designed as a platform, not as a single FiveM framework.
 The platform has two separate responsibilities:
 
 - `m4i_bridge` provides a stable compatibility boundary for M4I scripts.
-- `m4i_core` is the native M4I framework/runtime and owns the M4I data architecture when it is selected.
+- `m4i_core` is the native M4I framework/runtime and implements framework provider `m4i`.
 
 These responsibilities must not be mixed.
 
@@ -22,7 +22,7 @@ These responsibilities must not be mixed.
         +----------------+----------------+
         |                |                |
         v                v                v
-    m4i_core          QBCore         Qbox / ESX / Ox
+ m4i (m4i_core)       QBCore         Qbox / ESX / Ox
         |                |                |
         v                v                v
  M4I DATA LAYER     Their own data    Their own data
@@ -40,11 +40,11 @@ M4I-owned gameplay resources must not depend directly on a framework.
 
 They call `m4i_bridge` and the bridge translates the operation to the configured provider.
 
-This allows one M4I script to run with `m4i_core`, QBCore, Qbox, ESX, or Ox Core when the required capability exists.
+This allows one M4I script to run with provider `m4i` (`m4i_core` resource), QBCore, Qbox, ESX, or Ox Core when the required capability exists.
 
 ### Rule 2 — the selected framework owns its data
 
-When `m4i_core` is selected, M4I owns the full player-state and persistence architecture.
+When framework provider `m4i` is selected, `m4i_core` owns the full player-state and persistence architecture.
 
 When QBCore, Qbox, ESX, or Ox Core is selected, that framework remains responsible for its own cache, persistence, schema, and performance behavior.
 
@@ -54,7 +54,7 @@ When QBCore, Qbox, ESX, or Ox Core is selected, that framework remains responsib
 
 ### Rule 3 — M4I Data Layer is native-core only
 
-The M4I Data Layer belongs to `m4i_core`.
+The M4I Data Layer belongs to `m4i_core`, the resource implementing provider `m4i`.
 
 Its design goals are:
 
@@ -115,4 +115,4 @@ Do not remove the existing framework from production until every required resour
 
 The current `m4i_bridge` default framework selection remains `qbox`, with autodetect disabled.
 
-`m4i_core` is a supported provider, but production cutover must be explicit. Staging the resource is not the same as making it the active framework.
+Provider `m4i` is supported through the `m4i_core` resource, but production cutover must be explicit. Staging the resource is not the same as selecting provider `m4i` as the active framework.
