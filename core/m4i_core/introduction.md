@@ -2,7 +2,7 @@
 
 ## What is `m4i_core`
 
-`m4i_core` is the native, framework-neutral FiveM core for the M4I platform.
+`m4i_core` is the native, framework-neutral FiveM core for the M4I platform and implements framework provider `m4i` for `m4i_bridge`.
 
 It is designed to provide M4I with its own server-authoritative runtime while keeping M4I gameplay scripts portable through `m4i_bridge`.
 
@@ -21,7 +21,10 @@ M4I Script
 m4i_bridge
     |
     v
-m4i_core
+provider m4i
+    |
+    v
+m4i_core resource
 ```
 
 This prevents M4I scripts from being locked to one framework and allows the same script to run against another supported framework provider.
