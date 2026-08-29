@@ -108,7 +108,7 @@ Unsupported semantics must be reported rather than silently emulated incorrectly
 
 If an operation ID is supplied to a provider that cannot safely provide that guarantee, the operation must fail explicitly instead of discarding the ID and pretending it was idempotent.
 
-The native `m4i_core` provider supports durable money operation IDs.
+Provider `m4i`, implemented by the `m4i_core` resource, supports durable money operation IDs.
 
 ## Money semantics
 
@@ -119,7 +119,7 @@ Typical examples:
 - QBCore/Qbox: `cash`, `bank`, `crypto`
 - ESX: canonical `cash` maps to ESX money; account support depends on configured ESX accounts
 - Ox Core: current normalized account behavior differs and intentionally does not pretend unsupported cash/crypto semantics exist
-- M4I Core: named accounts are native to the M4I account model
+- provider `m4i` / `m4i_core`: named accounts are native to the M4I account model
 
 Scripts should check capabilities when portability depends on a specific account semantic.
 
@@ -170,7 +170,7 @@ A future shim can translate public framework exports/events, but cannot guarante
 
 The contract does not create an M4I Data Proxy over non-M4I frameworks.
 
-- if provider = `m4i`, `m4i_core` owns the native M4I data architecture
+- if provider = `m4i`, the `m4i_core` resource owns the native M4I data architecture
 - if provider = QBCore/Qbox/ESX/Ox, that provider owns its data architecture
 
 `m4i_bridge` remains the API compatibility layer in both cases.
