@@ -2,109 +2,17 @@
 
 ## Configuration files
 
-`m4i_bridge` loads and merges these files at startup:
+`m4i_bridge` loads and merges:
 
-- `config/default.lua`: core runtime defaults and safety behavior
-- `config/providers.lua`: provider selection and provider fallback order
-- `config/features.lua`: feature/domain/service toggles and debug switches
+- `config/default.lua`: runtime/safety behavior
+- `config/providers.lua`: provider selection, priority, autodetect, health
+- `config/features.lua`: domain/service toggles and debug options
 
-Merge behavior is deep-merge (later files override matching keys).
+Later config layers override matching keys through deep merge.
 
-## `config/default.lua` overview
+## Current framework selection
 
-### `production`
-
-Production override flags:
-
-- `strictMode`
-- `debugMode`
-- `performanceMode`
-- `safeMode`
-
-These flags adjust other sections at runtime (for example, strict mode forces fail-hard behavior for hooks/middleware).
-
-### `core`
-
-- `core.debug`: baseline debug switch used by internal services.
-
-### `plugins`
-
-- `enabled`: enable or disable plugin subsystem
-- `allowRuntimeRegistration`: allow plugin registration after kernel start
-- `autoStartOnKernelStart`: automatically start registered plugins when kernel starts
-- `enforceSourceNameMatch`: enforce plugin name to match invoking resource
-
-### `hooks`
-
-- `enabled`: global hook system toggle
-- `debugLogging`: emit hook debug logs
-- `failHard`: fail execution flow when hook handler errors
-
-### `middleware`
-
-- `enabled`: global middleware toggle
-- `debugLogging`: emit middleware debug logs
-- `failHard`: fail chain when middleware handler errors
-
-### `observability`
-
-- `enabled`: observability master switch
-- `metricsEnabled`: metrics collection switch
-- `sampleRate`: timer sampling ratio (0 < value <= 1)
-- `debugLogging`: observability debug output
-
-### `hotReload`
-
-- `cleanupOnResourceStop`: cleanup plugin/hook/middleware registrations when a resource stops
-
-### `logging`
-
-- `level`: `debug`, `info`, `warn`, `error`, `fatal`
-- `includeContext`: include context payloads in logs
-- `json`: emit structured JSON logs
-- `webhook`: optional Discord webhook forwarding
-
-### `security`
-
-Core security controls:
-
-- source validation behavior
-- callback cooldown and payload limits
-- suspicious scoring thresholds and decay
-- anomaly detection thresholds
-- optional auto-block and ban-hook trigger
-
-### `callbacks`
-
-Callback runtime controls:
-
-- timeout and max pending limits
-- optional token requirement (`requireToken`)
-- server/client rate-limit windows
-
-### `performance`
-
-- cache toggles and TTLs
-- memoization interval
-- profiling mode and thresholds
-- metrics toggle
-
-### `behavior`
-
-Resolver/runtime behavior:
-
-- `failOnMissingProvider`
-- `useAutodetectFallback`
-- `runtimeProviderSwitching`
-- `softFailDomains`
-- `softFailServices`
-- `includeRegisteredProvidersInFallback`
-
-## Provider selection (`config/providers.lua`)
-
-### `providers.selected`
-
-Primary provider per domain. This is the main control path.
+Current default selected providers include:
 
 ```lua
 selected = {
@@ -119,105 +27,128 @@ selected = {
 }
 ```
 
-### `providers.priority`
+The default framework therefore remains Qbox.
 
-Ordered fallback list used if selected provider is unavailable/unhealthy.
+### Framework priority
 
-### `providers.autodetect`
+Current framework priority begins with M4I as a fallback candidate:
 
-Optional fallback layer. Disabled by default and should not replace explicit `selected` values.
+```lua
+framework = { "m4i", "qbox", "qbcore", "esx", "ox_core" }
+```
 
-### `providers.health`
+This does **not** override a healthy selected Qbox provider. It matters when resolver fallback/recovery is needed.
 
-Provider health monitor controls:
+For a production server that is not ready for M4I cutover, review both the selected provider and fallback policy before running `m4i_core` in production.
 
-- periodic checks
-- max failure threshold
-- optional disable-on-failure
+### Autodetect
 
-## Feature toggles (`config/features.lua`)
+Autodetect is disabled by default.
 
-### `features.domains`
+Explicit selected-provider configuration remains the production control path.
 
-Enable/disable entire domains (`framework`, `inventory`, `ui`, etc.).
+## `config/default.lua`
 
-### `features.services`
+### `production`
 
-Enable/disable specific services (`callback`, `security`, etc.).
+Flags:
 
-### `debug`
+- `strictMode`
+- `debugMode`
+- `performanceMode`
+- `safeMode`
 
-- `startupVerbose`
-- `providerResolution`
+Use these as deployment profiles, not as substitutes for testing.
 
-## Fallback behavior explained
+### `plugins`
 
-Resolver logic in practice:
+Controls plugin subsystem enablement, runtime registration, auto-start, and source-name enforcement.
 
-1. Try selected provider.
-2. If invalid/unavailable/unhealthy, try `providers.priority` order.
-3. If enabled, try autodetect order.
-4. If configured, include registered providers as last fallback.
-5. If none work:
-- with soft-fail, disable domain/service and continue startup
-- without soft-fail, fail startup with explicit error
+### `hooks` / `middleware`
 
-## Production modes
+Controls extension system enablement, debug logging, and fail-hard behavior.
 
-### `strictMode = true`
+### `observability`
 
-- hook fail-hard enabled
-- middleware fail-hard enabled
-- plugin source-name enforcement enabled
-- stricter callback input checks
+Controls metrics/timer collection and sampling.
 
-### `debugMode = true`
+### `logging`
 
-- verbose startup and resolver logging
-- easier diagnostics during setup
+Controls level, structured context, JSON output, and optional webhook forwarding.
 
-### `performanceMode = true`
+### `security`
 
-- observability enabled
-- profiling enabled
+Controls source validation, callback payload/rate limits, suspicion scoring, anomaly thresholds, optional blocking, and ban-hook behavior.
 
-### `safeMode = true`
+### `callbacks`
 
-- callback token requirement enabled
-- invalid source rejection hardened
-- hot-reload cleanup safety enforced
+Controls timeout, pending-request limits, optional token requirements, request ID limits, and server/client rate limits.
+
+### `performance`
+
+Contains bridge-level cache/memoization/profiling/metrics settings.
+
+These bridge caches are integration/runtime optimizations. They do not turn the bridge into a second authoritative data store for another framework.
+
+### `behavior`
+
+Important resolver behavior includes:
+
+- `failOnMissingProvider`
+- `useAutodetectFallback`
+- `runtimeProviderSwitching`
+- `softFailDomains`
+- `softFailServices`
+- `includeRegisteredProvidersInFallback`
+
+## Provider health
+
+`providers.health` controls:
+
+- periodic health interval
+- maximum failures
+- disable-on-failure behavior
+
+The M4I provider also has explicit recovery logic for server/client alignment after a late or restarted `m4i_core` when runtime switching permits it.
+
+## Selecting M4I Core
+
+For a test/staging profile:
+
+```lua
+selected = {
+    framework = "m4i",
+    -- other domains stay explicit
+}
+```
+
+Required start order:
+
+```text
+oxmysql -> m4i_core -> m4i_bridge -> M4I scripts
+```
+
+Do not make this production change until persistent data and third-party resources have a validated migration/compatibility path.
+
+## Data responsibility
+
+Changing `framework` changes which provider handles framework operations.
+
+It does not make `m4i_bridge` responsible for provider persistence.
+
+- provider `m4i`: native data behavior belongs to `m4i_core`
+- provider QBCore/Qbox/ESX/Ox: data behavior belongs to that provider
 
 ## Example profiles
 
-### Local development
+### Development
 
-```lua
-production = {
-    strictMode = false,
-    debugMode = true,
-    performanceMode = true,
-    safeMode = false
-}
-```
+Use debug/profiling as needed and explicit provider selections.
 
 ### Staging
 
-```lua
-production = {
-    strictMode = true,
-    debugMode = true,
-    performanceMode = true,
-    safeMode = true
-}
-```
+Use the exact production provider plan, stricter safety flags, and isolated persistent data.
 
 ### Production
 
-```lua
-production = {
-    strictMode = true,
-    debugMode = false,
-    performanceMode = false,
-    safeMode = true
-}
-```
+Keep provider selection explicit, debug low, security validated, and do not change framework providers with connected players.

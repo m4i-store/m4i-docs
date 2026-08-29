@@ -2,18 +2,38 @@
 
 ## Purpose
 
-This guide defines the required development standard for all scripts built on `m4i_bridge`.
+This guide defines the required development standard for M4I-owned gameplay scripts.
+
+The goal is one script codebase that can run against supported framework providers through `m4i_bridge`, while keeping M4I-native data behavior centralized in the `m4i_core` resource when framework provider `m4i` is selected.
 
 ## Non-negotiable rules
 
-- NEVER call framework APIs directly from script business logic.
-- NEVER call inventory provider APIs directly.
-- ALWAYS consume bridge exports for integrations.
-- ALWAYS treat bridge as your compatibility/security boundary.
+- NEVER call QBCore/Qbox/ESX/Ox Core APIs directly from M4I gameplay business logic.
+- NEVER call `m4i_core` directly from M4I gameplay business logic when a bridge contract exists.
+- NEVER call inventory/UI/target providers directly when bridge abstraction exists.
+- ALWAYS use `m4i_bridge` as the compatibility boundary.
+- NEVER mutate core/framework-owned player data with direct SQL.
+- A missing capability is a platform-contract problem; extend the bridge/adapter instead of bypassing it.
 
-If a needed capability is missing, extend bridge contracts first instead of bypassing bridge.
+## Framework-neutral example
 
-## Recommended script structure
+Preferred:
+
+```lua
+local characterId = exports.m4i_bridge:GetCharacterId(source)
+local cash, err = exports.m4i_bridge:GetMoney(source, "cash")
+local job = exports.m4i_bridge:GetJob(source)
+```
+
+Forbidden:
+
+```lua
+local QBCore = exports['qb-core']:GetCoreObject()
+local player = exports.qbx_core:GetPlayer(source)
+local cash = exports.m4i_core:GetMoney(source, "cash")
+```
+
+## Recommended resource structure
 
 ```text
 my_script/
@@ -22,182 +42,170 @@ my_script/
     config.lua
   server/
     main.lua
-    callbacks.lua
+    services/
+      data_service.lua
+      webhook_service.lua
   client/
     main.lua
     ui.lua
+  sql/
 ```
 
-`my_script` should depend on `m4i_bridge` and start after it.
+The script should depend on `m4i_bridge` and start after it.
 
-## Integration lifecycle
+## Startup
 
-### Startup
+1. verify bridge readiness before provider-facing boot work
+2. register callbacks/hooks/middleware during resource start when required
+3. keep initialization idempotent
+4. log startup with meaningful context
 
-1. ensure bridge is started before script boot logic
-2. register callbacks/hooks/middleware during resource start
-3. log startup with trace context for diagnostics
+## Runtime integration
 
-### Runtime
+- use bridge exports for framework/inventory/UI/target/dispatch behavior
+- validate all external/client input before side effects
+- use structured callback responses
+- handle unsupported provider capabilities explicitly
+- do not infer framework identity from a returned data shape
 
-- use exports for all provider-facing actions
-- pass structured tables through callbacks
-- enforce script-level permissions and validation before side effects
+## Universal Core Contract v4
 
-### Shutdown
+For portable framework state, use v4 contracts where appropriate:
 
-- unregister callbacks/hooks/middleware if your script created persistent bindings
-- keep cleanup idempotent
+```lua
+GetFrameworkCapabilities
+GetCharacterId
+GetMoney / AddMoney / RemoveMoney / SetMoney
+GetJob / SetJob / SetDuty
+GetMetadata / SetMetadata
+GetGroups
+```
 
-## Logging rules
+Before depending on provider-specific semantics such as duty or idempotent money, inspect capability reporting.
 
-- use `exports.m4i_bridge:Log(...)` for structured logs
-- include meaningful `category` values per script area
-- include trace IDs on multi-step flows
+## Money rules
+
+Money is security- and persistence-sensitive.
+
+- validate the server-side reason/context
+- use a stable operation ID for retryable financial actions when the provider advertises durable idempotency
+- never update a framework balance table directly
+- never trust a client-supplied resulting balance
+- treat `false/nil, reason` as a real failure
 
 Example:
 
 ```lua
+local caps = exports.m4i_bridge:GetFrameworkCapabilities()
+local operationId = ("my_script:reward:%s"):format(rewardId)
+
+if caps.ready and caps.capabilities and caps.capabilities.idempotentMoney then
+    local ok, err = exports.m4i_bridge:AddMoney(source, "bank", 500, "mission_reward", operationId)
+    if not ok then
+        return false, err
+    end
+else
+    -- Decide an approved non-retryable behavior for this provider.
+end
+```
+
+## Data access rules
+
+### Core/framework-owned state
+
+Read/mutate through bridge contracts.
+
+Do not issue SQL against provider/core player, money, job, group, identity, or metadata tables.
+
+### Script-owned persistence
+
+A script may own dedicated tables for its own business domain.
+
+Use the bridge database service/exports and keep SQL inside a clear data/repository service rather than scattering it across gameplay files.
+
+### Do not poll unchanged state
+
+Avoid short loops that repeatedly request money/job/status merely to detect changes.
+
+Prefer:
+
+- initial read
+- platform/domain change event
+- explicit refresh when the feature actually needs it
+
+If many scripts need the same missing event or snapshot API, extend the shared platform instead of creating duplicate polling implementations.
+
+See [M4I Data Access Policy](../../shared/data-access-policy.md).
+
+## Bulk reads
+
+Do not create thousands of repeated fine-grained calls when a bounded snapshot/bulk contract can express the requirement better.
+
+If a needed snapshot API is not yet part of the bridge/core, propose it as a platform feature. Do not bypass the architecture with direct provider access.
+
+## Callbacks
+
+- namespace callback names (`my_script:action`)
+- validate source and payload server-side
+- return structured `success/reason/data`
+- handle timeout/error branches
+- keep handlers bounded and deterministic
+- use bridge callback channels for sensitive request/response flows
+
+## Logging
+
+Use structured bridge logging:
+
+```lua
 local traceId = exports.m4i_bridge:NewTraceId()
-exports.m4i_bridge:Log("info", "my_script", "starting flow", {
-    traceId = traceId,
-    action = "open_menu"
+exports.m4i_bridge:Log("info", "my_script", "flow started", {
+    source = source,
+    traceId = traceId
 })
 ```
 
-## Security rules
+Use trace IDs for multi-step actions where correlation matters.
 
-- validate all external input before callback or DB actions
-- use bridge callback channel instead of ad-hoc sensitive net events
-- use `CheckCooldown` where user-triggered actions can be spammed
-- review suspicion-related logs for abuse patterns
+## Security
 
-## Callback rules
+- authority lives on the server
+- validate item/money/job/permission requirements on the server
+- use cooldown/rate-limit controls for spam-sensitive actions
+- do not expose raw DB mutation through client events
+- do not trust client-supplied identity, amount, price, permission, or ownership state
 
-- register callback names with clear namespace (`my_script:action`)
-- return structured response payloads (`success`, `reason`, `data`)
-- handle timeout and error branches on caller side
-- keep callback handlers fast and deterministic
+## Provider behavior
 
-Server callback example:
+When provider = `m4i`, framework calls reach the `m4i_core` resource and benefit from native M4I data behavior.
 
-```lua
-exports.m4i_bridge:RegisterCallback("my_script:get_status", function(source)
-    if not exports.m4i_bridge:HasPermission(source, "my_script.use") then
-        return {
-            success = false,
-            reason = "no_permission"
-        }
-    end
+When provider = QBCore/Qbox/ESX/Ox Core, the bridge calls that provider's APIs and that provider owns its data architecture. M4I does not add a second player-data source of truth.
 
-    return {
-        success = true,
-        data = {
-            online = true
-        }
-    }
-end)
-```
+## Third-party resources
 
-Client callback call example:
+A framework-native third-party resource is not automatically an M4I-native script.
 
-```lua
-local ok, response, err, traceId = exports.m4i_bridge:TriggerServerCallback(
-    "my_script:get_status",
-    {},
-    5000
-)
+It may need:
 
-if not ok then
-    print(("status callback failed [%s]: %s"):format(tostring(traceId), tostring(err)))
-    return
-end
+- a reverse compatibility shim
+- source patch
+- migration adapter
+- replacement
 
-if response and response.success then
-    print("status online", response.data and response.data.online)
-end
-```
+Hard-coded provider SQL/private internals require special review.
 
-## Database and state access
+## Release checklist
 
-- use bridge DB exports only (`DBQuery`, `DBSingle`, etc.)
-- keep SQL and schema logic inside your script, but connection access through bridge
-- never expose raw DB operations through unsecured client events
+Before releasing an M4I script:
 
-## Plugin/hook/middleware integration flow
-
-Use these systems only for cross-cutting concerns:
-
-- plugin: resource-level integration package
-- hook: event interception/observation
-- middleware: scoped pipeline logic
-
-Do not put business gameplay logic into generic middleware/hooks when direct script code is clearer.
-
-## Do / Don't
-
-### Do
-
-- use bridge exports for framework/inventory/ui/dispatch access
-- validate payloads before actions
-- log with category and trace IDs
-- handle structured errors
-- keep callback handlers small and predictable
-
-### Don't
-
-- call `QBCore`, `ESX`, `ox_inventory`, `ox_lib` directly in script business layer
-- bypass bridge security for convenience
-- rely on fallback behavior as primary configuration strategy
-- ignore timeout/error branches in callback calls
-
-## Example server flow (end-to-end)
-
-```lua
-RegisterCommand("my_status", function(source)
-    local traceId = exports.m4i_bridge:NewTraceId()
-
-    local allowed = exports.m4i_bridge:HasPermission(source, "my_script.use")
-    if not allowed then
-        exports.m4i_bridge:NotifyPlayer(source, {
-            type = "error",
-            title = "Access denied",
-            description = "Missing permission"
-        })
-
-        exports.m4i_bridge:Log("warn", "my_script", "permission denied", {
-            source = source,
-            traceId = traceId
-        })
-        return
-    end
-
-    local hasItem = exports.m4i_bridge:HasItem(source, "phone", 1)
-    if not hasItem then
-        exports.m4i_bridge:NotifyPlayer(source, {
-            type = "error",
-            description = "You need a phone"
-        })
-        return
-    end
-
-    exports.m4i_bridge:NotifyPlayer(source, {
-        type = "success",
-        description = "Command executed"
-    })
-
-    exports.m4i_bridge:Log("info", "my_script", "command completed", {
-        source = source,
-        traceId = traceId
-    })
-end, false)
-```
-
-## Team checklist before releasing a script
-
-1. no direct provider/framework calls in gameplay code
-2. all external inputs validated
-3. callback timeouts handled
-4. bridge logging used in critical paths
-5. security-sensitive actions protected with permission + cooldown/rate-limit controls
-6. tested with `/m4i:debug` and provider configuration used by target server
+1. no direct framework/core/provider calls in gameplay business logic
+2. no direct SQL to core/framework-owned state
+3. external inputs validated
+4. financial operations use approved server-authoritative flow
+5. callbacks handle timeout/error
+6. polling avoided where event-driven behavior is possible
+7. bridge capabilities handled explicitly
+8. script-owned SQL isolated in a data service
+9. logs/trace IDs exist for critical flows
+10. tested against every provider claimed as supported
+11. resource restart and provider-unavailable behavior tested
+12. documentation updated in `m4i-docs`

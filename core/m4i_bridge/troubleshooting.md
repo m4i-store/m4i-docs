@@ -2,120 +2,124 @@
 
 ## Startup fails with configuration validation errors
 
-### Symptoms
+Check:
 
-- kernel startup aborted
-- console shows configuration validation messages
-
-### Checks
-
-1. verify field types in `config/default.lua`
-2. verify `providers.selected.<domain>` values are non-empty strings
-3. verify boolean flags are booleans (not strings)
-4. verify numeric limits are positive where required
+1. field types in `config/default.lua`
+2. `providers.selected.<domain>` values
+3. boolean/numeric limits
+4. exact provider/resource names
 
 ## Provider not found or unavailable
 
-### Symptoms
+Check:
 
-- domain disabled or provider resolution errors
-- bridge starts with soft-disabled domains
+1. selected provider name matches config/adapter naming
+2. dependency resource is started
+3. `/m4i:debug` provider/domain state
+4. `providers.priority` order
+5. provider health failure count
 
-### Checks
+## M4I provider is unavailable
 
-1. confirm selected provider name matches config and adapter naming
-2. confirm dependency resource is started (`ox_lib`, `qbx_core`, etc.)
-3. inspect `/m4i:debug` provider and disabled-domain sections
-4. review `providers.priority` fallback order
+For framework provider `m4i`, verify:
+
+- resource name is exactly `m4i_core`
+- `m4i_core` starts before the bridge
+- `exports.m4i_core:IsReady()` returns `true`
+- normalized `GetPlayerData` is available
+- the required v4 surface is present
+
+A partial `GetPlayer`-only core is intentionally rejected as unhealthy.
 
 ## Unexpected fallback provider selected
 
-### Symptoms
+Possible causes:
 
-- selected provider differs from runtime provider
+- selected provider failed dependency/readiness/health checks
+- priority fallback selected a healthy alternative
+- a provider recovered and runtime switching restored a preferred candidate
 
-### Causes
+Actions:
 
-- selected provider failed dependency/health/validation checks
-- fallback list selected a healthy alternative
+1. enable provider-resolution diagnostics in staging
+2. inspect health thresholds
+3. inspect selected + priority configuration together
+4. verify which framework resources are currently running
 
-### Actions
+If production is not ready for M4I cutover, remember that a running `m4i_core` can be a configured fallback candidate.
 
-1. inspect resolver logs with `debug.providerResolution = true`
-2. check provider health thresholds in `providers.health`
-3. verify selected provider dependencies and versions
+## Server/client provider mismatch
 
-## Plugin registration fails
+If server behavior uses one framework while client reads appear to use another:
 
-### Symptoms
+- verify the current bridge build includes M4I client recovery
+- restart/reproduce in staging
+- inspect provider health/recovery logs
+- verify the native core became ready on both sides
 
-- `RegisterPlugin` returns `false` with validation error
+Current bridge recovery is designed to reselect a healthy preferred M4I provider on both server and client without requiring a bridge restart.
 
-### Checks
+## v4 capability call fails
 
-1. plugin `name` is present and unique
-2. lifecycle handlers are functions if defined
-3. hooks/middleware definitions are valid tables/functions
-4. if source enforcement is enabled, plugin name matches resource name
+Check:
 
-## Hook issues
+```lua
+local info = exports.m4i_bridge:GetFrameworkCapabilities()
+```
 
-### Symptoms
+Verify:
 
-- hooks not firing, or flow cancelled unexpectedly
+- `ready == true`
+- the expected provider is selected
+- the requested semantic is advertised as supported
 
-### Checks
+Do not patch M4I gameplay code with a provider-specific call merely because one provider lacks a universal capability.
 
-1. verify event name (`before:*` / `after:*`)
-2. verify hook priority ordering
-3. inspect return shape (`false`, `{ cancel = true }`, payload mutation)
-4. check `hooks.failHard` impact on handler errors
+## Money operation ID error
 
-## Middleware issues
+If a v4 money mutation fails when an `operationId` is supplied:
 
-### Symptoms
+- verify `capabilities.idempotentMoney`
+- verify the ID was not reused for a conflicting operation
+- do not remove the ID silently in retryable financial flows
 
-- action stops unexpectedly or errors in chain
+The bridge intentionally refuses to pretend a non-idempotent provider is idempotent.
 
-### Checks
+## Database misuse / high load
 
-1. ensure `next()` is called at most once
-2. verify cancellation is intentional (`return false, "reason"`)
-3. check middleware scope name accuracy
-4. inspect `middleware.failHard` behavior for handler errors
+The bridge database service is for approved script-owned persistence.
+
+If an M4I script is issuing repeated SQL for framework/player state:
+
+- stop the direct SQL path
+- move framework state access to the bridge/core contract
+- replace polling with event-driven behavior where possible
+- review [M4I Data Access Policy](../../shared/data-access-policy.md)
+
+The bridge is not a Data Proxy/cache source of truth for QBCore/Qbox/ESX/Ox Core.
 
 ## Callback timeout or token errors
 
-### Symptoms
+Check:
 
-- callback returns `timeout`, `invalid_token`, or `token_not_ready`
+1. handler registration on the destination side
+2. timeout is appropriate for the operation
+3. token synchronization when token mode is enabled
+4. duplicate/replayed request behavior
+5. trace IDs and security logs
 
-### Checks
+## Plugin/hook/middleware issues
 
-1. confirm callback handler is registered on destination side
-2. increase timeout for heavy operations
-3. if token mode enabled, ensure token sync occurs before sensitive calls
-4. inspect security warnings and trace IDs
+Verify ownership, naming, registration lifecycle, cancellation behavior, `next()` usage, and fail-hard configuration.
 
-## High suspicion scores / blocked source
+## Collecting diagnostics
 
-### Symptoms
+Include:
 
-- actions rejected due to suspicious behavior
-
-### Checks
-
-1. inspect security logs for triggering action keys
-2. review `security.suspicionWeights` and thresholds
-3. confirm no duplicate callback request pattern in script logic
-4. if needed, tune anomaly threshold/window for your traffic profile
-
-## Collecting diagnostics for support
-
-When reporting issues, include:
-
-- selected providers (`config/providers.lua`)
-- production flags (`config/default.lua`)
+- selected/priority providers
+- production flags
 - `/m4i:debug` output
-- related trace IDs
-- full error message and structured error code if available
+- `GetFrameworkCapabilities()` result when framework behavior is involved
+- trace IDs
+- exact error/reason
+- bridge/core commit or release version

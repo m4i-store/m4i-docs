@@ -5,12 +5,24 @@
 - [Standards](introduction/standards.md)
 
 - Core Systems
+  - [Universal M4I Architecture](core/universal-architecture.md)
+  - m4i_core
+    - [Introduction](core/m4i_core/introduction.md)
+    - [Architecture](core/m4i_core/architecture.md)
+    - [M4I Data Layer](core/m4i_core/data-layer.md)
+    - [Installation](core/m4i_core/installation.md)
+    - [Configuration](core/m4i_core/configuration.md)
+    - [Bridge Contract](core/m4i_core/bridge-contract.md)
+    - [Production Rollout](core/m4i_core/production-rollout.md)
+    - [Troubleshooting](core/m4i_core/troubleshooting.md)
+    - [Changelog](core/m4i_core/changelog.md)
   - m4i_bridge
     - [Introduction](core/m4i_bridge/introduction.md)
     - [Installation](core/m4i_bridge/installation.md)
     - [Configuration](core/m4i_bridge/configuration.md)
     - [Architecture](core/m4i_bridge/architecture.md)
     - [Providers](core/m4i_bridge/providers.md)
+    - [Universal Core Contract v4](core/m4i_bridge/universal-core-contract-v4.md)
     - [Exports](core/m4i_bridge/exports.md)
     - [Plugin System](core/m4i_bridge/plugin-system.md)
     - [Hook System](core/m4i_bridge/hook-system.md)
@@ -53,4 +65,5 @@
   - [Installation Standards](shared/installation-standards.md)
   - [Naming Conventions](shared/naming-conventions.md)
   - [Integration Rules](shared/integration-rules.md)
+  - [M4I Data Access Policy](shared/data-access-policy.md)
   - [Support Policy](shared/support-policy.md)
