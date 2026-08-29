@@ -23,7 +23,8 @@ This hub follows these standards:
 - examples must reflect real supported behavior
 - pages must stay readable and operationally useful
 - terminology must stay consistent across sections
-- provider names and resource names must be exact (`m4i_core`, `m4i_bridge`)
+- provider key `m4i` and resource name `m4i_core` must not be used interchangeably
+- resource names such as `m4i_core` and `m4i_bridge` must be exact
 - performance claims require representative measurements
 
 ## Architecture baseline
@@ -34,7 +35,7 @@ The canonical separation is:
 M4I scripts -> m4i_bridge -> selected provider
 ```
 
-`m4i_core` owns the M4I Data Layer only when it is the selected native provider. `m4i_bridge` does not become a second data source for other frameworks.
+When provider `m4i` is selected, its `m4i_core` resource owns the M4I Data Layer. `m4i_bridge` does not become a second data source for other frameworks.
 
 Developers must consult:
 
