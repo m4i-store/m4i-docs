@@ -12,12 +12,12 @@
 M4I separates portability from native runtime implementation.
 
 - `m4i_bridge`: universal compatibility/integration boundary
-- `m4i_core`: native M4I framework and data runtime
+- provider `m4i`: native framework provider implemented by the `m4i_core` FiveM resource
 - M4I gameplay scripts: depend on the bridge, not on a concrete framework
 
-When another framework is selected, `m4i_bridge` translates the M4I contract to that provider. M4I does not place a second Data Proxy over QBCore/Qbox/ESX/Ox Core; those frameworks own their own data architecture.
+When another framework provider is selected, `m4i_bridge` translates the M4I contract to that provider. M4I does not place a second Data Proxy over QBCore/Qbox/ESX/Ox Core; those frameworks own their own data architecture.
 
-When `m4i_core` is selected, the M4I Data Layer provides server-authoritative state, memory-backed hot-path reads, strong financial persistence, and controlled ordinary-state persistence.
+When provider `m4i` is selected, the `m4i_core` resource and M4I Data Layer provide server-authoritative state, memory-backed hot-path reads, strong financial persistence, and controlled ordinary-state persistence.
 
 ## Documentation model
 
