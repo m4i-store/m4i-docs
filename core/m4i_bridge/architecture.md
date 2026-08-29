@@ -23,11 +23,11 @@ M4I Script
     v
 m4i_bridge
     |
-    +-> m4i_core
-    +-> QBCore
-    +-> Qbox
-    +-> ESX
-    +-> Ox Core
+    +-> m4i (m4i_core resource)
+    +-> qbcore
+    +-> qbox
+    +-> esx
+    +-> ox_core
 ```
 
 The bridge does not own another framework's authoritative data/cache. It calls the provider's supported API and returns normalized results.
@@ -85,17 +85,17 @@ The selected provider remains the primary control. Autodetect is not a substitut
 
 ## M4I provider recovery
 
-The M4I provider has explicit server and client recovery handling so a late `m4i_core` start can restore the preferred provider without requiring a bridge restart when configuration permits runtime switching.
+Provider `m4i` has explicit server and client recovery handling so a late `m4i_core` resource start can restore the preferred provider without requiring a bridge restart when configuration permits runtime switching.
 
 Recovery bypasses stale fallback caches and requires the native provider to be healthy before selection.
 
 ## Data responsibility
 
-### `m4i_core` selected
+### Provider `m4i` selected
 
-The native core owns the M4I Data Layer: authoritative in-memory state, persistence rules, financial transactions, and core data lifecycle.
+The `m4i_core` resource owns the M4I Data Layer: authoritative in-memory state, persistence rules, financial transactions, and core data lifecycle.
 
-### Other framework selected
+### Another framework provider selected
 
 QBCore/Qbox/ESX/Ox Core owns its own framework data architecture.
 
