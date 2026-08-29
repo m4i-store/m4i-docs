@@ -128,7 +128,7 @@ These exports are for approved script-owned persistence.
 
 See [M4I Data Access Policy](../../shared/data-access-policy.md).
 
-## Logging
+## Logging — server
 
 ```lua
 exports.m4i_bridge:Log(level, category, message, contextData)
@@ -145,7 +145,7 @@ exports.m4i_bridge:LogError(...)
 exports.m4i_bridge:LogFatal(...)
 ```
 
-## Security
+## Security — server
 
 ```lua
 exports.m4i_bridge:CheckCooldown(bucket, actor, durationMs)
@@ -154,7 +154,7 @@ exports.m4i_bridge:GetRiskScore(sourceId)
 exports.m4i_bridge:IsSourceBlocked(sourceId)
 ```
 
-## Plugins / hooks / middleware / container
+## Plugin / hook / middleware / container — server
 
 ```lua
 exports.m4i_bridge:RegisterPlugin(pluginDefinition)
@@ -205,6 +205,31 @@ exports.m4i_bridge:RegisterCallback(name, handler)
 exports.m4i_bridge:UnregisterCallback(name)
 exports.m4i_bridge:TriggerServerCallback(name, args, timeoutMs)
 exports.m4i_bridge:TriggerServerCallbackPromise(name, args, timeoutMs, options)
+exports.m4i_bridge:TriggerServerCallbackAsync(name, args, timeoutMs, completion, options)
+```
+
+## Client extensions / observability
+
+The extension systems are available on the client as well:
+
+```lua
+exports.m4i_bridge:RegisterPlugin(pluginDefinition)
+exports.m4i_bridge:UnregisterPlugin(pluginName)
+exports.m4i_bridge:ListPlugins()
+exports.m4i_bridge:GetPluginState(pluginName)
+
+exports.m4i_bridge:RegisterHook(eventName, handler, options)
+exports.m4i_bridge:UnregisterHook(eventName, hookId)
+exports.m4i_bridge:GetHookState(eventName)
+
+exports.m4i_bridge:RegisterMiddleware(scope, name, handler, options)
+exports.m4i_bridge:UnregisterMiddleware(scope, name)
+exports.m4i_bridge:GetMiddlewareState(scope)
+
+exports.m4i_bridge:ResolveService(name, options)
+exports.m4i_bridge:NewTraceId()
+exports.m4i_bridge:GetMetricsSnapshot()
+exports.m4i_bridge:GetDebugState()
 ```
 
 ## Error handling
