@@ -83,7 +83,7 @@ local caps = info and info.capabilities or {}
 
 if caps.nativeDataLayer and caps.playerSnapshot then
     local snapshot = exports.m4i_bridge:GetPlayerSnapshot(sourceId, {
-        "money",
+        "accounts",
         "job",
         "status"
     })
