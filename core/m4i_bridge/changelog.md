@@ -12,7 +12,7 @@ This changelog tracks major bridge milestones.
 - normalized money read/mutation APIs
 - normalized job/duty APIs
 - normalized metadata/groups APIs
-- native `m4i` framework provider for resource `m4i_core`
+- native framework provider `m4i`, implemented by resource `m4i_core`
 - Qbox/QBCore/ESX/Ox Core v4 adapters
 - explicit durable idempotent-money capability semantics
 - server/client M4I provider recovery paths
@@ -36,7 +36,7 @@ Review-driven hardening included fixes for:
 ### Architecture clarification
 
 - `m4i_bridge` is the compatibility/API boundary.
-- `m4i_core` owns the native M4I Data Layer when selected.
+- when provider `m4i` is selected, the `m4i_core` resource owns the native M4I Data Layer.
 - QBCore/Qbox/ESX/Ox Core remain responsible for their own framework data architecture when selected.
 - There is no M4I Data Proxy over other frameworks.
 
