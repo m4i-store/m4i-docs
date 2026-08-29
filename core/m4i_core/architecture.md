@@ -2,18 +2,18 @@
 
 ## Boundary
 
-`m4i_core` is a framework provider. `m4i_bridge` selects and consumes the provider; `m4i_core` does not depend on the bridge.
+The FiveM resource `m4i_core` implements framework provider `m4i`. `m4i_bridge` selects and consumes that provider; `m4i_core` does not depend on the bridge.
 
 This avoids a circular dependency and preserves provider neutrality for M4I scripts.
 
 ```text
 M4I Script -> m4i_bridge -> selected framework provider
                               |
-                              +-> m4i_core
-                              +-> QBCore
-                              +-> Qbox
-                              +-> ESX
-                              +-> Ox Core
+                              +-> m4i (m4i_core resource)
+                              +-> qbcore
+                              +-> qbox
+                              +-> esx
+                              +-> ox_core
 ```
 
 ## Canonical runtime model
