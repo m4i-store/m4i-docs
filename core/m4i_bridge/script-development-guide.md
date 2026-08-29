@@ -4,7 +4,7 @@
 
 This guide defines the required development standard for M4I-owned gameplay scripts.
 
-The goal is one script codebase that can run against supported framework providers through `m4i_bridge`, while keeping M4I-native data behavior centralized in `m4i_core` when that provider is selected.
+The goal is one script codebase that can run against supported framework providers through `m4i_bridge`, while keeping M4I-native data behavior centralized in the `m4i_core` resource when framework provider `m4i` is selected.
 
 ## Non-negotiable rules
 
@@ -176,7 +176,7 @@ Use trace IDs for multi-step actions where correlation matters.
 
 ## Provider behavior
 
-When provider = `m4i`, framework calls reach `m4i_core` and benefit from native M4I data behavior.
+When provider = `m4i`, framework calls reach the `m4i_core` resource and benefit from native M4I data behavior.
 
 When provider = QBCore/Qbox/ESX/Ox Core, the bridge calls that provider's APIs and that provider owns its data architecture. M4I does not add a second player-data source of truth.
 
