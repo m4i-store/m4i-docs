@@ -19,7 +19,7 @@ The core rule is:
 M4I gameplay scripts -> m4i_bridge -> selected framework provider
 ```
 
-When the selected provider is `m4i_core`, M4I owns the native server-authoritative data architecture.
+When framework provider `m4i` is selected, the FiveM resource `m4i_core` implements that provider and M4I owns the native server-authoritative data architecture.
 
 When QBCore, Qbox, ESX, or Ox Core is selected, that framework remains responsible for its own data/cache/persistence implementation. `m4i_bridge` translates APIs; it does not create an M4I Data Proxy over another framework.
 
