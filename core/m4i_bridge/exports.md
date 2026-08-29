@@ -63,6 +63,80 @@ exports.m4i_bridge:GetGroups(sourceId)
 
 See [Universal Core Contract v4](universal-core-contract-v4.md) for provider-dependent semantics.
 
+## Native M4I Data Layer — server
+
+These exports are **native-only capabilities**. They are available only when the selected framework provider is `m4i` and the implementing `m4i_core` resource exposes the healthy Data Layer contract.
+
+```lua
+exports.m4i_bridge:GetPlayerSnapshot(sourceId, fields)
+exports.m4i_bridge:GetPlayersSnapshot(fields, limit)
+exports.m4i_bridge:GetDataLayerState()
+exports.m4i_bridge:SubscribeData(topic, handler)
+exports.m4i_bridge:UnsubscribeData(token)
+```
+
+Check capability flags first:
+
+```lua
+local info = exports.m4i_bridge:GetFrameworkCapabilities()
+local caps = info and info.capabilities or {}
+
+if caps.nativeDataLayer and caps.playerSnapshot then
+    local snapshot = exports.m4i_bridge:GetPlayerSnapshot(sourceId, {
+        "accounts",
+        "job",
+        "status"
+    })
+end
+```
+
+Native Data Layer flags include:
+
+```text
+nativeDataLayer
+playerSnapshot
+bulkPlayerSnapshot
+dataLayerState
+dataSubscriptions
+```
+
+For `qbox`, `qbcore`, `esx` and `ox_core`, these capabilities are false/unsupported. `m4i_bridge` does **not** emulate them with a cache/Data Proxy/write queue above another framework.
+
+### Snapshot example
+
+```lua
+local snapshot, err = exports.m4i_bridge:GetPlayerSnapshot(sourceId, {
+    "identity",
+    "account:cash",
+    "job",
+    "metadata:phone",
+    "status:hunger"
+})
+
+if not snapshot then
+    -- Handle unsupported provider / unavailable player / validation error.
+end
+```
+
+### Subscription example
+
+```lua
+local token, err = exports.m4i_bridge:SubscribeData("status.changed", function(sourceId, payload, meta)
+    -- sourceId is session-safe for ordinary player-scoped events.
+    -- Use meta.characterId/sessionGeneration when lifecycle identity matters.
+end)
+```
+
+Keep the token and release it when no longer needed:
+
+```lua
+exports.m4i_bridge:UnsubscribeData(token)
+```
+
+Ownership is tied to the invoking gameplay resource. The bridge delegates that real owner to `m4i_core` so Core per-resource caps and resource-stop cleanup remain correct.
+
+For terminal `player.unloaded`, the primary `sourceId` is intentionally `nil`; historical source and stable identity remain in `meta`/payload so cleanup code cannot target a replacement session.
+
 ## Player compatibility exports — server
 
 ```lua

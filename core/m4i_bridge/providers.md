@@ -104,6 +104,33 @@ local info = exports.m4i_bridge:GetFrameworkCapabilities()
 
 Unsupported semantics should fail explicitly.
 
+## Native M4I Data Layer capabilities
+
+The following capabilities are native to provider `m4i` / resource `m4i_core`:
+
+```text
+nativeDataLayer
+playerSnapshot
+bulkPlayerSnapshot
+dataLayerState
+dataSubscriptions
+```
+
+They expose the shipped M4I Data Layer snapshot/subscription/observability contract through `m4i_bridge`.
+
+They are **not** universal framework features.
+
+For:
+
+- `qbox`
+- `qbcore`
+- `esx`
+- `ox_core`
+
+these flags remain false/unsupported unless a future contract explicitly defines otherwise.
+
+The bridge must not emulate native M4I Data Layer capabilities by caching/intercepting another framework's data.
+
 ## Data ownership rule
 
 Provider selection does **not** mean the bridge owns provider persistence.
@@ -115,6 +142,18 @@ Provider selection does **not** mean the bridge owns provider persistence.
 - `ox_core`: Ox Core owns its framework data/cache/persistence.
 
 There is no M4I Data Proxy layered over the non-M4I frameworks.
+
+## Native subscription ownership
+
+When an M4I gameplay resource subscribes through `m4i_bridge` while provider `m4i` is selected:
+
+1. bridge captures the gameplay resource with `GetInvokingResource()`
+2. bridge delegates that resource name to `m4i_core`
+3. Core applies per-owner limits and cleanup to the gameplay resource
+4. direct owner unsubscribe and resource stop remove the delegated bookkeeping
+5. bridge stop/crash triggers defensive cleanup of all delegated callback references
+
+Only the resource named exactly `m4i_bridge` can use the Core owner-delegation override. This is a narrow native integration contract, not a generic provider feature.
 
 ## Resolution and fallback
 
