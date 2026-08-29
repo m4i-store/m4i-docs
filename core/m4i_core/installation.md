@@ -15,7 +15,7 @@ m4i_core
 
 ## Start order
 
-When `m4i_core` is the selected framework provider:
+When framework provider `m4i` is selected, it is implemented by the `m4i_core` resource and the start order is:
 
 ```cfg
 ensure oxmysql
@@ -26,7 +26,7 @@ ensure m4i_bridge
 ensure m4i_example
 ```
 
-`m4i_core` does not depend on `m4i_bridge`; the bridge consumes the core provider.
+`m4i_core` does not depend on `m4i_bridge`; the bridge consumes provider `m4i` through the native core adapter.
 
 ## Automatic migrations
 
@@ -48,9 +48,9 @@ The migrations are designed to be idempotent, but production discipline still re
 
 Installing the resource files is different from selecting the provider.
 
-The current `m4i_bridge` default selected framework is `qbox`, and autodetect is disabled. If Qbox is healthy, simply having M4I code available does not make M4I the selected framework.
+The current `m4i_bridge` default selected framework provider is `qbox`, and autodetect is disabled. If Qbox is healthy, simply having M4I code available does not make provider `m4i` the active framework.
 
-For maximum cutover safety, keep `m4i_core` stopped until its database/config preflight is complete. Remember that the framework fallback priority can consider M4I if the selected provider becomes unavailable and `m4i_core` is running.
+For maximum cutover safety, keep `m4i_core` stopped until its database/config preflight is complete. Remember that framework fallback priority can consider provider `m4i` if the selected provider becomes unavailable and the `m4i_core` resource is running.
 
 ## First isolated boot
 
