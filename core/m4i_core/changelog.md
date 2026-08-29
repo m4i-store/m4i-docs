@@ -22,7 +22,7 @@
 
 ### Correctness / lifecycle hardening
 
-- critical money remains immediate, atomic, ledger-backed and idempotent rather than entering ordinary write-behind
+- critical money remains immediate, atomic and ledger-backed rather than entering ordinary write-behind; durable retry idempotency applies when callers supply a stable `operationId`
 - job/duty remains on the immediate controlled persistence path
 - DB-yielding duty mutation revalidates the captured live session before sync/event emission
 - stale/reused source deliveries are rejected
