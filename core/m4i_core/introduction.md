@@ -2,17 +2,37 @@
 
 ## What is `m4i_core`
 
-`m4i_core` is the native, framework-neutral FiveM core for the M4I platform and implements framework provider `m4i` for `m4i_bridge`.
+`m4i_core` is the native standalone primary FiveM core for the M4I platform and implements framework provider `m4i` for `m4i_bridge`.
 
-It is designed to provide M4I with its own server-authoritative runtime while keeping M4I gameplay scripts portable through `m4i_bridge`.
+It provides M4I with its own server-authoritative runtime while keeping M4I gameplay scripts portable through `m4i_bridge`.
 
-`m4i_core` does **not** depend on QBCore, Qbox, ESX, or Ox Core.
+`m4i_core` does **not** depend on QBCore, Qbox, ESX, or Ox Core. Its declared runtime dependency is `oxmysql`, which is the database driver rather than another framework core.
+
+Current standalone-primary line: `0.2.0-alpha.1`.
+
+## Runtime identity
+
+The core exposes:
+
+```lua
+exports.m4i_core:GetRuntimeInfo()
+```
+
+The returned runtime identity includes:
+
+```text
+mode = primary
+externalFrameworkRequired = false
+databaseDriver = oxmysql
+```
+
+Replicated diagnostics also publish the primary mode so runtime health/debug tooling can verify the intended architecture.
 
 ## Resource boundary
 
-M4I-owned gameplay scripts must not call `m4i_core` directly.
+M4I-owned gameplay scripts should normally call `m4i_bridge`, not framework-specific APIs directly.
 
-The required path is:
+The native path is:
 
 ```text
 M4I Script
@@ -27,40 +47,39 @@ provider m4i
 m4i_core resource
 ```
 
-This prevents M4I scripts from being locked to one framework and allows the same script to run against another supported framework provider.
+The bridge default framework provider is now `m4i`, and its default framework priority is M4I-only. QBCore/Qbox/ESX/Ox Core adapters remain available for explicit compatibility mode but are not required by the native M4I stack.
 
 ## What `m4i_core` owns
 
-Current v0.1 responsibilities include:
+Current responsibilities include:
 
 - canonical user and character identity
 - provider identity links
-- server-authoritative player objects
+- server-authoritative player objects and session lifecycle
 - named money accounts
 - integer-cent financial accounting
 - atomic balance + ledger transactions
-- idempotent money operation IDs
+- durable idempotent money behavior when a stable operation ID is supplied
 - jobs, groups, grades, and duty state
 - metadata and status state
 - controlled persistence
 - owner-targeted client player snapshots
-- metrics and runtime diagnostics
+- M4I Data Layer snapshots/subscriptions/write-behind/backpressure/metrics
+- runtime diagnostics and readiness
 
 ## Data philosophy
 
-After a player is loaded, ordinary getters read the in-memory player state instead of executing a SQL query per request.
+After a player is loaded, ordinary getters read authoritative in-memory player state instead of executing a SQL query per logical request.
 
-Critical money mutations are persisted immediately and transactionally. Ordinary metadata/status state is dirty-tracked and persisted on the controlled save cycle and disconnect.
-
-This is the foundation of the M4I Data Layer.
+Critical money mutations are persisted immediately and transactionally. Ordinary metadata/status state is dirty-tracked and persisted through the controlled Data Layer policy and disconnect/restart lifecycle.
 
 ## Current release state
 
-Current resource version: `0.1.0-alpha.1`.
+The standalone-primary code contract is merged in `m4i_core/main`, and the corresponding bridge primary-default change is merged in `m4i_bridge/main`.
 
-The release candidate passed isolated runtime testing, real-client lifecycle testing, persistence/restart checks, concurrency/idempotency tests, a controlled soak, multiple Codex review cycles, and post-merge CI.
+Repository CI validates that the core manifest declares only `oxmysql` as a runtime dependency and that native runtime Lua is not coupled to QBCore/Qbox/ESX/Ox Core symbols.
 
-Production framework migration is still a separate controlled deployment operation. A successful code release does not mean an existing QBCore/Qbox/ESX server should remove its framework immediately.
+The remaining release gate before an existing production server should remove its old framework is **isolated FiveM runtime validation plus production compatibility/data migration planning**. A native Core being standalone does not mean third-party framework-specific resources can be deleted without audit.
 
 ## Read next
 
