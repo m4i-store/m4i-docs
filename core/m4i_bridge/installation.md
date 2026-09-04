@@ -2,21 +2,24 @@
 
 ## Requirements
 
-Minimum runtime requirements:
+Minimum runtime requirements depend on the selected providers.
+
+For native framework provider `m4i`:
 
 - FiveM artifact with Lua 5.4 support
-- required provider resources for every enabled domain
-- `oxmysql` when the bridge database domain is enabled
+- `oxmysql`
+- `m4i_registry`
+- `m4i_core`
+- configured provider resources for other enabled bridge domains
 
-Framework provider examples:
+Explicit external framework compatibility examples remain:
 
-- `m4i` -> resource `m4i_core`
 - `qbox` -> `qbx_core`
 - `qbcore` -> `qb-core`
 - `esx` -> `es_extended`
 - `ox_core` -> Ox Core resource stack
 
-Other domains may require `ox_inventory`, `qb-inventory`, `ox_lib`, `qb-menu`, `ox_target`, `qb-target`, dispatch resources, and so on according to configuration.
+Other domains may use providers such as `ox_inventory`, `qb-inventory`, `ox_lib`, `qb-menu`, `ox_target`, `qb-target`, dispatch resources, and so on according to configuration.
 
 ## Resource setup
 
@@ -24,12 +27,37 @@ Other domains may require `ox_inventory`, `qb-inventory`, `ox_lib`, `qb-menu`, `
 2. keep the folder name exactly `m4i_bridge`
 3. review `config/default.lua`, `config/providers.lua`, and `config/features.lua`
 4. confirm every selected provider resource exists with the expected exact name
+5. for native M4I, confirm `m4i_registry` and `m4i_core` are the current compatible release lines
 
-## Start order
+## Native M4I start order
 
-The selected providers must be available before bridge-dependent M4I gameplay resources.
+Current native Core 0.3 requires Registry before Core:
 
-### Qbox example
+```cfg
+ensure oxmysql
+ensure m4i_registry
+ensure m4i_core
+
+# optional non-framework domain providers
+ensure ox_inventory
+ensure ox_lib
+ensure ox_target
+
+ensure m4i_bridge
+ensure m4i_admin
+
+ensure m4i_example
+```
+
+The important framework/definition order is:
+
+```text
+oxmysql -> m4i_registry -> m4i_core -> m4i_bridge
+```
+
+`m4i_core` consumes canonical job/gang/group definitions directly from `m4i_registry`. Bridge consumes Core as framework provider `m4i` and exposes Registry definitions to gameplay scripts through a read-only service.
+
+## Explicit Qbox compatibility example
 
 ```cfg
 ensure oxmysql
@@ -42,49 +70,71 @@ ensure m4i_bridge
 ensure m4i_example
 ```
 
-### Native M4I provider example
+In explicit external-framework compatibility mode, `m4i_registry` is not automatically turned into a Data Proxy or player-state authority for that external framework.
 
-```cfg
-ensure oxmysql
-ensure m4i_core
-ensure m4i_bridge
+## Current framework default
 
-ensure m4i_example
+The repository currently selects framework provider:
+
+```text
+m4i
 ```
 
-When framework provider `m4i` is selected, its implementing resource `m4i_core` must start before `m4i_bridge`.
+The default framework priority is M4I-only, autodetect is disabled, and registered-provider fallback is disabled for the normal native profile.
 
-## Current production default
+Therefore a missing native Core does not silently convert the server to QBCore/Qbox/ESX/Ox Core. External providers are used only when explicitly configured for compatibility.
 
-The repository currently selects `qbox` as the framework provider by default and disables autodetect.
+## First boot checklist — native M4I
 
-Do not assume this alone prevents every possible M4I fallback: review the configured framework priority list and whether the `m4i_core` resource is running before a production staging/cutover.
+1. verify `m4i_registry` becomes ready
+2. verify `m4i_core:GetRuntimeInfo()` reports primary mode and required Registry
+3. verify `m4i_core:IsReady()`
+4. start Bridge
+5. inspect `/m4i:debug`
+6. confirm framework provider `m4i`
+7. inspect `GetFrameworkCapabilities()`
+8. inspect `GetDefinitionRegistryState()`
+9. resolve one known definition through Bridge, such as `GetJobDefinition("unemployed")`
+10. test callback/notify/inventory/target paths required by the server
+11. test provider/resource restart behavior in isolated staging
 
-## First boot checklist
+## Definition registry read surface
 
-1. verify selected providers match installed resources
-2. start server and check startup validation
-3. inspect `/m4i:debug`
-4. confirm framework provider and domain/service states
-5. inspect `GetFrameworkCapabilities()` for v4 framework semantics
-6. test one callback
-7. test notify/progress/inventory/target paths required by the server
-8. verify provider stop/restart behavior in staging
+When Registry is available, Bridge exposes read-only catalog access including:
+
+```lua
+exports.m4i_bridge:GetDefinitionRegistryState()
+exports.m4i_bridge:GetDefinition(domain, key)
+exports.m4i_bridge:ResolveDefinition(domain, keyOrAlias)
+exports.m4i_bridge:ListDefinitions(domain, options)
+
+exports.m4i_bridge:GetItemDefinition(key)
+exports.m4i_bridge:GetJobDefinition(key)
+exports.m4i_bridge:GetGangDefinition(key)
+exports.m4i_bridge:GetGroupDefinition(key)
+exports.m4i_bridge:GetVehicleDefinition(key)
+exports.m4i_bridge:GetWeaponDefinition(key)
+exports.m4i_bridge:GetLocationDefinition(key)
+```
+
+Bridge does not expose Registry create/update/delete/import/rollback mutations to gameplay scripts.
 
 ## M4I Core migration warning
 
-Installing `m4i_bridge` does not migrate an existing framework to provider `m4i` / `m4i_core`.
+Installing/staging the new Bridge does not migrate an existing production framework to native M4I.
 
-A native-core cutover can require identity, money, jobs, ownership, vehicles, licenses, housing, inventory references, and third-party schema migration.
+A cutover can require identity, money, jobs/groups, shared definitions, ownership, vehicles, licenses, housing, inventory references, and third-party schema migration.
 
-Use the [m4i_core Production Rollout](../m4i_core/production-rollout.md) procedure.
+Use [m4i_core Production Rollout](../m4i_core/production-rollout.md).
 
 ## Common mistakes
 
-- starting bridge before required providers
-- selecting the wrong resource/provider name
+- starting `m4i_core` before `m4i_registry` in native mode
+- starting Bridge before required providers
+- selecting the wrong provider/resource name
 - assuming all framework capabilities are identical
-- bypassing bridge from M4I gameplay code
-- mutating framework/core-owned DB tables directly
-- running `m4i_core` automatic migrations against production without a backup
-- switching a framework with connected players
+- bypassing Bridge from M4I gameplay code
+- mutating framework/Core/Registry-owned DB tables directly from gameplay scripts
+- running Registry/Core automatic migrations against production without a backup
+- assuming an existing framework can be removed because native Core merely starts
+- switching framework provider with connected players
