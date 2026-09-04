@@ -16,7 +16,7 @@ Current default selected providers include:
 
 ```lua
 selected = {
-    framework = "qbox",
+    framework = "m4i",
     inventory = "ox_inventory",
     ui = "ox_lib",
     notify = "ox_lib",
@@ -27,25 +27,25 @@ selected = {
 }
 ```
 
-The default framework therefore remains Qbox.
+The default framework is now native M4I, implemented by the `m4i_core` resource.
 
 ### Framework priority
 
-Current framework priority begins with M4I as a fallback candidate:
+The normal/default automatic framework priority is intentionally restricted to M4I:
 
 ```lua
-framework = { "m4i", "qbox", "qbcore", "esx", "ox_core" }
+framework = { "m4i" }
 ```
 
-This does **not** override a healthy selected Qbox provider. It matters when resolver fallback/recovery is needed.
+This prevents an outage or late readiness of `m4i_core` from silently changing the server to QBCore, Qbox, ESX, or Ox Core.
 
-For a production server that is not ready for M4I cutover, review both the selected provider and fallback policy before running `m4i_core` in production.
+External framework adapters remain available for **explicit compatibility mode**. An operator can intentionally select another provider through configuration or the profile-scoped `m4i_bridge:frameworkProvider` override.
 
 ### Autodetect
 
 Autodetect is disabled by default.
 
-Explicit selected-provider configuration remains the production control path.
+Its order may still contain supported external framework adapters, but that list is inactive unless an operator deliberately enables autodetection. Native M4I remains first.
 
 ## `config/default.lua`
 
@@ -101,6 +101,8 @@ Important resolver behavior includes:
 - `softFailServices`
 - `includeRegisteredProvidersInFallback`
 
+With the shipped defaults, framework-domain soft-fail/recovery allows `m4i_bridge` to start while `m4i_core` is finishing database/migration readiness. When the Core ready signal arrives, the bridge refreshes provider `m4i`. This recovery does not select an external core under the default framework priority.
+
 ## Provider health
 
 `providers.health` controls:
@@ -109,26 +111,37 @@ Important resolver behavior includes:
 - maximum failures
 - disable-on-failure behavior
 
-The M4I provider also has explicit recovery logic for server/client alignment after a late or restarted `m4i_core` when runtime switching permits it.
+The M4I provider has explicit recovery logic for server/client alignment after a late or restarted `m4i_core` when runtime switching permits it.
 
-## Selecting M4I Core
+## Native M4I primary mode
 
-For a test/staging profile:
-
-```lua
-selected = {
-    framework = "m4i",
-    -- other domains stay explicit
-}
-```
-
-Required start order:
+Required framework start order:
 
 ```text
 oxmysql -> m4i_core -> m4i_bridge -> M4I scripts
 ```
 
-Do not make this production change until persistent data and third-party resources have a validated migration/compatibility path.
+No QBCore/Qbox/ESX/Ox Core resource is required for this framework path.
+
+Other bridge domains can still use their selected non-core providers such as `ox_inventory`, `ox_lib`, or `ox_target`. Those are separate domain providers, not framework cores.
+
+## Explicit compatibility mode
+
+To intentionally run an M4I script against another supported framework, select that provider explicitly, for example:
+
+```lua
+selected = {
+    framework = "qbox"
+}
+```
+
+or use the isolated/profile override:
+
+```cfg
+set m4i_bridge:frameworkProvider qbox
+```
+
+In that mode, the selected external framework owns its own state and persistence. `m4i_bridge` does not place an M4I Data Proxy above it.
 
 ## Data responsibility
 
@@ -151,4 +164,4 @@ Use the exact production provider plan, stricter safety flags, and isolated pers
 
 ### Production
 
-Keep provider selection explicit, debug low, security validated, and do not change framework providers with connected players.
+Keep provider selection explicit, debug low, security validated, and do not change framework providers with connected players. Even though M4I is now the product default, migrating an existing production server remains a controlled compatibility/data-cutover operation.
