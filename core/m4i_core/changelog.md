@@ -1,5 +1,30 @@
 # m4i_core Changelog
 
+## 0.2.0-alpha.1 — Standalone Primary Core
+
+### Changed
+
+- `m4i_core` is now formally declared as the standalone primary framework runtime for native M4I mode
+- the manifest still declares only `oxmysql` as a runtime dependency
+- QBCore/Qbox/ESX/Ox Core are explicitly non-required compatibility ecosystems, not Core dependencies
+- runtime identity now reports `mode = primary` and `externalFrameworkRequired = false`
+- resource version advanced to `0.2.0-alpha.1`
+
+### Added
+
+- `GetRuntimeInfo()` for safe runtime identity/readiness diagnostics
+- replicated `m4i_core:mode` and `m4i_core:externalFrameworkRequired` diagnostics
+- CI static guards that scan native runtime Lua for accidental external-core coupling
+
+### Validation
+
+- feature-branch push CI: PASS
+- PR CI: PASS
+- post-merge `main` CI: PASS
+- manual diff/security review completed because Codex code-review quota was exhausted for this release gate
+
+This release does not itself perform a production framework/data migration. Existing production third-party resources still require compatibility audit before an old framework is removed.
+
 ## Data Layer v1 — shipped
 
 ### Added
