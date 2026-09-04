@@ -1,29 +1,67 @@
 # m4i_core Changelog
 
+## 0.3.0-alpha.1 — Registry-backed group runtime
+
+### Changed
+
+- `m4i_registry` is now a required native M4I dependency alongside `oxmysql`
+- `m4i_core` no longer owns the canonical job/gang/group definition catalog
+- active Core group runtime resolves job/gang/group definitions from `m4i_registry`
+- `m4i_group_memberships` now carries `group_domain`
+- fresh membership identity is `(character_id, group_domain, group_name)`
+- `SetJob` validates canonical Registry job definitions and grades
+- Core startup waits for required Registry readiness before Core migration/player load
+
+### Migration
+
+- schema migration v3 upgrades legacy membership rows to domain-aware membership state
+- upgraded databases may read historical `m4i_groups` only to translate membership domains
+- active Core 0.3 runtime does not create/query/update `m4i_groups` as a definition source
+- the old table is intentionally not dropped automatically and remains rollback/migration evidence until isolated/production verification is complete
+
+### Live definition refresh
+
+- trusted Registry job/gang/group changes trigger a bounded refresh of affected online players
+- Core re-reads authoritative Registry definitions rather than trusting event payload as canonical state
+- Registry change events are accepted only from resource `m4i_registry`
+- refresh uses a finite player snapshot with cooperative yielding; no unbounded frame loop was introduced
+- source/session ownership guards remain enforced around yielding paths
+
+### Architecture
+
+- native start order is now `oxmysql -> m4i_registry -> m4i_core -> m4i_bridge`
+- `GetRuntimeInfo()` reports the required definition registry
+- Core still has no QBCore/Qbox/ESX/Ox Core dependency
+- gameplay resources continue to depend on `m4i_bridge`, not direct Core internals
+
+### Validation
+
+- complete Core repository CI: PASS
+- post-merge `main` CI: PASS
+- manual migration/runtime diff review: completed
+- fresh isolated real FiveM runtime validation is still required because previous isolated runtime evidence predates Registry 0.2/Core 0.3
+
 ## 0.2.0-alpha.1 — Standalone Primary Core
 
 ### Changed
 
-- `m4i_core` is now formally declared as the standalone primary framework runtime for native M4I mode
-- the manifest still declares only `oxmysql` as a runtime dependency
-- QBCore/Qbox/ESX/Ox Core are explicitly non-required compatibility ecosystems, not Core dependencies
-- runtime identity now reports `mode = primary` and `externalFrameworkRequired = false`
-- resource version advanced to `0.2.0-alpha.1`
+- `m4i_core` was formally declared as the standalone primary framework runtime for native M4I mode
+- its only dependency at that release stage was `oxmysql`; 0.3 later added native `m4i_registry`
+- QBCore/Qbox/ESX/Ox Core remained non-required compatibility ecosystems, not Core dependencies
+- runtime identity reports `mode = primary` and `externalFrameworkRequired = false`
 
 ### Added
 
-- `GetRuntimeInfo()` for safe runtime identity/readiness diagnostics
+- `GetRuntimeInfo()` for runtime identity/readiness diagnostics
 - replicated `m4i_core:mode` and `m4i_core:externalFrameworkRequired` diagnostics
-- CI static guards that scan native runtime Lua for accidental external-core coupling
+- CI static guards against accidental external-core coupling
 
 ### Validation
 
-- feature-branch push CI: PASS
-- PR CI: PASS
-- post-merge `main` CI: PASS
-- manual diff/security review completed because Codex code-review quota was exhausted for this release gate
+- feature/PR/post-merge CI passed
+- manual diff/security review completed
 
-This release does not itself perform a production framework/data migration. Existing production third-party resources still require compatibility audit before an old framework is removed.
+This release did not itself perform a production framework/data migration. Existing production third-party resources still require compatibility audit before an old framework is removed.
 
 ## Data Layer v1 — shipped
 

@@ -2,7 +2,9 @@
 
 ## Principle
 
-Native M4I now uses `m4i_core` as its standalone primary framework by default, but converting an **existing** production server is still a migration project, not a resource toggle.
+Native M4I now uses `m4i_registry + m4i_core` as its canonical definition/runtime foundation and `m4i_bridge` defaults to provider `m4i`.
+
+Converting an **existing** production server is still a migration project, not a resource toggle.
 
 Do not remove QBCore/Qbox/ESX/Ox Core from an existing production server until every dependent resource and persistent-data requirement has been audited.
 
@@ -10,105 +12,159 @@ Do not remove QBCore/Qbox/ESX/Ox Core from an existing production server until e
 
 ### Stage 1 — repository release
 
-- `m4i_core` standalone-primary release merged to `main`
-- `m4i_bridge` native-M4I primary-default release merged to `main`
-- feature/PR/post-merge CI passes
-- code/diff review completed
+Current code-side prerequisites include:
 
-This proves the code contract, not the migration of an existing production ecosystem.
+- canonical Registry group-definition release merged to `m4i_registry/main`
+- registry-backed Core 0.3 merged to `m4i_core/main`
+- read-only definition surface merged to `m4i_bridge/main`
+- live admin group/import hardening merged to `m4i_admin/main`
+- feature/PR/post-merge CI green for each changed runtime repository
+- manual diff/security review completed
 
-### Stage 2 — isolated staging
+This proves code contracts. It does not prove migration of an existing production ecosystem.
 
-Use a separate profile/database and **do not start another framework core** for the native standalone test.
+### Stage 2 — isolated database/profile gate
 
-Validate:
+Use a dedicated profile/database clone. Do **not** start another framework core in the native standalone test.
 
-- `GetRuntimeInfo()` => `mode = primary`, `externalFrameworkRequired = false`
-- bridge selects provider `m4i` from defaults without a framework override
-- migrations
+Start:
+
+```text
+oxmysql
+m4i_registry
+m4i_core
+m4i_bridge
+m4i_admin
+```
+
+Validate at minimum:
+
+- Registry schema v2 migration
+- canonical job/gang/group shared-name constraint
+- legacy `m4i_groups` definition import without overwriting Registry-owned definitions
+- canonical `unemployed` seed
+- Core schema v3 membership migration to `group_domain`
+- `GetRuntimeInfo()` => primary mode, no external framework required, registry required
+- bridge provider `m4i`
+- Bridge item/job/gang/group/vehicle/weapon/location definition reads
 - player load/unload/reconnect
-- resource restart recovery
+- source/session reuse protection
 - money operation-ID replay/conflict and persistence
 - jobs/groups/duty
 - metadata/status
 - Data Layer snapshots/subscriptions/backpressure
-- source/session reuse protection
-- real client login and callbacks
-- persistence after restart
+- live Registry definition change -> affected Core player refresh without restart
+- disabling/removing a currently relevant job grade/definition and expected Core repair/fail-closed behavior
+- job/gang/group duplicate-name rejection, including a concurrency/race case
+- `/m4iadmin` authorization and CRUD
+- Smart Import standard data plus namespace conflicts
+- controlled Registry/Core/Bridge restarts
+- persistence and final DB invariants after full profile restart
+
+Binary image upload/automatic inventory asset materialization is not in the current release and is not part of this gate yet.
 
 ### Stage 3 — production compatibility preflight
 
-Before removing any existing framework resource:
+Before disabling/removing any existing framework resource:
 
-1. inventory active framework and resources
-2. identify every script with direct framework imports/exports/events
-3. identify every script with direct framework-schema SQL
-4. identify framework-owned persistent identifiers/foreign keys
-5. classify resources as bridge-native, compatibility-ready, patch-required, replacement-required, or removable
-6. back up production files/config
-7. create a full database backup
-8. verify rollback commands and backup readability
+1. inventory the active framework and every resource
+2. find direct framework manifest dependencies/imports/exports/events
+3. find direct framework-schema SQL
+4. identify framework-owned persistent IDs/foreign keys
+5. classify each resource: bridge-native, compatibility-ready, patch-required, replacement-required, removable
+6. inventory definition sources (items/jobs/gangs/vehicles/etc.) and plan canonical Registry import
+7. back up production files/config
+8. create a full database backup
+9. verify backup readability and rollback procedure
 
-### Stage 4 — prepare the M4I cutover
+### Stage 4 — stage M4I files without accidental cutover
 
-Validated `m4i_core`/`m4i_bridge` files can be staged before the migration window, but remember that the shipped bridge default is now `m4i`.
+Validated releases can be staged before the migration window.
 
-Do not restart a production bridge with the new defaults until the cutover is intentional. If the old framework must remain active before migration, pin that compatibility provider explicitly in the production profile until the migration window.
+The bridge default framework provider is `m4i`. If the old production framework must remain active before the migration window, pin that compatibility provider explicitly and do not restart into the native default accidentally.
 
-### Stage 5 — data migration
+Do not start Registry/Core automatic migrations against production merely to “prepare” without the approved backup/migration window.
 
-Build and validate migrations for the actual production schema.
+### Stage 5 — data/definition migration plan
 
-Typical mapping domains include:
+Typical migration domains include:
 
 - canonical user/character identity
 - money/accounts
-- jobs/groups/duty
+- jobs/gangs/groups and membership/duty
+- item/job/gang/vehicle shared definitions into `m4i_registry`
 - metadata/status
 - licenses
 - owned vehicles
 - housing/property
 - inventory/ownership references
-- phone/business/other script-specific foreign keys
+- phone/business/script-specific foreign keys
 
-Never assume a framework ID and an M4I canonical ID are interchangeable.
+Never assume a framework ID and M4I canonical ID are interchangeable.
+
+For native M4I group definitions, Registry must become canonical **before** Core 0.3 membership migration/runtime is started.
 
 ### Stage 6 — controlled cutover
 
 1. close player access
-2. cleanly stop the server
-3. take a final database backup
-4. execute validated data migrations
-5. remove/disable the explicit old-framework provider override so bridge uses shipped provider `m4i`
+2. cleanly stop the production server
+3. take a final database/file backup
+4. execute any validated pre-migration transforms
+5. configure Bridge for native provider `m4i` (remove old explicit provider override only now)
 6. start `oxmysql`
-7. start `m4i_core`
-8. verify `GetRuntimeInfo()`, `IsReady()` and migration state
-9. start `m4i_bridge`
-10. verify provider `m4i` and native capabilities
-11. start M4I/compatible gameplay resources
-12. keep incompatible old-framework resources disabled
-13. run smoke/reconnect/restart tests with administrators/testers
-14. reopen only after validation passes
+7. start `m4i_registry`
+8. verify Registry schema/import/defaults and collision checks
+9. start `m4i_core`
+10. verify Core v3 membership migration, `GetRuntimeInfo()` and `IsReady()`
+11. start `m4i_bridge`
+12. verify provider `m4i`, native Data Layer capabilities and definition exports
+13. start `m4i_admin` and compatible gameplay resources
+14. keep incompatible old-framework resources disabled
+15. run admin/tester smoke + reconnect + controlled restart tests
+16. compare critical data/invariants with migration expectations
+17. reopen only after all gates pass
 
-### Stage 7 — removal of old framework resources
+### Stage 7 — stabilization before deletion
 
-Only after the native M4I cutover is proven should obsolete QBCore/Qbox/ESX/Ox Core resources be deleted from production.
+Do not immediately delete old framework files after the first successful boot.
 
-Keeping a rollback copy outside the active resource tree for the first release window is safer than deleting it immediately.
+Prefer keeping rollback copies **outside the active resource path** or leaving old resource files stopped/disabled during an initial stability window.
 
-### Stage 8 — rollback gate
+Observe:
+
+- identity/session correctness
+- money/ledger invariants
+- membership/job/duty correctness
+- inventory/vehicle/property ownership
+- DB/log errors
+- Registry/Core/Bridge restart/recovery behavior
+
+### Stage 8 — remove obsolete framework resources
+
+Delete obsolete QBCore/Qbox/ESX/Ox Core resources only after the native M4I cutover and compatibility audit are proven stable.
+
+### Stage 9 — rollback gate
 
 Rollback immediately if critical invariants fail, including:
 
 - wrong character identity
 - money mismatch
 - missing ownership
-- job/permission mismatch
+- job/group/permission mismatch
+- Registry canonical-definition corruption/collision
 - repeated database errors
 - duplicate sessions
-- core/bridge provider instability
+- unstable Core/Bridge provider behavior
 
-Rollback means restoring the previous provider/config and data backup according to the migration plan. Do not improvise live repairs against player data.
+Rollback means restoring the previous provider/config and verified data/file backup according to the migration plan. Do not improvise live repairs against active player data.
+
+## Legacy `m4i_groups` policy
+
+The latest Registry/Core migrations deliberately **do not drop** the historical `m4i_groups` table.
+
+On an upgraded M4I database it can be used as one-way migration input/rollback evidence. Active Core 0.3 runtime no longer treats it as the job/gang/group definition source.
+
+Do not manually drop it until isolated and production migration verification is complete and a separate cleanup decision is approved.
 
 ## Third-party resource policy
 
@@ -116,15 +172,17 @@ M4I-owned scripts should use `m4i_bridge`.
 
 Framework-native third-party scripts require one of:
 
-- approved reverse-compatibility shim targeting native M4I
-- source patch to bridge APIs
+- approved reverse-compatibility shim
+- source patch to Bridge APIs
 - replacement with an M4I-native resource
-- temporary retention only during a controlled compatibility/migration phase
+- temporary retention during controlled compatibility/migration
 
-A script with hard-coded framework SQL cannot be declared compatible merely because its public exports look similar.
+A script with hard-coded framework SQL cannot be declared compatible merely because public exports look similar.
 
 ## Current recommendation
 
-The code architecture is now ready for the **standalone isolated runtime gate**: `oxmysql + m4i_core + m4i_bridge`, with no QBCore/Qbox/ESX/Ox Core running.
+The repositories are ready for the **new registry-backed isolated real FiveM runtime gate**.
 
-For an existing production server, complete that gate plus the production resource/data audit before deleting the old core.
+That gate must be rerun because the previous isolated runtime evidence predates Registry 0.2 / Core 0.3 / Admin 0.2 group-definition architecture.
+
+For an existing production server, complete that isolated gate plus the production resource/data audit before deleting the old core.

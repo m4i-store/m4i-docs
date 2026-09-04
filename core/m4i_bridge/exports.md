@@ -4,7 +4,7 @@
 
 M4I gameplay resources should use `m4i_bridge` exports instead of direct framework/provider calls.
 
-For core/framework state, prefer the Universal Core Contract v4 exports when the capability exists.
+For core/framework state, prefer Universal Core Contract v4 when the capability exists. For shared catalog definitions, use the read-only definition registry surface below.
 
 ## System / API
 
@@ -18,6 +18,79 @@ exports.m4i_bridge:GetProvider(domain)
 exports.m4i_bridge:GetMetricsSnapshot()
 exports.m4i_bridge:GetDebugState()
 ```
+
+## Canonical definition registry — server read-only
+
+When `m4i_registry` is installed/ready, server-side M4I gameplay resources can resolve canonical definitions through Bridge without depending directly on Registry implementation details.
+
+```lua
+exports.m4i_bridge:GetDefinitionRegistryState()
+exports.m4i_bridge:GetDefinition(domain, key, includeDisabled)
+exports.m4i_bridge:ResolveDefinition(domain, keyOrAlias, includeDisabled)
+exports.m4i_bridge:ResolveDefinitionKey(domain, keyOrAlias)
+exports.m4i_bridge:ListDefinitions(domain, options)
+```
+
+Convenience exports:
+
+```lua
+exports.m4i_bridge:GetItemDefinition(key, includeDisabled)
+exports.m4i_bridge:GetJobDefinition(key, includeDisabled)
+exports.m4i_bridge:GetGangDefinition(key, includeDisabled)
+exports.m4i_bridge:GetGroupDefinition(key, includeDisabled)
+exports.m4i_bridge:GetVehicleDefinition(key, includeDisabled)
+exports.m4i_bridge:GetWeaponDefinition(key, includeDisabled)
+exports.m4i_bridge:GetLocationDefinition(key, includeDisabled)
+```
+
+Current canonical Registry domains are:
+
+```text
+item
+job
+gang
+group
+vehicle
+weapon
+location
+```
+
+Example:
+
+```lua
+local job, err = exports.m4i_bridge:GetJobDefinition("police")
+if not job then
+    -- unavailable registry / missing definition / disabled definition
+    return
+end
+
+print(job.payload.label)
+```
+
+Registry state example:
+
+```lua
+local state = exports.m4i_bridge:GetDefinitionRegistryState()
+if state.ready then
+    print(state.version, state.generation)
+end
+```
+
+Live definition changes are forwarded as server event:
+
+```text
+m4i_bridge:server:definitionChanged
+```
+
+and registry-ready as:
+
+```text
+m4i_bridge:server:definitionRegistryReady
+```
+
+Bridge only forwards trusted Registry-origin lifecycle hints and reuses the read-only Registry export surface. Gameplay Bridge exposes **no** `PutEntry`, delete, rollback, alias mutation or Smart Import write path.
+
+For native M4I, `m4i_core` itself consumes job/gang/group definitions directly from `m4i_registry`; gameplay scripts should still prefer Bridge.
 
 ## Universal Core Contract v4 — server
 
@@ -43,7 +116,7 @@ exports.m4i_bridge:RemoveMoney(sourceId, account, amount, reason, operationId)
 exports.m4i_bridge:SetMoney(sourceId, account, amount, reason, operationId)
 ```
 
-`operationId` is optional at the call site but must only be used when the provider capability supports durable idempotency. The bridge does not silently discard an operation ID.
+`operationId` is optional at the call site but must only be used when the provider capability supports durable idempotency. Bridge does not silently discard an operation ID.
 
 ### Jobs / duty
 
@@ -52,6 +125,8 @@ exports.m4i_bridge:GetJob(sourceId)
 exports.m4i_bridge:SetJob(sourceId, jobName, grade)
 exports.m4i_bridge:SetDuty(sourceId, onDuty)
 ```
+
+In native provider `m4i`, `SetJob` validates the canonical job/grade against `m4i_registry`; Core persists only membership/runtime state.
 
 ### Metadata / groups
 
@@ -65,7 +140,7 @@ See [Universal Core Contract v4](universal-core-contract-v4.md) for provider-dep
 
 ## Native M4I Data Layer — server
 
-These exports are **native-only capabilities**. They are available only when the selected framework provider is `m4i` and the implementing `m4i_core` resource exposes the healthy Data Layer contract.
+These are **native-only** capabilities, available only when selected framework provider is `m4i` and `m4i_core` exposes the healthy Data Layer contract.
 
 ```lua
 exports.m4i_bridge:GetPlayerSnapshot(sourceId, fields)
@@ -75,7 +150,7 @@ exports.m4i_bridge:SubscribeData(topic, handler)
 exports.m4i_bridge:UnsubscribeData(token)
 ```
 
-Check capability flags first:
+Check capabilities first:
 
 ```lua
 local info = exports.m4i_bridge:GetFrameworkCapabilities()
@@ -100,7 +175,7 @@ dataLayerState
 dataSubscriptions
 ```
 
-For `qbox`, `qbcore`, `esx` and `ox_core`, these capabilities are false/unsupported. `m4i_bridge` does **not** emulate them with a cache/Data Proxy/write queue above another framework.
+For `qbox`, `qbcore`, `esx` and `ox_core`, these capabilities are false/unsupported. Bridge does **not** emulate them with a Data Proxy/cache/write queue above another framework.
 
 ### Snapshot example
 
@@ -112,30 +187,25 @@ local snapshot, err = exports.m4i_bridge:GetPlayerSnapshot(sourceId, {
     "metadata:phone",
     "status:hunger"
 })
-
-if not snapshot then
-    -- Handle unsupported provider / unavailable player / validation error.
-end
 ```
 
 ### Subscription example
 
 ```lua
 local token, err = exports.m4i_bridge:SubscribeData("status.changed", function(sourceId, payload, meta)
-    -- sourceId is session-safe for ordinary player-scoped events.
-    -- Use meta.characterId/sessionGeneration when lifecycle identity matters.
+    -- ordinary player-scoped source is session-safe
 end)
 ```
 
-Keep the token and release it when no longer needed:
+Release the token when no longer needed:
 
 ```lua
 exports.m4i_bridge:UnsubscribeData(token)
 ```
 
-Ownership is tied to the invoking gameplay resource. The bridge delegates that real owner to `m4i_core` so Core per-resource caps and resource-stop cleanup remain correct.
+Ownership is tied to the invoking gameplay resource. Bridge delegates the real owner to Core so per-resource caps and stop cleanup remain correct.
 
-For terminal `player.unloaded`, the primary `sourceId` is intentionally `nil`; historical source and stable identity remain in `meta`/payload so cleanup code cannot target a replacement session.
+For terminal `player.unloaded`, primary `sourceId` is intentionally `nil`; historical source/stable identity remain in metadata/payload.
 
 ## Player compatibility exports — server
 
@@ -154,8 +224,6 @@ exports.m4i_bridge:HasPermission(sourceId, permission)
 exports.m4i_bridge:HasAcePermission(sourceId, permission)
 ```
 
-These compatibility helpers remain available alongside v4.
-
 ## Inventory — server
 
 ```lua
@@ -164,6 +232,8 @@ exports.m4i_bridge:CanCarryItem(sourceId, itemName, amount, metadata)
 exports.m4i_bridge:AddItem(sourceId, itemName, amount, metadata, slot)
 exports.m4i_bridge:RemoveItem(sourceId, itemName, amount, metadata, slot)
 ```
+
+Inventory runtime/quantity remains owned by the selected inventory provider. Canonical item definitions can be read from Registry, but current Bridge inventory adapters do not imply every provider can hot-materialize newly created items/images without provider-specific support.
 
 ## Notify / progress / dispatch — server
 
@@ -198,7 +268,7 @@ exports.m4i_bridge:DBTransaction(queries, params)
 
 These exports are for approved script-owned persistence.
 
-**Do not use them to mutate core/framework-owned player, money, job, group, or identity tables.** Use the framework/core bridge contracts instead so provider memory and persistence cannot diverge.
+**Do not use them to mutate Core/framework/Registry-owned player, money, membership, identity, or canonical-definition tables.** Use the appropriate Bridge/Core/Registry contract.
 
 See [M4I Data Access Policy](../../shared/data-access-policy.md).
 
@@ -254,8 +324,6 @@ exports.m4i_bridge:GetPlayerData()
 exports.m4i_bridge:IsLoggedIn()
 ```
 
-The selected framework client adapter is responsible for normalized client state. M4I scripts should not infer the active framework from returned data.
-
 ## Client UI / inventory / target / dispatch
 
 ```lua
@@ -283,8 +351,6 @@ exports.m4i_bridge:TriggerServerCallbackAsync(name, args, timeoutMs, completion,
 ```
 
 ## Client extensions / observability
-
-The extension systems are available on the client as well:
 
 ```lua
 exports.m4i_bridge:RegisterPlugin(pluginDefinition)
