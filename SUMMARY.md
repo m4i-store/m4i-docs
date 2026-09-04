@@ -6,6 +6,7 @@
 
 - Core Systems
   - [Universal M4I Architecture](core/universal-architecture.md)
+  - [m4i_registry](core/m4i_registry.md)
   - m4i_core
     - [Introduction](core/m4i_core/introduction.md)
     - [Architecture](core/m4i_core/architecture.md)
@@ -32,6 +33,7 @@
     - [Troubleshooting](core/m4i_bridge/troubleshooting.md)
     - [Changelog](core/m4i_bridge/changelog.md)
     - [Script Development Guide](core/m4i_bridge/script-development-guide.md)
+  - [m4i_admin](core/m4i_admin.md)
 
 - Scripts
   - Script Template
