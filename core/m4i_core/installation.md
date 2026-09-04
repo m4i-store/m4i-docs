@@ -3,74 +3,90 @@
 ## Requirements
 
 - FiveM server artifact with Lua 5.4 support
-- MariaDB/MySQL connection supported by `oxmysql`
-- `oxmysql` installed and started before `m4i_core`
-- database credentials with permission to create/update the M4I schema when automatic migrations are enabled
+- MariaDB/MySQL supported by `oxmysql`
+- `oxmysql` installed
+- `m4i_registry` installed
+- database credentials with permission to create/update M4I schema when automatic migrations are enabled
 
-The FiveM resource folder name must be exactly:
+Resource folder names must remain exact:
 
 ```text
+m4i_registry
 m4i_core
+m4i_bridge
+m4i_admin
 ```
 
 No QBCore, Qbox, ESX, or Ox Core resource is required for the native M4I framework path.
 
-## Start order
+## Native start order
 
-Native M4I is now the default framework mode in `m4i_bridge`.
+Core 0.3 requires canonical registry definitions before Core membership migration/player load.
 
 Use:
 
 ```cfg
 ensure oxmysql
+ensure m4i_registry
 ensure m4i_core
 ensure m4i_bridge
+ensure m4i_admin
 
 # M4I gameplay resources after the bridge
 ensure m4i_example
 ```
 
-`m4i_core` does not depend on `m4i_bridge`; the bridge consumes provider `m4i` through the native core adapter.
+`m4i_core` does not depend on `m4i_bridge`; Bridge consumes provider `m4i` through the native Core adapter. Core accesses `m4i_registry` directly for canonical job/gang/group definitions.
 
 Other bridge domains may still use separate providers such as `ox_inventory`, `ox_lib`, or `ox_target`. Those are not framework cores.
 
 ## Runtime verification
 
-After `m4i_core` starts, verify the native runtime identity:
+After Registry/Core start:
 
 ```lua
+local registryReady = exports.m4i_registry:IsReady()
 local info = exports.m4i_core:GetRuntimeInfo()
+local coreReady = exports.m4i_core:IsReady()
 ```
 
-Expected architecture fields include:
+Expected Core architecture fields include:
 
 ```text
 mode = primary
 externalFrameworkRequired = false
 databaseDriver = oxmysql
+definitionRegistry = m4i_registry
+definitionRegistryRequired = true
 ```
 
-`exports.m4i_core:IsReady()` must become `true` after database preflight/migrations complete.
+Core readiness should remain false if the required definition registry cannot become ready.
 
 ## Automatic migrations
 
-Current default:
+Both Registry and Core currently ship automatic migrations enabled by default.
 
-```lua
-database = {
-    autoMigrate = true
-}
-```
+Registry must migrate first. Registry schema v2 prepares canonical definition/history state and group-name uniqueness, then imports legacy Core group definitions if present. Core schema v3 then upgrades group membership rows to domain-aware membership state.
 
-On first start, the core can create/update its own `m4i_*` schema, including the migration table, user/character tables, accounts/ledger, groups/memberships, and provider-link tables.
+**Do not first-start these releases against an important production database without a verified database backup and rollback plan.**
 
-**Do not first-start `m4i_core` against an important production database without a verified database backup and rollback plan.**
+### Legacy group migration ordering
 
-The migrations are designed to be idempotent, but production discipline still requires a backup before schema changes.
+For an upgraded native M4I database:
+
+1. `m4i_registry` starts;
+2. Registry creates/updates its own schema;
+3. Registry imports missing legacy `m4i_groups` definitions without overwriting existing Registry definitions;
+4. Registry seeds canonical `unemployed` if missing;
+5. Registry publishes ready;
+6. `m4i_core` starts/migrates membership rows to `group_domain`;
+7. Core runtime uses Registry definitions from that point forward.
+
+The old `m4i_groups` table is not automatically dropped in these releases.
 
 ## Bridge primary/default behavior
 
-The shipped bridge defaults are now:
+Shipped bridge defaults remain:
 
 ```lua
 selected = {
@@ -82,43 +98,49 @@ priority = {
 }
 ```
 
-Autodetect remains disabled by default.
+Autodetect remains disabled by default. Native M4I therefore does not silently fall back to QBCore/Qbox/ESX/Ox Core.
 
-Therefore an unhealthy/late `m4i_core` does **not** silently turn the server into QBCore/Qbox/ESX/Ox Core. The framework domain can soft-disable temporarily and recover on Core readiness/resource restart.
-
-External framework adapters still exist for explicit compatibility mode when an operator deliberately selects one.
+External framework adapters remain explicit compatibility choices.
 
 ## First isolated boot
 
-Recommended sequence:
+Use a dedicated profile and database clone. Recommended gate:
 
-1. use a dedicated test database
-2. start `oxmysql`
-3. start `m4i_core`
-4. verify migration versions
-5. verify `GetRuntimeInfo()` reports primary standalone mode
-6. verify `exports.m4i_core:IsReady()` returns `true`
-7. start `m4i_bridge`
-8. verify `GetFrameworkCapabilities()` reports provider `m4i`
-9. connect a test client
-10. test load/reconnect/resource restart
-11. test snapshots/subscriptions and source/session reuse protection
-12. test money operation-ID replay/conflict and persistence
-13. stop/restart Core and Bridge while connected
-14. restart the isolated profile
-15. verify database invariants again
+1. back up/clone the isolated database
+2. start only `oxmysql`
+3. start `m4i_registry`
+4. verify Registry v2 migration and canonical definitions
+5. verify legacy group import/default seeding if legacy test rows exist
+6. start `m4i_core`
+7. verify Core v3 membership migration
+8. verify `GetRuntimeInfo()` and `IsReady()`
+9. start `m4i_bridge`
+10. verify framework provider `m4i` and definition read exports
+11. start `m4i_admin`
+12. connect a real test client
+13. test player load/reconnect/source reuse
+14. test money operation-ID replay/conflict and persistence
+15. test job grade validation
+16. edit job/gang/group definitions live and verify Core refresh without restart
+17. verify job/gang/group canonical duplicate rejection
+18. verify Smart Import and namespace-conflict UX
+19. restart Registry/Core/Bridge in controlled order while connected
+20. restart the isolated profile and re-check database/runtime invariants
+
+Binary image upload/materialization is not yet part of this runtime gate because it is not shipped.
 
 ## Production migration
 
-The native M4I stack no longer requires another framework core. However, **do not delete an existing production QBCore/Qbox/ESX/Ox Core immediately** merely because the native M4I runtime starts successfully.
+The native stack does not require another framework core. However, do **not** delete an existing production QBCore/Qbox/ESX/Ox Core merely because Registry/Core start successfully.
 
-Existing third-party resources and persistent data may still be tied to that framework. Production cutover therefore requires:
+Existing third-party resources and persistent data may still be framework-specific. Production cutover requires:
 
-- resource compatibility audit
-- database backup
+- direct dependency audit
+- framework-schema SQL audit
+- database/file backup
 - data migration where required
-- controlled provider cutover
+- controlled provider/config cutover
 - smoke/reconnect/restart tests
 - rollback validation
 
-Only after that cutover is proven should the old production framework resources be removed. Follow [Production Rollout](production-rollout.md).
+Only after that cutover is proven should obsolete old-framework resources be removed. Follow [Production Rollout](production-rollout.md).
