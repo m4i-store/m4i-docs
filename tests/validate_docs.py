@@ -57,11 +57,19 @@ assert "not dropped" in registry.lower()
 assert "not shipped yet" in registry.lower(), "binary asset upload must not be documented as shipped"
 assert "not shipped yet" in admin.lower(), "admin asset upload must remain labeled unshipped"
 
+# Exact cfg blocks on architecture/installation pages must use the canonical
+# native startup order. Rollout uses numbered prose, so validate its semantic
+# order separately instead of requiring literal `ensure` lines there.
 expected_start_order = ["ensure oxmysql", "ensure m4i_registry", "ensure m4i_core", "ensure m4i_bridge"]
-for text, label in ((universal, "universal"), (core_install, "core install"), (bridge_install, "bridge install"), (rollout, "rollout")):
+for text, label in ((universal, "universal"), (core_install, "core install"), (bridge_install, "bridge install")):
     positions = [text.find(token) for token in expected_start_order]
     assert all(pos >= 0 for pos in positions), f"{label} is missing canonical startup resources"
     assert positions == sorted(positions), f"{label} has incorrect native startup order"
+
+rollout_order = ["start `oxmysql`", "start `m4i_registry`", "start `m4i_core`", "start `m4i_bridge`"]
+rollout_positions = [rollout.find(token) for token in rollout_order]
+assert all(pos >= 0 for pos in rollout_positions), "rollout is missing native startup stages"
+assert rollout_positions == sorted(rollout_positions), "rollout native startup order is incorrect"
 
 for stale in (
     "default framework selection remains `qbox`",
