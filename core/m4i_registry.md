@@ -52,7 +52,9 @@ This prevents a second definition table from competing with the registry.
 
 For example, key `police` cannot simultaneously exist as both a job and a gang.
 
-This rule is not only a UI check. Schema version 2 uses a database-enforced generated namespace column plus a unique index, so concurrent administrator writes cannot race around the rule. Startup also rejects pre-existing cross-domain collisions instead of guessing which definition should win.
+This rule is not only a UI check. Schema version 2 adds generated column `group_namespace` and DB unique index `uq_m4i_registry_group_namespace` over `(group_namespace, entry_key)`. For job/gang/group rows, `group_namespace` resolves to `groups`; other registry domains produce `NULL` and are not part of this cross-domain identity rule.
+
+The database constraint prevents concurrent administrator writes from racing around the rule. Startup also checks for pre-existing cross-domain collisions and fails closed instead of guessing which definition should win.
 
 Soft-deleted entries continue to reserve their canonical identity. Reusing the same key under another group domain requires an intentional migration/rename policy rather than silently changing the meaning of existing memberships.
 
