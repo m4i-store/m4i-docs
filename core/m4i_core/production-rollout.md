@@ -2,55 +2,58 @@
 
 ## Principle
 
-A framework cutover is a migration project, not a resource toggle.
+Native M4I now uses `m4i_core` as its standalone primary framework by default, but converting an **existing** production server is still a migration project, not a resource toggle.
 
-Do not remove QBCore/Qbox/ESX/Ox Core from an existing production server until every dependency and persistent-data requirement has been audited.
+Do not remove QBCore/Qbox/ESX/Ox Core from an existing production server until every dependent resource and persistent-data requirement has been audited.
 
 ## Safe rollout stages
 
 ### Stage 1 — repository release
 
-- `m4i_core` and `m4i_bridge` release candidates merged to `main`
-- exact-head CI passes
-- review findings closed
+- `m4i_core` standalone-primary release merged to `main`
+- `m4i_bridge` native-M4I primary-default release merged to `main`
+- feature/PR/post-merge CI passes
+- code/diff review completed
 
-This proves the code release, not the production migration.
+This proves the code contract, not the migration of an existing production ecosystem.
 
 ### Stage 2 — isolated staging
 
-Use a separate profile/database.
+Use a separate profile/database and **do not start another framework core** for the native standalone test.
 
 Validate:
 
+- `GetRuntimeInfo()` => `mode = primary`, `externalFrameworkRequired = false`
+- bridge selects provider `m4i` from defaults without a framework override
 - migrations
 - player load/unload/reconnect
 - resource restart recovery
-- money operations/idempotency
+- money operation-ID replay/conflict and persistence
 - jobs/groups/duty
 - metadata/status
-- bridge provider resolution
+- Data Layer snapshots/subscriptions/backpressure
+- source/session reuse protection
 - real client login and callbacks
 - persistence after restart
 
-### Stage 3 — production preflight
+### Stage 3 — production compatibility preflight
 
-Before touching production:
+Before removing any existing framework resource:
 
 1. inventory active framework and resources
-2. identify every script with direct framework imports
+2. identify every script with direct framework imports/exports/events
 3. identify every script with direct framework-schema SQL
-4. classify resources as bridge-native, compatibility-ready, patch-required, or removable
-5. back up production files/config
-6. create a full database backup
-7. verify rollback commands and backup readability
+4. identify framework-owned persistent identifiers/foreign keys
+5. classify resources as bridge-native, compatibility-ready, patch-required, replacement-required, or removable
+6. back up production files/config
+7. create a full database backup
+8. verify rollback commands and backup readability
 
-### Stage 4 — stage code without cutover
+### Stage 4 — prepare the M4I cutover
 
-It is acceptable to place validated resource files on the server while leaving the active framework unchanged.
+Validated `m4i_core`/`m4i_bridge` files can be staged before the migration window, but remember that the shipped bridge default is now `m4i`.
 
-However, remember that a running `m4i_core` may be considered as a framework fallback if the selected framework becomes unhealthy and M4I appears in bridge priority configuration.
-
-For the safest pre-cutover staging, keep `m4i_core` stopped until the migration window or explicitly control the framework priority list.
+Do not restart a production bridge with the new defaults until the cutover is intentional. If the old framework must remain active before migration, pin that compatibility provider explicitly in the production profile until the migration window.
 
 ### Stage 5 — data migration
 
@@ -75,18 +78,25 @@ Never assume a framework ID and an M4I canonical ID are interchangeable.
 1. close player access
 2. cleanly stop the server
 3. take a final database backup
-4. execute validated migrations
-5. configure `m4i_bridge` framework provider to `m4i`
+4. execute validated data migrations
+5. remove/disable the explicit old-framework provider override so bridge uses shipped provider `m4i`
 6. start `oxmysql`
 7. start `m4i_core`
-8. verify `IsReady()` and migrations
+8. verify `GetRuntimeInfo()`, `IsReady()` and migration state
 9. start `m4i_bridge`
-10. verify framework capabilities
+10. verify provider `m4i` and native capabilities
 11. start M4I/compatible gameplay resources
-12. run smoke tests with administrators/testers
-13. reopen only after validation passes
+12. keep incompatible old-framework resources disabled
+13. run smoke/reconnect/restart tests with administrators/testers
+14. reopen only after validation passes
 
-### Stage 7 — rollback gate
+### Stage 7 — removal of old framework resources
+
+Only after the native M4I cutover is proven should obsolete QBCore/Qbox/ESX/Ox Core resources be deleted from production.
+
+Keeping a rollback copy outside the active resource tree for the first release window is safer than deleting it immediately.
+
+### Stage 8 — rollback gate
 
 Rollback immediately if critical invariants fail, including:
 
@@ -102,22 +112,19 @@ Rollback means restoring the previous provider/config and data backup according 
 
 ## Third-party resource policy
 
-M4I-owned scripts should be migrated to `m4i_bridge` first.
+M4I-owned scripts should use `m4i_bridge`.
 
 Framework-native third-party scripts require one of:
 
-- approved reverse-compatibility shim
+- approved reverse-compatibility shim targeting native M4I
 - source patch to bridge APIs
 - replacement with an M4I-native resource
-- temporary retention of the original framework dependency
+- temporary retention only during a controlled compatibility/migration phase
 
 A script with hard-coded framework SQL cannot be declared compatible merely because its public exports look similar.
 
 ## Current recommendation
 
-Until the production resource audit and migration tooling are complete:
+The code architecture is now ready for the **standalone isolated runtime gate**: `oxmysql + m4i_core + m4i_bridge`, with no QBCore/Qbox/ESX/Ox Core running.
 
-- keep the existing production framework active
-- use `m4i_bridge` as the compatibility boundary for new M4I scripts
-- develop and benchmark the M4I Data Layer in staging
-- move production to `m4i_core` only through the controlled cutover procedure above
+For an existing production server, complete that gate plus the production resource/data audit before deleting the old core.

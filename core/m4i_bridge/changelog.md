@@ -2,6 +2,30 @@
 
 This changelog tracks major bridge milestones.
 
+## Native M4I Primary Default — shipped
+
+### Changed
+
+- default framework provider is now `m4i`, implemented by resource `m4i_core`
+- default framework priority is intentionally `{ "m4i" }`
+- QBCore/Qbox/ESX/Ox Core are no longer automatic fallback candidates in the normal M4I profile
+- framework autodetect remains disabled by default
+- external framework adapters remain available for explicit compatibility mode
+
+### Runtime behavior
+
+- if `m4i_core` is still completing database/migration readiness, the framework domain can soft-disable and recover on the Core ready signal
+- default recovery does not silently select another framework core
+- explicit profile/provider overrides can still intentionally select a supported external framework
+- external framework state/persistence remains owned by that framework; no M4I Data Proxy is introduced
+
+### Validation
+
+- feature-branch push CI: PASS
+- PR CI: PASS
+- post-merge `main` CI: PASS
+- manual diff/security review completed because Codex code-review quota was exhausted for this release gate
+
 ## Native M4I Data Layer Contract — additive
 
 ### Added
@@ -69,7 +93,7 @@ Review-driven hardening included fixes for:
 
 - `m4i_bridge` is the compatibility/API boundary.
 - when provider `m4i` is selected, the `m4i_core` resource owns the native M4I Data Layer.
-- QBCore/Qbox/ESX/Ox Core remain responsible for their own framework data architecture when selected.
+- QBCore/Qbox/ESX/Ox Core remain responsible for their own framework data architecture when explicitly selected.
 - There is no M4I Data Proxy over other frameworks.
 
 ## 1.3.1 — Final Stabilization

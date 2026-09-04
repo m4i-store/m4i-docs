@@ -10,30 +10,40 @@ Check:
 4. resource folder is named exactly `m4i_core`
 5. console does not show schema or startup failures
 6. `exports.m4i_core:IsReady()` returns `true`
+7. `exports.m4i_core:GetRuntimeInfo()` reports `mode = primary` and `externalFrameworkRequired = false`
+
+A failure here does not mean another framework core is missing. Native `m4i_core` does not require QBCore/Qbox/ESX/Ox Core.
 
 ## Bridge does not select M4I
 
+The shipped/default framework provider is `m4i` and the default framework priority is M4I-only.
+
 Check:
 
-1. `m4i_bridge` framework provider is configured as `m4i` for the profile you are testing
-2. `m4i_core` is started before the bridge
+1. no profile-scoped `m4i_bridge:frameworkProvider` override intentionally selects another framework
+2. `m4i_core` is started before or alongside the bridge
 3. `GetPlayerData` exists and is functional
-4. `IsReady()` returns `true`
-5. `GetFrameworkCapabilities()` does not report an unavailable native provider
-6. bridge resolver/health logs do not show a disabled provider
+4. `IsReady()` becomes `true`
+5. `GetFrameworkCapabilities()` reports provider `m4i` once healthy
+6. bridge resolver/health logs do not show a permanently disabled M4I provider
 
 A `GetPlayer`-only partial core is intentionally not considered healthy.
 
-## Unexpected provider switch
+If the bridge starts while Core is still completing database/migration readiness, the framework domain may be temporarily soft-disabled. The `m4i_core:server:ready` lifecycle signal should refresh/recover provider `m4i` without selecting another core.
 
-If production is supposed to remain on Qbox/QBCore/ESX/Ox Core but M4I becomes selected after a failure:
+## Unexpected external framework selection
 
-- inspect `providers.selected.framework`
-- inspect framework priority order
-- inspect provider health failures
-- verify whether `m4i_core` was running as a fallback candidate
+Under the shipped defaults, QBCore/Qbox/ESX/Ox Core are not automatic framework fallback candidates.
 
-For pre-cutover production staging, keep the active framework plan explicit and do not run unnecessary fallback providers.
+If one of them is selected, inspect deliberate configuration changes:
+
+- `providers.selected.framework`
+- the `m4i_bridge:frameworkProvider` convar/profile override
+- whether framework autodetect was explicitly enabled
+- whether framework priority was customized
+- whether registered-provider fallback was explicitly enabled
+
+Treat external framework selection as compatibility mode, not native M4I failover.
 
 ## Automatic migration errors
 
@@ -68,7 +78,7 @@ Check:
 - account name is allowed
 - amount is valid and within max transaction limit
 - sufficient balance exists for removals
-- operation ID was not reused for a conflicting operation
+- a stable operation ID was not reused for a conflicting operation
 - transaction/ledger did not report an error
 - optimistic conflict did not exceed its bounded retry
 
@@ -80,12 +90,13 @@ Collect:
 
 - old and new source IDs
 - character ID
+- session generation where relevant
 - load/unload timing
 - session handoff metrics
 - deferred cleanup metrics
 - console errors
 
-The current core includes guards for overlapping sessions, delayed cleanup, load retries, and delayed unload events against reused source IDs. Any reproduction should be treated as a lifecycle bug and tested before production changes.
+The current core includes guards for overlapping sessions, delayed cleanup, load retries, queued stale-session deliveries, and terminal unload events against reused source IDs. Any reproduction should be treated as a lifecycle bug and tested before production changes.
 
 ## Database pressure
 
@@ -95,6 +106,7 @@ If database activity is unexpectedly high:
 - distinguish core-owned operations from script-owned SQL
 - verify gameplay scripts are not polling bridge DB exports
 - verify scripts are not bypassing bridge/core APIs
+- inspect snapshot/cache/delivery/write-queue metrics
 - inspect transaction/save latency
 - inspect whether ordinary state is being written unnecessarily often
 
@@ -106,6 +118,7 @@ Include:
 
 - `m4i_core` main/release commit
 - `m4i_bridge` main/release commit
+- `GetRuntimeInfo()` output with secrets excluded
 - provider configuration
 - migration versions
 - relevant metrics snapshot

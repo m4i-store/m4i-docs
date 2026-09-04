@@ -2,19 +2,26 @@
 
 ## Boundary
 
-The FiveM resource `m4i_core` implements framework provider `m4i`. `m4i_bridge` selects and consumes that provider; `m4i_core` does not depend on the bridge.
+The FiveM resource `m4i_core` is the standalone primary framework runtime for native M4I mode and implements framework provider `m4i`. `m4i_bridge` selects and consumes that provider; `m4i_core` does not depend on the bridge or on QBCore, Qbox, ESX, or Ox Core.
 
-This avoids a circular dependency and preserves provider neutrality for M4I scripts.
+The declared runtime dependency is `oxmysql`, which is the database driver.
+
+Native/default path:
 
 ```text
-M4I Script -> m4i_bridge -> selected framework provider
-                              |
-                              +-> m4i (m4i_core resource)
-                              +-> qbcore
-                              +-> qbox
-                              +-> esx
-                              +-> ox_core
+M4I Script -> m4i_bridge -> provider m4i -> m4i_core
 ```
+
+Optional compatibility paths remain explicit operator choices:
+
+```text
+M4I Script -> m4i_bridge -> qbcore
+                         -> qbox
+                         -> esx
+                         -> ox_core
+```
+
+The default bridge framework priority contains only `m4i`, so native M4I mode does not silently fall back to another framework core.
 
 ## Canonical runtime model
 
@@ -27,8 +34,28 @@ The current native core uses:
 - integer-cent balances in memory and persistence
 - cached jobs/groups/metadata/status
 - explicit dirty tracking for ordinary mutable character state
+- per-load session generation for queued player-scoped work
+- native Data Layer snapshot/subscription/write-behind/backpressure policies
 
-Reconnect/session handoff is guarded so overlapping or reused source IDs cannot create two active copies of the same character.
+Reconnect/session handoff is guarded so overlapping or reused source IDs cannot create two active copies of the same character or receive stale queued work.
+
+## Runtime identity
+
+`m4i_core` exposes:
+
+```lua
+exports.m4i_core:GetRuntimeInfo()
+```
+
+The standalone-primary contract reports:
+
+```text
+mode = primary
+externalFrameworkRequired = false
+databaseDriver = oxmysql
+```
+
+These diagnostics describe architecture/readiness only; they do not perform provider switching or migration.
 
 ## Player lifecycle
 
@@ -40,15 +67,16 @@ A player load resolves or creates the canonical user and first character, loads 
 
 Ordinary player getters are served from the in-memory object after load.
 
-There are no per-frame server loops in the core. The recurring persistence work is controlled and bounded.
+There are no per-frame server loops in the core. Recurring persistence/subscription work is controlled and bounded.
 
 ### Unload
 
 On disconnect the core:
 
 - captures final native position before detaching the source
+- captures stable identity/session generation
 - detaches the old source session
-- emits the unload event before a yielding persistence path can confuse a reused numeric source
+- emits terminal unload with a safe primary source contract
 - drains the character session barrier
 - persists final state
 - releases the character reservation
@@ -71,23 +99,23 @@ Money mutations are treated as critical operations:
 
 - account-level serialization
 - integer-cent arithmetic
-- operation ID/idempotency validation
+- stable operation-ID replay/conflict validation when supplied
 - optimistic concurrency detection
 - balance update + audit-ledger insert in one transaction
 - bounded reload/retry on optimistic conflicts
 
-Job/group mutations are also persisted immediately.
+Job/group/duty mutations use their controlled immediate persistence paths.
 
 ### Cached / ordinary
 
-Metadata and status changes update in-memory state, mark it dirty, synchronize the owning client, and are saved by the controlled persistence cycle or forced unload/save paths.
+Metadata and status changes update authoritative in-memory state, mark it dirty, synchronize the owning client, and are persisted through the bounded Data Layer write-behind/forced unload-save policies.
 
-## Current database dependency
+## Database dependency
 
-`m4i_core` currently depends on `oxmysql` as its database driver.
+`m4i_core` depends on `oxmysql` as its database driver.
 
-The architectural rule is that M4I gameplay scripts do not depend on `oxmysql` directly for core-owned player/framework state. The driver remains an internal infrastructure dependency behind `m4i_core`.
+M4I gameplay scripts do not depend on `oxmysql` directly for core-owned player/framework state. The driver remains infrastructure behind `m4i_core`.
 
 ## Current alpha limitation
 
-`0.1.0-alpha.1` automatically resolves the first non-deleted character and creates slot 1 when none exists. A complete multicharacter selection lifecycle is a later contract expansion.
+`0.2.0-alpha.1` still automatically resolves the first non-deleted character and creates slot 1 when none exists. A complete multicharacter selection lifecycle is a later contract expansion.

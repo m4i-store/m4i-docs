@@ -60,25 +60,27 @@ Provider selection is driven by `config/providers.lua`.
 
 ## Current framework defaults
 
-Current bridge configuration selects:
+Native M4I is now the default framework mode:
 
 ```lua
-framework = "qbox"
+framework = "m4i"
 ```
 
-Autodetect is disabled by default.
+The default automatic framework priority is intentionally M4I-only:
 
-The framework priority list includes M4I as a fallback candidate. Therefore, if `m4i_core` is running and the selected framework becomes unavailable, provider health/fallback configuration can matter.
+```lua
+framework = { "m4i" }
+```
 
-For a production server that is not ready to cut over to M4I, do not assume that merely keeping `framework = "qbox"` is the entire migration plan. Control whether `m4i_core` is running and review the priority/fallback policy before deployment.
+This means the normal M4I configuration will **not silently fall back** to QBCore, Qbox, ESX, or Ox Core if `m4i_core` becomes unavailable.
+
+Autodetect remains disabled by default. External framework adapters remain installed for explicit compatibility mode, and an operator can intentionally select one of them through configuration or a profile-scoped provider override.
 
 ## M4I provider readiness
 
-The native `m4i` provider is not healthy merely because the resource is started.
+The native `m4i` provider is implemented by the resource named exactly `m4i_core`.
 
-The adapter requires the normalized provider surface to be functional, including `GetPlayerData`, and requires `IsReady()` to report ready.
-
-A partial `GetPlayer`-only implementation is not accepted as a healthy M4I framework provider.
+The adapter does not consider it healthy merely because the resource is started. The normalized provider surface must be available and `IsReady()` must report ready. Bridge framework-domain recovery handles late Core readiness/resource restart without changing the default provider to another core.
 
 ## Universal v4 capability semantics
 
@@ -118,16 +120,7 @@ dataSubscriptions
 
 They expose the shipped M4I Data Layer snapshot/subscription/observability contract through `m4i_bridge`.
 
-They are **not** universal framework features.
-
-For:
-
-- `qbox`
-- `qbcore`
-- `esx`
-- `ox_core`
-
-these flags remain false/unsupported unless a future contract explicitly defines otherwise.
+They are **not** universal framework features. For `qbox`, `qbcore`, `esx`, and `ox_core`, these flags remain false/unsupported unless a future contract explicitly defines otherwise.
 
 The bridge must not emulate native M4I Data Layer capabilities by caching/intercepting another framework's data.
 
@@ -157,13 +150,15 @@ Only the resource named exactly `m4i_bridge` can use the Core owner-delegation o
 
 ## Resolution and fallback
 
-In practice:
+With the default M4I configuration:
 
-1. selected provider is attempted first
-2. if unavailable/invalid/unhealthy, configured priority providers may be attempted
-3. if enabled, autodetect order may be attempted
-4. optionally other registered providers may be considered
-5. if all fail, the domain can soft-disable or startup can fail according to configuration
+1. selected framework provider `m4i` is attempted
+2. default framework priority contains only `m4i`
+3. autodetect is disabled
+4. registered-provider fallback is disabled
+5. if M4I is temporarily unavailable, the framework domain can soft-disable and recover when `m4i_core` becomes healthy; it does not silently become another framework
+
+If an operator explicitly selects or enables another compatibility provider, that is a deliberate deployment choice and its own data architecture remains authoritative.
 
 ## Health checks
 
