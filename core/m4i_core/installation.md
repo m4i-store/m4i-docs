@@ -13,9 +13,13 @@ The FiveM resource folder name must be exactly:
 m4i_core
 ```
 
+No QBCore, Qbox, ESX, or Ox Core resource is required for the native M4I framework path.
+
 ## Start order
 
-When framework provider `m4i` is selected, it is implemented by the `m4i_core` resource and the start order is:
+Native M4I is now the default framework mode in `m4i_bridge`.
+
+Use:
 
 ```cfg
 ensure oxmysql
@@ -27,6 +31,26 @@ ensure m4i_example
 ```
 
 `m4i_core` does not depend on `m4i_bridge`; the bridge consumes provider `m4i` through the native core adapter.
+
+Other bridge domains may still use separate providers such as `ox_inventory`, `ox_lib`, or `ox_target`. Those are not framework cores.
+
+## Runtime verification
+
+After `m4i_core` starts, verify the native runtime identity:
+
+```lua
+local info = exports.m4i_core:GetRuntimeInfo()
+```
+
+Expected architecture fields include:
+
+```text
+mode = primary
+externalFrameworkRequired = false
+databaseDriver = oxmysql
+```
+
+`exports.m4i_core:IsReady()` must become `true` after database preflight/migrations complete.
 
 ## Automatic migrations
 
@@ -44,13 +68,25 @@ On first start, the core can create/update its own `m4i_*` schema, including the
 
 The migrations are designed to be idempotent, but production discipline still requires a backup before schema changes.
 
-## Staging without framework cutover
+## Bridge primary/default behavior
 
-Installing the resource files is different from selecting the provider.
+The shipped bridge defaults are now:
 
-The current `m4i_bridge` default selected framework provider is `qbox`, and autodetect is disabled. If Qbox is healthy, simply having M4I code available does not make provider `m4i` the active framework.
+```lua
+selected = {
+    framework = "m4i"
+}
 
-For maximum cutover safety, keep `m4i_core` stopped until its database/config preflight is complete. Remember that framework fallback priority can consider provider `m4i` if the selected provider becomes unavailable and the `m4i_core` resource is running.
+priority = {
+    framework = { "m4i" }
+}
+```
+
+Autodetect remains disabled by default.
+
+Therefore an unhealthy/late `m4i_core` does **not** silently turn the server into QBCore/Qbox/ESX/Ox Core. The framework domain can soft-disable temporarily and recover on Core readiness/resource restart.
+
+External framework adapters still exist for explicit compatibility mode when an operator deliberately selects one.
 
 ## First isolated boot
 
@@ -59,18 +95,30 @@ Recommended sequence:
 1. use a dedicated test database
 2. start `oxmysql`
 3. start `m4i_core`
-4. verify migrations versions
-5. verify `exports.m4i_core:IsReady()` returns `true`
-6. start `m4i_bridge` with framework provider `m4i` only in the test profile
-7. verify `GetFrameworkCapabilities()`
-8. connect a test client
-9. test load/reconnect/resource restart
-10. test money idempotency and persistence
-11. stop and restart the profile
-12. verify database invariants again
+4. verify migration versions
+5. verify `GetRuntimeInfo()` reports primary standalone mode
+6. verify `exports.m4i_core:IsReady()` returns `true`
+7. start `m4i_bridge`
+8. verify `GetFrameworkCapabilities()` reports provider `m4i`
+9. connect a test client
+10. test load/reconnect/resource restart
+11. test snapshots/subscriptions and source/session reuse protection
+12. test money operation-ID replay/conflict and persistence
+13. stop/restart Core and Bridge while connected
+14. restart the isolated profile
+15. verify database invariants again
 
 ## Production migration
 
-Do not remove QBCore/Qbox/ESX/Ox Core merely because `m4i_core` starts successfully.
+The native M4I stack no longer requires another framework core. However, **do not delete an existing production QBCore/Qbox/ESX/Ox Core immediately** merely because the native M4I runtime starts successfully.
 
-Production cutover requires resource compatibility and persistent-data migration. Follow [Production Rollout](production-rollout.md).
+Existing third-party resources and persistent data may still be tied to that framework. Production cutover therefore requires:
+
+- resource compatibility audit
+- database backup
+- data migration where required
+- controlled provider cutover
+- smoke/reconnect/restart tests
+- rollback validation
+
+Only after that cutover is proven should the old production framework resources be removed. Follow [Production Rollout](production-rollout.md).
