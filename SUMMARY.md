@@ -62,6 +62,19 @@
     - [Testing](scripts/m4i_interface/testing.md)
     - [Troubleshooting](scripts/m4i_interface/troubleshooting.md)
     - [Changelog](scripts/m4i_interface/changelog.md)
+  - m4i_rental
+    - [Introduction — مقدمة](scripts/m4i_rental/introduction.md)
+    - [Version and Sources — حالة النسخة](scripts/m4i_rental/source-status.md)
+    - [Installation — التركيب](scripts/m4i_rental/installation.md)
+    - [Configuration — الإعدادات](scripts/m4i_rental/configuration.md)
+    - [Admin Creator — إدارة المكاتب](scripts/m4i_rental/admin-creator.md)
+    - [Player Lifecycle — دورة الكراء](scripts/m4i_rental/lifecycle.md)
+    - [Payments and Renewals — الأداء والتجديد](scripts/m4i_rental/payments.md)
+    - [Integration — التكامل](scripts/m4i_rental/integration.md)
+    - [Exports and Commands — الصادرات والأوامر](scripts/m4i_rental/exports.md)
+    - [Testing — الاختبارات](scripts/m4i_rental/testing.md)
+    - [Troubleshooting — حل المشاكل](scripts/m4i_rental/troubleshooting.md)
+    - [Changelog — سجل التغييرات](scripts/m4i_rental/changelog.md)
 
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)

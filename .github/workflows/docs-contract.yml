@@ -4,12 +4,16 @@ on:
   push:
     paths:
       - "**/*.md"
+      - "scripts/m4i_rental/source-snapshot.json"
       - "tests/validate_docs.py"
+      - "tests/validate_rental_docs.py"
       - ".github/workflows/docs-contract.yml"
   pull_request:
     paths:
       - "**/*.md"
+      - "scripts/m4i_rental/source-snapshot.json"
       - "tests/validate_docs.py"
+      - "tests/validate_rental_docs.py"
       - ".github/workflows/docs-contract.yml"
 
 permissions:
@@ -25,3 +29,6 @@ jobs:
 
       - name: Validate documentation contracts and local links
         run: python3 tests/validate_docs.py
+
+      - name: Validate rental documentation and source status
+        run: python3 tests/validate_rental_docs.py
