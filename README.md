@@ -87,7 +87,11 @@ Changes merged to the Git-synced branch are intended to become the canonical doc
 - [m4i_bridge](core/m4i_bridge/introduction.md)
 - [Bridge Exports](core/m4i_bridge/exports.md)
 - [m4i_admin](core/m4i_admin.md)
+- [m4i_rental — V4 review documentation / توثيق الكراء](scripts/m4i_rental/introduction.md)
+- [Rental version and source status](scripts/m4i_rental/source-status.md)
 - [Universal Core Contract v4](core/m4i_bridge/universal-core-contract-v4.md)
 - [Script Development Guide](core/m4i_bridge/script-development-guide.md)
 - [Data Access Policy](shared/data-access-policy.md)
 - [Integration Rules](shared/integration-rules.md)
+
+The rental section is pinned to the delivered review archive, not a claimed merged gameplay release. Its source-status page separates the asset-only main branch, alternate V4 branches, automated evidence, and pending live FiveM validation.

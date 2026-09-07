@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-09-07",
+  "status": "review-build",
+  "documentation_scope": "conversation-review-archive",
+  "archive": {
+    "name": "m4i_rental_v4_REVIEW_BUILD.zip",
+    "sha256": "da5e80b582e0228ded49da6f60fb061a8a067dac1d60aff94816720e04fc779b",
+    "root": "m4i_rental/",
+    "manifest_version": "4.0.0",
+    "git_commit": null,
+    "github_upload_verified": false,
+    "live_fivem_tested": false
+  },
+  "upstream": {
+    "repository": "m4i-store/m4i_rental",
+    "main_sha": "65092bbdc288c6898f00de135b3b349863c6e405",
+    "branches": {
+      "feature/rental-system-v4": "67a2c892df9f46dcb49af48615cbf5c6ce020b5d",
+      "feature/full-rental-system-v4": "408b19ba7bc888f4c164544dfb37765a8a64fbff"
+    },
+    "main_contains_documented_gameplay": false,
+    "bridge_contract_sha": "113ed579b70a72891186d31952659294d85dc584"
+  },
+  "expected_contract": {
+    "admin_command": "rentaladmin",
+    "admin_ace": "m4i.rental.admin",
+    "member_command": "myrentals",
+    "max_active_per_character": 3,
+    "max_duration_seconds": 2592000,
+    "warning_seconds": 300,
+    "cleanup_seconds": 120,
+    "parking_min": 2,
+    "parking_max": 10,
+    "catalogue_max": 20,
+    "schema_path": "sql/schema.sql",
+    "price_rounding": "ceil-integer-currency",
+    "server_exports": ["HasRentalKeys", "GetRentalRegistration", "IsRentalPlate"],
+    "client_exports": ["HasLocalRentalKeys"]
+  },
+  "source_files_sha256": {
+    "config.lua": "69c7dbda5662f605248e525a45f51df6a0aacde869b8d4ca7c15962f761f075e",
+    "fxmanifest.lua": "261324071a299ecd64fb51f6cadcb21c0028727cc94a9439c315c902c7540e14",
+    "shared/domain.lua": "5ca110fa1cc2db75b1ff7331ebd0c55c50a7c6db2986fb3657e84fef411f6572",
+    "server/bridge.lua": "992a0b26501beeae5e8fa60739145b0a5c87024bd1637804090ba127803767c1",
+    "server/store.lua": "6d129eaa06e93afee55f3abe562cea72a1496df5c3d4a9c2902f98bdbd32fc0a",
+    "server/payment.lua": "c47921ab18dbe800a816e399797c910c5dde331caeeae02ae15ca5a949bb58fc",
+    "server/rental.lua": "fb439f3c0d4168c603668a0d931f72f00b915d52d5de1b589a26430ad875b697",
+    "server.lua": "8b9f6dd790df72042cfafac463878543b4830318258d057f24660c1c36ad181a",
+    "client.lua": "eb3471275164c1033e73c4736dffdff9d1a1fd36ed0a8ad8658e5fb89841f2bc",
+    "client/transport.lua": "8dc11cd524f19e5e7b31483ee26bb18879d63aed696e40b47f2211888a28b01b",
+    "client/runtime.lua": "87c9c6d43f250eb57a53e7a80c07e41539b70bad0e364e0c93b320af251aee19",
+    "client/creator.lua": "bf00e88e387a7b7330dd3bbe2f7db33854d8702f996898e7f6784debeddee6f3",
+    "client/vehicles.lua": "e1b7d67d4492bda833d2b35d3f5166ea8d2aa9d37d97f4ea5b30ae338f1257e3",
+    "web/app.js": "49a3232657d55b6f5a40aa84d5abbec78fe74ab61dcdc2b2170cf36da2de6085",
+    "web/logic.js": "fada454b6f5ca49401e1ecd38aad937c634d2ffedee098afcc407cfeea3b0b99",
+    "sql/schema.sql": "f57e66a936e6756113b5bf86e25847f34567aa4f87d173cd9c3c08bd86a9a8af",
+    "tests/run.lua": "b84b09940bb9cb35b47392ab695d57fc7e12d6480dbe5d3b50d985b0c7ff8dd7",
+    "tests/service.lua": "4d11aae2e3d81312b8b0bff71fbfacaf0a3bcb2de6d601b60e32029e083b1cd7",
+    "tests/web.test.mjs": "76b997da3854efa0d82c8d5f0a6897a7d7aee6339cde4bbc1deb1fa3c93f430b",
+    "tests/contracts.py": "9c3689faaa7e40b386966a08306fd462c7796081c287464148c5a45a0c75c37b",
+    "BUILD_REPORT.json": "8e35c770ce55ed9119b0a6fff8c5781760f9c13c2e0fdfb3d1cc5dbdada96334"
+  },
+  "retained_asset_git_blobs": {
+    "mks_carrent_v3.ydr": "7bce6b15d873f0437c97bea73c255a7f907964eb",
+    "mks_carrent_v3.ytd": "125efcfd0ac148f28cea026f099524e0853d0383",
+    "mks_carrent_v3.ytyp": "c803a41752087c55964362d5bc0cb6f43a608d2a",
+    "mks_carrent_v3_doors.ytyp": "aba1e0e0248bc9603f37cf66db4e023e33709ebd",
+    "mks_carrent_v3_front_door.ydr": "e65f3c418dfd0e6f0f22c783791b241e02dd0ae7",
+    "mks_carrent_v3_rear_door.ydr": "8668f7f612e01731e00b17bed696aa0169bf6aeb"
+  },
+  "test_evidence": {
+    "supplied_report_at": "2026-09-07T17:35:36Z",
+    "supplied_lua_assertions": { "domain_and_payment": 29264, "server_service": 76 },
+    "documentation_audit_reruns": {
+      "node --test tests/web.test.mjs": "pass: 4 tests",
+      "python3 tests/contracts.py": "pass",
+      "lua5.4 tests/run.lua": "not rerun in documentation session"
+    },
+    "scope_note": "Documentation checks and mocked tests do not run FiveM, a live money provider or MySQL."
+  }
+}
