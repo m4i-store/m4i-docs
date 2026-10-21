@@ -21,3 +21,8 @@ Lua, JavaScript, static and mocked permission checks passed against the transfor
 Log in as the authorized master and test /m4iadminnext. Confirm roster/online updates, goto/bring, freeze/unfreeze, heal, spectate exit, noclip exit, inventory grants, kick permissions and webhook behavior only in a controlled test session. Do not test destructive actions on ordinary players. Keep the existing resource as the stable fallback; do not copy files from the canary over the existing dirty Admin directory without a separate validated merge.
 
 This canary is built from the draft PR, with resource/event/config namespace substitutions; changes to the canonical m4i_admin source should be made and reviewed through its own PR before release.
+
+
+## GitHub canary source
+
+The transformed live-canary source was also pushed without any runtime ACE secrets to the dedicated branch [canary/m4i-admin-next-20261021](https://github.com/m4i-store/m4i_admin/tree/canary/m4i-admin-next-20261021), commit b6ae618. The canonical main branch and draft feature PR remain separate; the existing production m4i_admin code is not overwritten.
