@@ -49,3 +49,14 @@ M4I Confige resource inventory now exposes whitelisted entry points for m4i_gara
 ## Audit integrity fix
 
 Confige commit 15feffb adds fail-closed handling for corrupted on-disk backup indexes and expands mocked recovery tests to include Registry, Multicharacter settings, and global UI theme restores. The repo remains staged, not enabled in server.cfg.
+
+
+## GitHub Actions quota workaround and guarded cutover (2026-10-21)
+
+The user-supplied GitHub billing screenshot showed 3,000/3,000 included Actions minutes and 2GB/2GB included Actions storage consumed. The new workflow runs were terminating with no runner steps. A VPS local test runner, bash tools/local_ci.sh, was added at m4i_confige commit 8e364f9. Its 15 checks include Lua/JavaScript syntax, static contracts, mocked security and recovery, Bridge/Registry and staged Admin. The external Bridge before/after performance test fixture is excluded.
+
+A read-only cutover preflight independently verifies the root-only code/config archive and compressed live database backup by SHA-256. It accepts a passing local CI result as substitute for quota-blocked GitHub Actions while still requiring a trusted, explicit m4i.confige ACE grant and genuine FiveM runtime tests. All three Confige server request modules reject fallback to m4i.admin.
+
+No production FXServer restart or permission transfer has been performed. The database archive is held under /root/m4i-confige-precutover-20261021 on the VPS. Prepare an encrypted offsite backup before production deployment.
+
+The optional safe administrator ACE template is config/ace.example.txt; grant only specific trusted licenses rather than indiscriminately broad staff groups.

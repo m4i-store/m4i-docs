@@ -55,3 +55,8 @@ Initial Confige build f75cca4 added native Garage/Weather launcher, backup recov
 
 
 The final Confige local-tested revision for this round is 15feffb. Repo source and additional docs were pushed, while GitHub Actions remained in failure without reported runner steps. No live restart or permission transfer took place.
+
+
+## Latest local validation (2026-10-21)
+
+m4i_confige commit 8e364f9 includes the local, quota-free 15-check CI runner and database-aware preflight. All 15 checks passed on the VPS. The resource/server configuration archive and 2.27 MB compressed MariaDB dump were checksum-verified. No production restart was performed. Remaining gates: authorize a trusted config editor through m4i.confige ACE and verify actual FiveM runtime behavior. Remote GitHub Actions remains quota-blocked; local CI is the preparation workaround.
