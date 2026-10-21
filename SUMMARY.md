@@ -36,6 +36,7 @@
   - [m4i_admin](core/m4i_admin.md)
   - [m4i_confige](core/m4i_confige.md)
   - [VPS Source Inventory](core/m4i_source_inventory.md)
+  - [GitHub and VPS Sync Status](core/m4i_github_sync_status.md)
 
 - Scripts
   - Script Template

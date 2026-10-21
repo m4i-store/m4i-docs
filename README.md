@@ -100,3 +100,5 @@ The rental section is pinned to the delivered review archive, not a claimed merg
 ## Configuration Center migration (2026-10-21)
 
 The staging package for m4i_confige is available at https://github.com/m4i-store/m4i_confige. It splits configuration from the legacy m4i_admin code, but **the cutover is not complete**. The live server still starts m4i_admin and the bridge/registry write boundaries must be deliberately changed when the replacement administration UI is ready. See [configuration center](core/m4i_confige.md) and the [VPS source inventory](core/m4i_source_inventory.md).
+
+Detailed [GitHub and VPS synchronization status](core/m4i_github_sync_status.md) distinguishes shipped source, draft PRs and unverified missing repositories.
