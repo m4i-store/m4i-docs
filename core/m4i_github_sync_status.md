@@ -4,8 +4,8 @@ These changes are **staged for review**. VPS running resources, production start
 
 | Resource | Status | Link | Scope |
 | --- | --- | --- | --- |
-| m4i_confige | pushed main | [Review](https://github.com/m4i-store/m4i_confige/commit/7a8e2f5) | initial 0.4.0-alpha from live VPS |
-| m4i_admin | draft PR | [Review](https://github.com/m4i-store/m4i_admin/pull/3) | staff-only 0.4.0-alpha, not deployed |
+| m4i_confige | pushed main | [Review](https://github.com/m4i-store/m4i_confige/commit/7a8e2f5) | initial 0.4.1-alpha from live VPS |
+| m4i_admin | draft PR | [Review](https://github.com/m4i-store/m4i_admin/pull/3) | staff-only 0.4.1-alpha, not deployed |
 | m4i_bridge | draft PR | [Review](https://github.com/m4i-store/m4i_bridge/pull/8) | VPS source reconciliation + Confige-only settings/theme writes |
 | m4i_registry | draft PR | [Review](https://github.com/m4i-store/m4i_registry/pull/3) | VPS source reconciliation + Confige-only registry writer |
 | m4i_appearance | draft PR | [Review](https://github.com/m4i-store/m4i_appearance/pull/1) | VPS source delta |
@@ -39,3 +39,8 @@ m4i_livingworld, m4i_mechanic, m4i_underworld and m4i_weathersync have VPS sourc
 ## Deployment order
 
 Back up resources, database and server.cfg; inspect all draft PRs; review CI; set restricted Confige ACE and webhook secrets server-side; deploy matched Registry/Bridge/Confige package together in controlled maintenance; test edits and rollbacks; then migrate standalone staff Admin and remove legacy config controls.
+
+
+## 2026-10-21 late-stage preflight
+
+Initial Confige build f75cca4 added native Garage/Weather launcher, backup recovery and server authorization tests. Follow-up commit bfa3f8e added a no-mutation cutover preflight. A root-only and SHA-256-verified local code/config archive was created. The validator reports explicit blockers: the trusted m4i.confige ACE grant is absent; there is no complete real FiveM runtime test; GitHub Actions CI has failures with zero reported job steps. The production resource was deliberately not activated. Until these are resolved, existing m4i_admin remains the active config tool.

@@ -1,6 +1,6 @@
 # m4i_confige — Central Configuration Control
 
-**Verified initial package:** 0.4.0-alpha at m4i-store/m4i_confige, commit 7a8e2f5 (2026-10-21). This is staged on Roleplay VPS, not yet activated in the production start order.
+**Verified initial package:** 0.4.1-alpha at m4i-store/m4i_confige, commit 7a8e2f5 (2026-10-21). This is staged on Roleplay VPS, not yet activated in the production start order.
 
 ## Responsibilities
 - One UI for M4I canonical definitions, global themes, registered script settings and resource inventory.
@@ -28,3 +28,15 @@ These are required steps for a production migration; the staged initial package 
 Live server copies contain modified and sometimes untracked files not yet mirrored to GitHub. Review each resource diff first, exclude secrets and runtime data, validate source integrity, then use a reviewed commit or PR. Never reset the VPS to an older GitHub snapshot or automatically push .cfg secrets.
 
 Repository: https://github.com/m4i-store/m4i_confige
+
+
+## 2026-10-21 staging update
+
+- The standalone Confige source is now at commit bfa3f8e, staged on VPS and synchronized to GitHub main.
+- The script inventory can hand off to the native Garage Creator and Weather Dashboard. These target systems still require their own server-side permissions, and this handoff is not a generic raw Lua file editor.
+- The server now supports an explicit read-only backup inventory command (m4iconfig:backupinfo) and a console-only restore command (m4iconfig:restore slot current_revision CONFIRM). All restore attempts must compare live revision and create a pre-restore backup.
+- Mocked Lua tests cover ACE denial, registry changes, tool launch validation, failed backups, replay denial, console-only restores and optimistic revision constraints.
+- A SHA-256-checked, owner-root-only rollback archive was created locally on the VPS at /root/m4i-confige-precutover-20261021. This is NOT an offsite database backup.
+- A read-only cutover preflight is available under tools/preflight.py. It currently reports ready=false due to missing Confige ACE, no validated in-game cutover, and failing GitHub Actions job startup.
+- Production server.cfg still starts legacy m4i_admin and NOT m4i_confige. The existing Bridge/Registry writer guards are unchanged.
+- Do not merge the related draft PRs individually; coordinate a maintenance-window cutover.
