@@ -65,3 +65,14 @@ The optional safe administrator ACE template is config/ace.example.txt; grant on
 ## Dependency correction and final check
 
 The newest m4i_confige source for this round is commit a24bef8. Its FiveM manifest explicitly depends on m4i_registry, m4i_core and m4i_bridge so the canonical registry must be present before the configuration editor loads. The current 15 local CI checks pass. No FXServer startup, config writer cutover, or live in-game acceptance testing was performed.
+
+
+## 2026-10-21 supervised FiveM activation (latest status)
+
+**Supersedes the earlier staging-only notes above:** Confige is now enabled in server.cfg and has been started by a supervised fivem-txadmin systemd restart at a moment with zero connected players. The enabled resource is m4i_confige version 0.4.2-alpha, source commit f154f47. Its read-only runtime dependency check logged result=PASS after a normal initial RETRY while m4i_registry was still initializing.
+
+The production Bridge Settings/Theme writer gates were changed narrowly from m4i_admin to m4i_confige. The Registry writer allowlist was likewise changed to m4i_confige. Local source differences unrelated to the writer gate were preserved; no wholesale overwrites were made. An explicitly scoped m4i.confige ACE was added in a private runtime configuration for the one txAdmin master CitizenFX identity. Do not publish this configuration file or the numeric identifier.
+
+The protected archive in /root/m4i-confige-precutover-20261021 contains checksummed code/configuration and a compressed SQL backup. The root-only cutover.py script records SHA-256 drift checks and can restore the four changed files on disk with --rollback, followed by a supervised service restart. The root-only manifest has been updated for the separate Admin canary described in core/m4i_admin_canary.md.
+
+**Runtime verified:** FXServer service active, Confige resource loaded, Registry ready, Bridge resource settings read available, Bridge theme read available. **Not yet verified:** a real owner/admin player session opening /m4iconfig and saving then safely restoring an item or setting through NUI. Until a controlled in-game test, treat the UI write path as conditionally verified, not production-proven.

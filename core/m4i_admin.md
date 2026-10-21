@@ -118,3 +118,8 @@ The legacy m4i_admin currently mixes registry, theme, multicharacter settings an
 
 
 The new staff-only m4i_admin is proposed as Draft PR #3, currently not merged and not deployed; staff tool parity with major third-party admin scripts remains a phased goal.
+
+
+## Live canary alongside legacy admin
+
+A separate m4i_admin_next canary was installed from the staged Admin PR #3 source, with isolated event names, commands and ACEs, and successfully started on the Roleplay VPS without replacing the existing dirty m4i_admin resource. It is restricted to the txAdmin master CitizenFX identity. The existing /m4iadmin remains unchanged. For usage and testing, see core/m4i_admin_canary.md.

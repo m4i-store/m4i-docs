@@ -34,6 +34,7 @@
     - [Changelog](core/m4i_bridge/changelog.md)
     - [Script Development Guide](core/m4i_bridge/script-development-guide.md)
   - [m4i_admin](core/m4i_admin.md)
+  - [M4I Admin Next Canary](core/m4i_admin_canary.md)
   - [m4i_confige](core/m4i_confige.md)
   - [VPS Source Inventory](core/m4i_source_inventory.md)
   - [GitHub and VPS Sync Status](core/m4i_github_sync_status.md)

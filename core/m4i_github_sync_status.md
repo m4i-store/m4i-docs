@@ -65,3 +65,10 @@ m4i_confige commit 8e364f9 includes the local, quota-free 15-check CI runner and
 ## Dependency correction and final check
 
 The newest m4i_confige source for this round is commit a24bef8. Its FiveM manifest explicitly depends on m4i_registry, m4i_core and m4i_bridge so the canonical registry must be present before the configuration editor loads. The current 15 local CI checks pass. No FXServer startup, config writer cutover, or live in-game acceptance testing was performed.
+
+
+## Active Confige rollout and independent Admin canary — later 2026-10-21
+
+m4i_confige v0.4.2-alpha, commit f154f47, passed a local 16-check CI suite including runtime health mocks. The Roleplay FXServer was restarted with no connected players, Confige loaded and its read-only runtime probe reported PASS for Core, Registry readiness, Bridge settings and theme reads. The live Registry and Bridge writer permissions now point to Confige, and the separate master-only owner ACE is in a protected untracked runtime file. Neither configuration nor any private identity was pushed to GitHub.
+
+A distinct resource m4i_admin_next from the Admin draft branch was started alongside the legacy m4i_admin without replacing its local changes. Both resources appear in FiveM's loaded resource list, and the service is active. GUI operation in-game is pending. Source-drift-aware backup/rollback: /root/m4i-confige-precutover-20261021/cutover.py. Note that GitHub Actions is still quota constrained; local checks are the current validation path.
