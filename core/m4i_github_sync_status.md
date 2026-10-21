@@ -52,3 +52,6 @@ Initial Confige build f75cca4 added native Garage/Weather launcher, backup recov
 - [m4i_garage](https://github.com/m4i-store/m4i_garage) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
 - [m4i_quickmenu](https://github.com/m4i-store/m4i_quickmenu) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
 - [m4i_store](https://github.com/m4i-store/m4i_store) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
+
+
+The final Confige local-tested revision for this round is 15feffb. Repo source and additional docs were pushed, while GitHub Actions remained in failure without reported runner steps. No live restart or permission transfer took place.
