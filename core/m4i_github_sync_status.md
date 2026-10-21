@@ -75,3 +75,8 @@ A distinct resource m4i_admin_next from the Admin draft branch was started along
 
 
 The separate m4i_admin_next canary source is available on m4i_admin branch canary/m4i-admin-next-20261021 at commit b6ae618.
+
+
+## 2026-10-21 hotfix — client-side resource start
+
+Confige 0.4.3-alpha commit 68eceb3 fixes a client join failure caused by declaring m4i_registry, which is server-only, as a manifest dependency. The failing user's Windows CitizenFX log explicitly identified this dependency. The refreshed source passed 16/16 local checks, was pushed to GitHub, and restarted on the VPS; Confige returned PASS for runtime service readiness. Actual in-game join retry is still unverified.

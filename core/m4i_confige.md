@@ -76,3 +76,10 @@ The production Bridge Settings/Theme writer gates were changed narrowly from m4i
 The protected archive in /root/m4i-confige-precutover-20261021 contains checksummed code/configuration and a compressed SQL backup. The root-only cutover.py script records SHA-256 drift checks and can restore the four changed files on disk with --rollback, followed by a supervised service restart. The root-only manifest has been updated for the separate Admin canary described in core/m4i_admin_canary.md.
 
 **Runtime verified:** FXServer service active, Confige resource loaded, Registry ready, Bridge resource settings read available, Bridge theme read available. **Not yet verified:** a real owner/admin player session opening /m4iconfig and saving then safely restoring an item or setting through NUI. Until a controlled in-game test, treat the UI write path as conditionally verified, not production-proven.
+
+
+## FiveM client join failure — manifest dependency hotfix (2026-10-21)
+
+The user's Windows FiveM log reported Could not find dependency m4i_registry for resource m4i_confige. Registry is a server-only resource, hence it is not a valid client dependency for a mixed client/server NUI resource. Confige incorrectly declared a manifest dependency that let the server start but prevented client join.
+
+Confige release commit 68eceb3, version 0.4.3-alpha, removes that dependency while retaining ensure m4i_registry before ensure m4i_confige in server.cfg, and adds a static regression test. After release the local 16-test CI passed, the roleplay server was restarted with no connected players, the resource loaded, and server-side health returned PASS. Player reconnection after the fix has not yet been observed.
