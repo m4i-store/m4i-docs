@@ -8,7 +8,7 @@
 
 **M4I dependencies explicitly declared:** No explicit M4I dependency detected in the manifest (does not prove zero runtime dependencies)
 
-**GitHub source:** No matching repository found in m4i-store at the time of audit
+**GitHub source:** [m4i-store/m4i_garage](https://github.com/m4i-store/m4i_garage) (private source snapshot created 2026-10-21)
 
 ## Source authority
 

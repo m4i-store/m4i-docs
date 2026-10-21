@@ -40,3 +40,7 @@ Repository: https://github.com/m4i-store/m4i_confige
 - A read-only cutover preflight is available under tools/preflight.py. It currently reports ready=false due to missing Confige ACE, no validated in-game cutover, and failing GitHub Actions job startup.
 - Production server.cfg still starts legacy m4i_admin and NOT m4i_confige. The existing Bridge/Registry writer guards are unchanged.
 - Do not merge the related draft PRs individually; coordinate a maintenance-window cutover.
+
+
+## Native tool integrations
+M4I Confige resource inventory now exposes whitelisted entry points for m4i_garage Garage Creator and m4i_weathersync Weather Dashboard. Both destination scripts continue enforcing their own server-side administrator permissions. This integration is a management launcher, not a wholesale config-file editor.

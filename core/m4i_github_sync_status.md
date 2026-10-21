@@ -21,7 +21,7 @@ These changes are **staged for review**. VPS running resources, production start
 
 ## Missing same-name GitHub repositories
 
-The VPS contains m4i_dls, m4i_gameplay, m4i_garage, m4i_quickmenu, and m4i_store, with no matching repository in the available m4i-store listing. These cannot be marked synchronized without establishing repositories and reviewing rights.
+The VPS contains m4i_dls, for which no matching repository has been created. This script contains GTA-related texture replacements, so its third-party asset licensing should be reviewed before uploading those assets. Private repositories were created for m4i_gameplay, m4i_garage, m4i_quickmenu and m4i_store, with manifest file references verified and sensitive runtime data excluded.
 
 ## Other resources not yet reconciled
 
@@ -44,3 +44,11 @@ Back up resources, database and server.cfg; inspect all draft PRs; review CI; se
 ## 2026-10-21 late-stage preflight
 
 Initial Confige build f75cca4 added native Garage/Weather launcher, backup recovery and server authorization tests. Follow-up commit bfa3f8e added a no-mutation cutover preflight. A root-only and SHA-256-verified local code/config archive was created. The validator reports explicit blockers: the trusted m4i.confige ACE grant is absent; there is no complete real FiveM runtime test; GitHub Actions CI has failures with zero reported job steps. The production resource was deliberately not activated. Until these are resolved, existing m4i_admin remains the active config tool.
+
+
+### Newly created private source repositories
+
+- [m4i_gameplay](https://github.com/m4i-store/m4i_gameplay) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
+- [m4i_garage](https://github.com/m4i-store/m4i_garage) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
+- [m4i_quickmenu](https://github.com/m4i-store/m4i_quickmenu) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
+- [m4i_store](https://github.com/m4i-store/m4i_store) — backed by the Roleplay VPS source; private repository. No running VPS files changed.
