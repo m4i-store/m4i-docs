@@ -60,3 +60,8 @@ A read-only cutover preflight independently verifies the root-only code/config a
 No production FXServer restart or permission transfer has been performed. The database archive is held under /root/m4i-confige-precutover-20261021 on the VPS. Prepare an encrypted offsite backup before production deployment.
 
 The optional safe administrator ACE template is config/ace.example.txt; grant only specific trusted licenses rather than indiscriminately broad staff groups.
+
+
+## Dependency correction and final check
+
+The newest m4i_confige source for this round is commit a24bef8. Its FiveM manifest explicitly depends on m4i_registry, m4i_core and m4i_bridge so the canonical registry must be present before the configuration editor loads. The current 15 local CI checks pass. No FXServer startup, config writer cutover, or live in-game acceptance testing was performed.

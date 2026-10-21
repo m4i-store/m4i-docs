@@ -60,3 +60,8 @@ The final Confige local-tested revision for this round is 15feffb. Repo source a
 ## Latest local validation (2026-10-21)
 
 m4i_confige commit 8e364f9 includes the local, quota-free 15-check CI runner and database-aware preflight. All 15 checks passed on the VPS. The resource/server configuration archive and 2.27 MB compressed MariaDB dump were checksum-verified. No production restart was performed. Remaining gates: authorize a trusted config editor through m4i.confige ACE and verify actual FiveM runtime behavior. Remote GitHub Actions remains quota-blocked; local CI is the preparation workaround.
+
+
+## Dependency correction and final check
+
+The newest m4i_confige source for this round is commit a24bef8. Its FiveM manifest explicitly depends on m4i_registry, m4i_core and m4i_bridge so the canonical registry must be present before the configuration editor loads. The current 15 local CI checks pass. No FXServer startup, config writer cutover, or live in-game acceptance testing was performed.
