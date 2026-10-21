@@ -34,6 +34,8 @@
     - [Changelog](core/m4i_bridge/changelog.md)
     - [Script Development Guide](core/m4i_bridge/script-development-guide.md)
   - [m4i_admin](core/m4i_admin.md)
+  - [m4i_confige](core/m4i_confige.md)
+  - [VPS Source Inventory](core/m4i_source_inventory.md)
 
 - Scripts
   - Script Template
@@ -75,6 +77,27 @@
     - [Testing — الاختبارات](scripts/m4i_rental/testing.md)
     - [Troubleshooting — حل المشاكل](scripts/m4i_rental/troubleshooting.md)
     - [Changelog — سجل التغييرات](scripts/m4i_rental/changelog.md)
+
+  - Additional VPS M4I Scripts (source inventories)
+    - [m4i_appearance](scripts/m4i_appearance/introduction.md)
+    - [m4i_appearance_assets](scripts/m4i_appearance_assets/introduction.md)
+    - [m4i_chat](scripts/m4i_chat/introduction.md)
+    - [m4i_dls](scripts/m4i_dls/introduction.md)
+    - [m4i_finance](scripts/m4i_finance/introduction.md)
+    - [m4i_gameplay](scripts/m4i_gameplay/introduction.md)
+    - [m4i_garage](scripts/m4i_garage/introduction.md)
+    - [m4i_hud](scripts/m4i_hud/introduction.md)
+    - [m4i_inventory](scripts/m4i_inventory/introduction.md)
+    - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
+    - [m4i_livingworld](scripts/m4i_livingworld/introduction.md)
+    - [m4i_mechanic](scripts/m4i_mechanic/introduction.md)
+    - [m4i_multicharacter](scripts/m4i_multicharacter/introduction.md)
+    - [m4i_quickmenu](scripts/m4i_quickmenu/introduction.md)
+    - [m4i_radialmenu](scripts/m4i_radialmenu/introduction.md)
+    - [m4i_store](scripts/m4i_store/introduction.md)
+    - [m4i_target](scripts/m4i_target/introduction.md)
+    - [m4i_underworld](scripts/m4i_underworld/introduction.md)
+    - [m4i_weathersync](scripts/m4i_weathersync/introduction.md)
 
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)

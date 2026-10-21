@@ -110,3 +110,8 @@ ensure m4i_admin
 ```
 
 For native M4I mode, registry must start before Core. `m4i_admin` starts after the runtime/bridge services it uses.
+
+
+## Configuration split (staged 2026-10-21)
+
+The legacy m4i_admin currently mixes registry, theme, multicharacter settings and some staff functions. A separate m4i_confige 0.4.0-alpha resource has been staged on the VPS and uploaded to GitHub. The goal is to leave m4i_admin exclusively for staff/player controls. **This split is not yet live:** keep the legacy panel available until write guards are transferred and a standalone administration UI is deployed and tested. See [m4i_confige](m4i_confige.md).
