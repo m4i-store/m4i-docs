@@ -132,3 +132,13 @@ Window Settings now accepts 100% width and 100% height in the sliders, presets, 
 Individual Script Control pages include explicit buttons for validated native management tools: Garage Creator and Recovery, Weather/Time, M4I Upload Image Library, and HUD Layout. Other source-discovered commands and config file names remain read-only until each script has a validated server-side live adapter. Generic source introspection cannot safely make arbitrary FiveM Lua config fields immediately writable.
 
 Local Confige CI: 17/17 passes. Chromium NUI mock tested full-screen dimensions, integrated Admin Tools, Grant Item form, Inventory command controls, and script-specific tool buttons. Activation inside real FiveM is pending a safe maintenance window; the original server is still active.
+
+## 2026-10-22 Confige V0.9 — typed live configuration adapters
+
+Confige main ad9a71e (0.9.0-alpha) now has a schema-driven configuration panel inside each adapted M4I Script page. HUD has 6 supported settings: ShowLocation, ShowMinimapOnFoot, ShowMinimapInVehicle, MinimapEnabled, Units (kmh/mph), CinematicEnabled. Garage has 4 settings: StoreDistance, TransferBaseFee, GpsPurchaseFee and DefaultImpoundFee. The older Inventory command editor and Multicharacter settings editor remain supported.
+
+Settings use an allowlist, typed validation, optimistic revisions, verified mandatory backups and audit logging. After a successful persistent write to Confige data/script_settings.json, the server publishes GlobalState snapshots to present and future clients. HUD consumes the new snapshots client-side, and Garage consumes them in server and client code. Confige refuses changes if a compatible resource adapter is not installed and started. 257 static Config property names from 9 M4I scripts are now discoverable without exposing raw values, but unsupported keys remain read-only. Other scripts need separate safe adapters rather than editing arbitrary Lua and pretending changes are hot.
+
+Staged GitHub branches: m4i_hud feat/confige-live-settings-v09 commit 65cbd27 and m4i_garage feat/confige-live-settings-v09 commit 73744c2. Source/manifests have been installed in the Roleplay VPS and the old source backed up at /root/m4i-confige-v09-backup-20261022. Confige local CI passed 18/18; both adapter mock tests and browser UI smoke passed.
+
+The server still had one connected player at the last check, so the updated scripts have not yet been reloaded. Source on disk is not the same as code already running in FXServer. The initial resource reload and first in-game Save & Apply test are outstanding before calling this release active/stable.

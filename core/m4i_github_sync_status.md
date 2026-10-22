@@ -103,3 +103,7 @@ The startup warning on new resource directory permissions was corrected and re-t
 GitHub main 36f1aa9 and Roleplay VPS source use Confige 0.8.0-alpha (full screen to 100%, expanded script-native launch buttons, integrated legacy Admin functions and audited Give Item). Three online players prevented a safe FXServer restart. Code is on disk but in-memory loaded resource still needs restart. Rollback archive and private ACL backup: /root/m4i-confige-v08-backup-20261022. Confige data and backups directories were fixed for write access by m4i_core_test to resolve snapshot persist failure, tested without restart. All 17 local checks passed and browser UI smoke passed.
 
 Every M4I command and arbitrary Lua config is not universally hot editable; source-command entries lacking an adapter remain explicitly read-only for safety.
+
+## 2026-10-22 Confige V0.9 staged, activation pending
+
+M4I Confige main ad9a71e, HUD feature 65cbd27 and Garage feature 73744c2 introduce typed live HUD/Garage configurations and source-derived read-only Config catalogs. The VPS has the new source/manifests after verified backups, but a player was connected and no resource restart was performed. All 18 Confige local CI checks, HUD/Garage Lua mocks and Chromium UI smoke passed. Await controlled resource reload and real FiveM acceptance. Remaining M4I scripts still need validated hot adapters.
