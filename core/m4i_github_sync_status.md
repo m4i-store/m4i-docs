@@ -107,3 +107,7 @@ Every M4I command and arbitrary Lua config is not universally hot editable; sour
 ## 2026-10-22 Confige V0.9 staged, activation pending
 
 M4I Confige main ad9a71e, HUD feature 65cbd27 and Garage feature 73744c2 introduce typed live HUD/Garage configurations and source-derived read-only Config catalogs. The VPS has the new source/manifests after verified backups, but a player was connected and no resource restart was performed. All 18 Confige local CI checks, HUD/Garage Lua mocks and Chromium UI smoke passed. Await controlled resource reload and real FiveM acceptance. Remaining M4I scripts still need validated hot adapters.
+
+## 2026-10-22 Confige V0.9 runtime active, 40 resources
+
+Confige main ad9a71e, Garage main 73744c2 and HUD feature branch 65cbd27 are installed on the Roleplay VPS. The first no-player restart revealed a root-owned 0600 manifest/source permission regression, temporarily preventing Confige from starting. This was corrected without changing private data/backups ownership, and a second no-player restart verified Confige/HUD/Garage started with 40 resources loaded. Confige health PASS after Registry initialization. Local CI 18/18, HUD/Garage mocks and Chromium UI smoke passed; first in-game settings save remains pending. Main HUD repository still depends on review of its earlier VPS sync source branch; do not independently fast-forward that repo without reviewing the full sync.
