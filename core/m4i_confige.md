@@ -120,3 +120,15 @@ Confige main 7fe20c7 is active on Roleplay VPS. M4I Scripts now shows per-resour
 m4i_upload image library is available in the resource list with a protected Open Tool button and the in-game /m4iupload command. See scripts/m4i_upload/introduction.md.
 
 The rollout had zero connected players. A protected snapshot lives at /root/m4i-control-hub-predeploy-20261022. After correcting upload directory permissions, 40 resources started, m4i_upload logged 26 catalog images, and Confige health PASS. Confige local CI 17/17; Upload server and browser tests passed. In-game Save & Apply and additional per-resource command/config adapters are still outstanding.
+
+## 2026-10-22 Confige V0.8 — source prepared, runtime reload pending
+
+Confige source on Roleplay VPS and GitHub main has been updated to 0.8.0-alpha at commit 36f1aa9; the code is also in feat/confige-script-suite-v08. The active FXServer resource still has previous code loaded until a controlled restart, which was deferred because three players were connected. Protected source and ACE backup: /root/m4i-confige-v08-backup-20261022.
+
+The original Confige save failure (persist failed: data/backups/snapshot-001.json) was caused by the data/ and data/backups/ folders being owned by root and not writable by the FXServer service account m4i_core_test. The live folder ownership was fixed, mode set to 0750, and a temporary test file was written and removed successfully as the service account. No server restart needed for this permission correction; a real in-game Save still requires validation.
+
+Window Settings now accepts 100% width and 100% height in the sliders, presets, and resize boundaries. A new integrated Admin Tools screen combines Registry definitions and Smart Import, Theme, Multicharacter settings, Garage Creator, Vehicle Recovery, and a new audited Give Item operation. Give Item uses a separate owner-only m4i.confige.giveitem ACE, verifies item in Registry, checks the target player's carrying capacity, performs a mandatory backup snapshot before using M4I Bridge AddItem, then logs the result. The private ACE has been staged for the next resource/server load.
+
+Individual Script Control pages include explicit buttons for validated native management tools: Garage Creator and Recovery, Weather/Time, M4I Upload Image Library, and HUD Layout. Other source-discovered commands and config file names remain read-only until each script has a validated server-side live adapter. Generic source introspection cannot safely make arbitrary FiveM Lua config fields immediately writable.
+
+Local Confige CI: 17/17 passes. Chromium NUI mock tested full-screen dimensions, integrated Admin Tools, Grant Item form, Inventory command controls, and script-specific tool buttons. Activation inside real FiveM is pending a safe maintenance window; the original server is still active.

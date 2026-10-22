@@ -97,3 +97,9 @@ The no-player service restart loaded 39 resources, with Confige health PASS afte
 Confige 0.7.0-alpha main 7fe20c7, Inventory live command adapter 0.14.5-alpha from branch commit 1ecc295, and new private m4i_upload 0.1.0-alpha main df0d61d are deployed on the Roleplay VPS. Confige command index: 27 M4I folders, 44 literal source commands, 18 config-related files. Other non-integrated commands remain read-only until their adapters are written. Central M4I Upload initial library: 26 images; legacy original images preserved.
 
 The startup warning on new resource directory permissions was corrected and re-tested. The final service log reported m4i_upload ready with 26 images and Confige runtime health PASS; 40 resources listed. Only the trusted master has m4i.upload ACE in a protected untracked server configuration. In-game upload and all cross-resource image consumers are pending acceptance tests.
+
+## 2026-10-22 Confige V0.8 code ready, service reload deferred
+
+GitHub main 36f1aa9 and Roleplay VPS source use Confige 0.8.0-alpha (full screen to 100%, expanded script-native launch buttons, integrated legacy Admin functions and audited Give Item). Three online players prevented a safe FXServer restart. Code is on disk but in-memory loaded resource still needs restart. Rollback archive and private ACL backup: /root/m4i-confige-v08-backup-20261022. Confige data and backups directories were fixed for write access by m4i_core_test to resolve snapshot persist failure, tested without restart. All 17 local checks passed and browser UI smoke passed.
+
+Every M4I command and arbitrary Lua config is not universally hot editable; source-command entries lacking an adapter remain explicitly read-only for safety.
