@@ -80,3 +80,8 @@ The separate m4i_admin_next canary source is available on m4i_admin branch canar
 ## 2026-10-21 hotfix — client-side resource start
 
 Confige 0.4.3-alpha commit 68eceb3 fixes a client join failure caused by declaring m4i_registry, which is server-only, as a manifest dependency. The failing user's Windows CitizenFX log explicitly identified this dependency. The refreshed source passed 16/16 local checks, was pushed to GitHub, and restarted on the VPS; Confige returned PASS for runtime service readiness. Actual in-game join retry is still unverified.
+
+
+## Confige and Admin UI release (2026-10-21)
+
+Confige 0.5.0-alpha at main commit 6818250 adds unified overview/navigation and protected runtime health. The separate m4i_admin_next canary 0.5.0-alpha at branch commit a3a5f68 adds structured staff operations pages, moderation warnings, basic revive/armour, waypoint/return and a validated vehicle catalog. The original m4i_admin source was intentionally not replaced. Browser navigation checks passed with mocked NUI responses, and no-player supervised restart loaded both releases on the Roleplay server. Next: test authenticated UIs in-game; implement comprehensive persistent moderation and framework integrations before promoting Admin Next as a full production replacement.

@@ -83,3 +83,10 @@ The protected archive in /root/m4i-confige-precutover-20261021 contains checksum
 The user's Windows FiveM log reported Could not find dependency m4i_registry for resource m4i_confige. Registry is a server-only resource, hence it is not a valid client dependency for a mixed client/server NUI resource. Confige incorrectly declared a manifest dependency that let the server start but prevented client join.
 
 Confige release commit 68eceb3, version 0.4.3-alpha, removes that dependency while retaining ensure m4i_registry before ensure m4i_confige in server.cfg, and adds a static regression test. After release the local 16-test CI passed, the roleplay server was restarted with no connected players, the resource loaded, and server-side health returned PASS. Player reconnection after the fix has not yet been observed.
+
+
+## UI console refresh — 0.5.0-alpha (2026-10-21)
+
+Confige main commit 6818250 introduces a unified NUI management console. The opening Overview displays read-only runtime service status, registered/running M4I resources and counts of settings adapters and native management tools. Persistent primary navigation now includes Overview, Definitions, Script Inventory, Theme & Language, and Multicharacter. Existing Registry editing, validation, revision workflows, global theme settings, safe import, and audit/backup handling remain intact; this change does not create arbitrary Lua-file editing access.
+
+Chromium browser interaction tests with a mocked NUI transport passed for all five route transitions. The running resource remains ACE-protected and its new health read is served through the existing authorized Confige action dispatcher. Production resource started after a no-player supervised restart; a privileged owner's in-game interface test remains outstanding.

@@ -26,3 +26,14 @@ This canary is built from the draft PR, with resource/event/config namespace sub
 ## GitHub canary source
 
 The transformed live-canary source was also pushed without any runtime ACE secrets to the dedicated branch [canary/m4i-admin-next-20261021](https://github.com/m4i-store/m4i_admin/tree/canary/m4i-admin-next-20261021), commit b6ae618. The canonical main branch and draft feature PR remain separate; the existing production m4i_admin code is not overwritten.
+
+
+## Expanded Admin Next — 0.5.0-alpha
+
+Canary branch commit a3a5f68 adds a redesigned multi-section Admin dashboard: Dashboard, Players, Moderation, Vehicles, Staff Tools, and Server. Alongside existing player tools, it adds targeted staff warnings, basic revive, armour, waypoint teleport/return and a server-whitelisted vehicle spawn/delete mechanism. The new warning, revive and vehicle actions require specific ACE grants, and protected staff target checks remain server-side. The canary now inherits the primary accent color from the M4I Bridge global UI theme.
+
+The existing m4i_admin resource remains active and untouched; this is not a silent promotion of the canary. Basic revive needs an adapter for any external EMS death-status resource. Full QB/QS/Code admin parity is still pending, particularly persistent bans and appeals, reports, permissions and employment, economy controls, resource-level operations, and framework-specific safe integration.
+
+Chromium browser navigation tests with a mocked NUI transport passed for all six management sections, player selection, warning form readiness and shared theme color. The canary passed the static and mocked server authorization suite. A protected backup of the old canary folder is held at /root/m4i-confige-precutover-20261021/m4i_admin_next-before-v050-20261021.tar.gz, and the master-only canary ACE settings were amended in the private runtime file after taking a second protected backup.
+
+The expanded canary was deployed and loaded by an FXServer supervised restart when zero players were connected. In-game staff acceptance tests remain outstanding before calling the new functions stable.
