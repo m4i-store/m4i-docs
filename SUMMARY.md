@@ -90,6 +90,7 @@
     - [m4i_garage](scripts/m4i_garage/introduction.md)
     - [m4i_hud](scripts/m4i_hud/introduction.md)
     - [m4i_inventory](scripts/m4i_inventory/introduction.md)
+  - [M4I Upload](scripts/m4i_upload/introduction.md)
     - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
     - [m4i_livingworld](scripts/m4i_livingworld/introduction.md)
     - [m4i_mechanic](scripts/m4i_mechanic/introduction.md)

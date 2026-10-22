@@ -91,3 +91,9 @@ Confige 0.5.0-alpha at main commit 6818250 adds unified overview/navigation and 
 Confige main a1e263f was deployed on the Roleplay VPS with a persistent Sidebar, 23 themes, six-language navigation, typography choices and Preview/Cancel/Save & Apply. Window Settings stores size and position locally per player. The live Bridge shared theme sanitizer was changed narrowly, backed up and checked; its source is available in draft cutover branch commit 76f9d4f.
 
 The no-player service restart loaded 39 resources, with Confige health PASS after Registry initialization. 16/16 local CI and Chromium preview tests passed. Real player acceptance and integration of font/language across other independently implemented M4I interfaces are still pending.
+
+## 2026-10-22 live control hub and upload
+
+Confige 0.7.0-alpha main 7fe20c7, Inventory live command adapter 0.14.5-alpha from branch commit 1ecc295, and new private m4i_upload 0.1.0-alpha main df0d61d are deployed on the Roleplay VPS. Confige command index: 27 M4I folders, 44 literal source commands, 18 config-related files. Other non-integrated commands remain read-only until their adapters are written. Central M4I Upload initial library: 26 images; legacy original images preserved.
+
+The startup warning on new resource directory permissions was corrected and re-tested. The final service log reported m4i_upload ready with 26 images and Confige runtime health PASS; 40 resources listed. Only the trusted master has m4i.upload ACE in a protected untracked server configuration. In-game upload and all cross-resource image consumers are pending acceptance tests.
