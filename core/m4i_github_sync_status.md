@@ -85,3 +85,9 @@ Confige 0.4.3-alpha commit 68eceb3 fixes a client join failure caused by declari
 ## Confige and Admin UI release (2026-10-21)
 
 Confige 0.5.0-alpha at main commit 6818250 adds unified overview/navigation and protected runtime health. The separate m4i_admin_next canary 0.5.0-alpha at branch commit a3a5f68 adds structured staff operations pages, moderation warnings, basic revive/armour, waypoint/return and a validated vehicle catalog. The original m4i_admin source was intentionally not replaced. Browser navigation checks passed with mocked NUI responses, and no-player supervised restart loaded both releases on the Roleplay server. Next: test authenticated UIs in-game; implement comprehensive persistent moderation and framework integrations before promoting Admin Next as a full production replacement.
+
+## 2026-10-22 Confige V0.6
+
+Confige main a1e263f was deployed on the Roleplay VPS with a persistent Sidebar, 23 themes, six-language navigation, typography choices and Preview/Cancel/Save & Apply. Window Settings stores size and position locally per player. The live Bridge shared theme sanitizer was changed narrowly, backed up and checked; its source is available in draft cutover branch commit 76f9d4f.
+
+The no-player service restart loaded 39 resources, with Confige health PASS after Registry initialization. 16/16 local CI and Chromium preview tests passed. Real player acceptance and integration of font/language across other independently implemented M4I interfaces are still pending.
