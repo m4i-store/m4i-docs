@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-23 Finance settings discovery
+
+Confige 0.12.1 lists 34 Finance source configuration field names as reference-only metadata, including transaction limits, fees, invoice rules and creator constraints. Financial settings cannot be modified in this interface until a dedicated transactional, audited and permission-enforcing native Finance adapter has been created. No Finance source, account state or financial value was changed during this release.

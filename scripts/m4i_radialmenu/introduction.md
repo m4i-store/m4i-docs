@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-23 Confige 0.12.1 live adapter
+
+Main commit 2b9c2a6 (Radial 0.2.1-alpha) supports server-authoritative changes to maximum root items, submenu items and nested menu depth. New values are validated and applied in place for the next menu render; player keybindings are not changed. Real in-game Save & Apply acceptance remains pending.
