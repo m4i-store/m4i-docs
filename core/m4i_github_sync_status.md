@@ -111,3 +111,9 @@ M4I Confige main ad9a71e, HUD feature 65cbd27 and Garage feature 73744c2 introdu
 ## 2026-10-22 Confige V0.9 runtime active, 40 resources
 
 Confige main ad9a71e, Garage main 73744c2 and HUD feature branch 65cbd27 are installed on the Roleplay VPS. The first no-player restart revealed a root-owned 0600 manifest/source permission regression, temporarily preventing Confige from starting. This was corrected without changing private data/backups ownership, and a second no-player restart verified Confige/HUD/Garage started with 40 resources loaded. Confige health PASS after Registry initialization. Local CI 18/18, HUD/Garage mocks and Chromium UI smoke passed; first in-game settings save remains pending. Main HUD repository still depends on review of its earlier VPS sync source branch; do not independently fast-forward that repo without reviewing the full sync.
+
+## 2026-10-23 Confige V0.10 active, Rental and LedgeGrab live adapters
+
+Confige 0.10.0-alpha main cec37b0 is active and healthy. Rental new settings source feat/confige-live-settings-v010 266fbcc and LedgeGrab source feat/confige-live-settings-v010 b4b1542 are on GitHub, with only manifests and separate adapters added to the live Roleplay VPS, preserving other source modifications. Four Rental and five LedgeGrab typed live settings were added, increasing the typed Confige general adapters to four resources (HUD, Garage, Rental and LedgeGrab). Source metadata for other scripts is still read-only until adapters exist.
+
+The first UI smoke caught a stale HUD-only condition: corrected on GitHub main in cec37b0, retested and activated with a second zero-player restart. Confige local CI 18/18, client Lua mocks and Chromium browser save flow passed. Current server: 40 resources and Confige Health PASS after initial RETRY during registry startup. Rollback archive and checksums: /root/m4i-live-settings-v010-backup-20261023. Real player acceptance of Save & Apply remains outstanding.
