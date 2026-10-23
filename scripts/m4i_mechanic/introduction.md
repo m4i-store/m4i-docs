@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-23 Confige Live Settings
+
+Source at https://github.com/m4i-store/m4i_mechanic main commit 402fb5c is based on the latest Roleplay VPS Mechanic implementation with no live database files. A shared client/server live adapter accepts four bounded, schema-verified settings from M4I Confige: target and invoice-pair distance, vehicle network-control timeout and vehicle-state polling frequency. The original server-side invoice, character, job and finance checks remain intact. Source version 0.1.5-alpha; real in-game Save & Apply acceptance remains pending.

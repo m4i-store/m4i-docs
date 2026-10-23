@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-23 Canonical Confige Weather Settings
+
+WeatherSync source at https://github.com/m4i-store/m4i_weathersync main commit 7cd42ca (1.1.4-alpha) exposes authenticated server-only Confige getters and setters for dynamic weather, change interval and transition duration. Native WeatherSync state.json remains authoritative and verified upon write. Its original admin UI increments the same revision when these fields change, preventing stale saves from Confige. FiveM runtime startup restored existing state without overwriting it. Confige V0.11 also supports launching the original Weather & Time UI for broader controls including in-game time, day/night lengths, and blacklist. Live in-game Save & Apply still needs owner acceptance testing.
