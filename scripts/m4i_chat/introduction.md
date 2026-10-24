@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-24 Confige V0.13 chat live controls
+
+The private m4i_chat GitHub main commit df90a97 adds a shared runtime adapter for MaxMessageLength, MaxMessages, ClosedVisibleMs and RateLimitMs. The server continues to enforce message length and chat cooldowns; client NUI receives presentation updates. Local user key mapping and chat command names remain unchanged. Confige revisioned Save & Apply passed mocked UI tests; real player acceptance remains pending.

@@ -25,3 +25,7 @@ Only manifest metadata and repository availability are verified on this page. Co
 ## 2026-10-23 Finance settings discovery
 
 Confige 0.12.1 lists 34 Finance source configuration field names as reference-only metadata, including transaction limits, fees, invoice rules and creator constraints. Financial settings cannot be modified in this interface until a dedicated transactional, audited and permission-enforcing native Finance adapter has been created. No Finance source, account state or financial value was changed during this release.
+
+## 2026-10-24 Confige V0.13 nonmonetary settings adapter
+
+The private m4i_finance GitHub main commit 1ffccbf adds an audited, bounded, in-place GlobalState runtime adapter for BillingTargetDistance, CreatorPlacementDistance and CreatorMaxLocations. The Finance config remains authoritative. Monetary balances, fees, tax rates, account rights and live transaction thresholds are NOT editable through this panel. Confige owns revisioning, permission checks, mandatory backups and persisting the three nonmonetary settings only. The in-game acceptance test is pending.
