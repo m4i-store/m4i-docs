@@ -149,3 +149,7 @@ Confige feat/command-directory-actions-v017 at 201b25d provides owner command me
 ## 2026-10-24 Confige V0.17 + Finance native command controls — LIVE
 
 Owner-approved maintenance on M4I_TEST disconnected one player, stopped the FiveM process, installed Confige main 545bd17 and Finance main 24bba8d and restarted. Root-only rollback /root/m4i-confige-v017-backup-20261024 checksums verified. 21/21 Confige CI, Finance native command tests passed; 40 resources loaded, Health PASS, service active, separate loopback source file editor active. Both repositories pushed to GitHub main. fivem-momo remains inactive. Real in-game owner Save/Apply and command actions are still untested.
+
+## October 24 2026 — Confige V2 SQL pilot (Store) LIVE
+
+Confige main 1598ec4, V2.0.0-alpha.1. M4I_TEST piloted Store SQL revision 2 with original values restored by actual oxmysql Save/Reset, two audit records, 40 resources and Health PASS. Other adapters remain V1; root-only rollback including SQL export saved at /root/m4i-confige-v2-pilot-rollback-20261024. Boot selftest disabled for subsequent restarts. CI 24/24 and Chromium/isolated MariaDB tests passed; owner NUI and player-ACK still need human acceptance. Momo stays inactive.
