@@ -133,3 +133,7 @@ Confige main 9fb77ca, Finance main 1ffccbf and Chat main df90a97. Three bounded 
 ## 2026-10-24 Confige V0.14: Store active, Appearance staged offline
 
 Confige main d64de17, Store main c0e6f56, Appearance feat/confige-camera-v014 d20b62e (not merged to main). Eleven typed live editors correspond to started resources; Appearance is installed but disabled because RCore clothing remains the canonical resource. Root-only rollback: /root/m4i-v014-backup-20261024. 40 active resources; Confige PASS, 18/18 local CI and browser/Lua mocks passed. In-game Save & Apply acceptance outstanding. fivem-momo inactive and autostart disabled.
+
+## 2026-10-24 Confige V0.15 + Gameplay live policies
+
+Confige main 0b0390e and m4i_gameplay main a832900. Nine real-time Gameplay controls are now backed by dynamic per-frame and NPC/pickup workers with on-demand idle scheduling and pickup ownership release, not read-only discovery. Zero-player source cutover completed successfully with protected /root/m4i-v015-backup-20261024. Server status: 40 resources, Confige PASS and service active; momo remains stopped and disabled. Confige CI 18/18, Lua native mocks (4 frame and 14 guard tests) and Chromium UI mocks passed. Real game owner/client acceptance and resmon profiling are still pending. Disk free about 3.6 GB (95% used).

@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-24 Gameplay live controls in Confige
+
+m4i_gameplay main a832900 version 1.2.0-alpha supports nine server-authoritative, bounded gameplay policy settings exposed through Confige main 0b0390e. Confige persists, audits and revises settings before applying. The client now refreshes weapon-wheel native control arrays, vehicle rewards, NPC scan interval and batch size, pickup ownership and future NPC drops without a resource restart. Worker execution idles when disabled. Already-marked NPC flags cannot be restored because their original state is unknown. Initial controlled install and service startup were verified, but real GTA client/owner Save & Apply and performance acceptance are still pending.
