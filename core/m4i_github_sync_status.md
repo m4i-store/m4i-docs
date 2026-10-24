@@ -153,3 +153,15 @@ Owner-approved maintenance on M4I_TEST disconnected one player, stopped the Five
 ## October 24 2026 — Confige V2 SQL pilot (Store) LIVE
 
 Confige main 1598ec4, V2.0.0-alpha.1. M4I_TEST piloted Store SQL revision 2 with original values restored by actual oxmysql Save/Reset, two audit records, 40 resources and Health PASS. Other adapters remain V1; root-only rollback including SQL export saved at /root/m4i-confige-v2-pilot-rollback-20261024. Boot selftest disabled for subsequent restarts. CI 24/24 and Chromium/isolated MariaDB tests passed; owner NUI and player-ACK still need human acceptance. Momo stays inactive.
+
+## 2026-10-24 Confige V2 SQL Store+HUD rollout — completed
+
+Main m4i_confige v2.0.0-alpha.2 runs on M4I_TEST with selected SQL pilots
+m4i_store rev2 and m4i_hud rev2. Additional old typed adapters stay V1.
+HUD initial rev0 seed was verified; real SQL Save/Reset live smoke produced
+rev1/rev2 and restored original defaults. Subsequent FXServer boot loaded
+both SQL resources on rev2, 40 resources, Health PASS. Source/SQL/private
+cfg backups checksum verified at /root/m4i-v2-multi-cutover-20261024 and
+/root/m4i-v2-hud-live-smoke-checkpoint-20261024. CI 27/27; 3 isolated
+MariaDB tests PASS. Finance/other resources unaffected; momo service stopped.
+Actual game-client ACK/performance/owner UX not yet accepted as stable.

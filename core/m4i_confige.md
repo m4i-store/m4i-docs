@@ -258,3 +258,32 @@ Confige V2.0.0-alpha.1 at main revision 1598ec4 now runs on M4I_TEST. Store is t
 An initial cutover attempt detected root-only file permissions and rolled back; source readability was repaired, then the guarded retry succeeded. Private rollback backups include source, ACE and MariaDB pilot table dump under /root/m4i-confige-v2-pilot-rollback-20261024. The boot selftest flag was disabled after the successful test. Owner-only V2 editing ACE stays protected in private config. The Finance and Store resource sources were not edited in this deployment. Momo remains stopped.
 
 Confige UI has typed SQL Save, Reset Defaults, History/Rollback and Retry Apply, with publication status distinct from individual client delivery. Local CI 24/24, isolated MariaDB tests and Chromium UI mocks passed. Manual in-game owner acceptance and connected-client acknowledgement remain outstanding before stable release. Arbitrary Lua config files without adapters are NOT live-editable merely by moving values into SQL.
+
+## 2026-10-24 M4I Confige V2.0.0-alpha.2 — Store and HUD now SQL LIVE
+
+Confige main now has a validated comma-separated SQL pilot registry, allowing
+approved adapters to use SQL without forcing all scripts over at once. Two
+resources have completed migration on M4I_TEST: m4i_store (revision 2) and
+m4i_hud (revision 2). All other typed adapters remain on original V1 state
+until reviewed. No arbitrary config.lua Lua functions were migrated to SQL.
+
+Implementation includes separate per-resource fail-closed initialization,
+suppression of legacy JSON publishing for each SQL-selected resource,
+canonical SQL read/cache, optimistic revisions and journal history, audited
+reset/rollback, per-field Reset in NUI, and replay on resource start. A
+fresh migration matches legacy JSON in both directions; post-migration SQL
+revisions must match their atomic journal. In a standalone live zero-player
+HUD smoke the server saved ShowLocation=false as SQL revision 1, published
+GlobalState and reset it to true at revision 2. A further complete FXServer
+restart loaded both Store and HUD SQL revision 2 with 40 resources and
+Confige Health PASS. The selftest owner convar was then removed. Current
+persistent state is the original HUD value, not the temporary smoke change.
+
+Evidence: protected source/config/SQL rollback archives at
+/root/m4i-v2-multi-cutover-20261024 and
+/root/m4i-v2-hud-live-smoke-checkpoint-20261024. Confige local CI 27/27,
+isolated MariaDB tests 3/3, supervised SQL smoke PASS. FXServer active;
+momo_v1.1 remains disabled/stopped. This validates *server publication*,
+not asynchronous per-client receipt; later client ACK and in-game owner
+acceptance are still required. Other scripts and protected third-party Lua
+configs are NOT automatically hot-editable.
