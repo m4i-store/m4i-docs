@@ -129,3 +129,7 @@ Confige main b788112, Target main 781b356, Radial main 2b9c2a6. New typed Target
 ## 2026-10-24 V0.13 Confige + Finance + Chat live, oxmysql restored
 
 Confige main 9fb77ca, Finance main 1ffccbf and Chat main df90a97. Three bounded nonmonetary Finance limits plus four Chat controls are now available as typed live settings; monetary policies and command key mappings remain read-only. Backups: /root/m4i-v013-backup-20261024, checksum verified. Lua native adapter mocks, Chromium UI mocks and Confige CI 18/18 passed. After controlled no-player restart, a broken oxmysql symlink referencing a deleted August rollback caused Core/Registry/Confige failure. Restored an independent local oxmysql 2.14.1 from the existing MKS installation and restarted again at 0 players. Verified 40 resources, Confige Health PASS, no new dependency errors. FiveM M4I_TEST active; fivem-momo inactive and disabled. In-game acceptance still required.
+
+## 2026-10-24 Confige V0.14: Store active, Appearance staged offline
+
+Confige main d64de17, Store main c0e6f56, Appearance feat/confige-camera-v014 d20b62e (not merged to main). Eleven typed live editors correspond to started resources; Appearance is installed but disabled because RCore clothing remains the canonical resource. Root-only rollback: /root/m4i-v014-backup-20261024. 40 active resources; Confige PASS, 18/18 local CI and browser/Lua mocks passed. In-game Save & Apply acceptance outstanding. fivem-momo inactive and autostart disabled.

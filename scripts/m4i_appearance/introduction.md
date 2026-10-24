@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-24 Confige V0.14 Appearance camera prototype, NOT ENABLED
+
+Source on feature branch https://github.com/m4i-store/m4i_appearance/tree/feat/confige-camera-v014 (d20b62e). Client adapter supports bounded camera field of view, transition duration, smoothing and zoom. M4I_TEST intentionally disables m4i_appearance while rcore_clothing controls player appearances; the code is installed but does not run in this server. Never enable without separate migration/compatibility validation. Character data, ped rights and prices are unchanged.

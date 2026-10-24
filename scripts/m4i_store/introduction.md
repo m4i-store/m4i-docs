@@ -21,3 +21,7 @@ This script should use m4i_bridge for cross-resource and framework interactions.
 ## Documentation status
 
 Only manifest metadata and repository availability are verified on this page. Commands, configuration keys, exports, migrations and gameplay behavior must be documented from actual source before being labeled supported.
+
+## 2026-10-24 Confige V0.14 active Store settings
+
+Store main c0e6f56 (0.2.0-alpha.4) exposes live InteractionDistance and DrawDistance settings. The shared adapter synchronizes client prompts with the server's actual store-interaction proximity policy. No product prices, catalog, basket, payments or inventory mechanics were modified. Runtime service active on M4I_TEST; direct in-game acceptance pending.
