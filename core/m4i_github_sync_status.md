@@ -137,3 +137,7 @@ Confige main d64de17, Store main c0e6f56, Appearance feat/confige-camera-v014 d2
 ## 2026-10-24 Confige V0.15 + Gameplay live policies
 
 Confige main 0b0390e and m4i_gameplay main a832900. Nine real-time Gameplay controls are now backed by dynamic per-frame and NPC/pickup workers with on-demand idle scheduling and pickup ownership release, not read-only discovery. Zero-player source cutover completed successfully with protected /root/m4i-v015-backup-20261024. Server status: 40 resources, Confige PASS and service active; momo remains stopped and disabled. Confige CI 18/18, Lua native mocks (4 frame and 14 guard tests) and Chromium UI mocks passed. Real game owner/client acceptance and resmon profiling are still pending. Disk free about 3.6 GB (95% used).
+
+## 2026-10-24 V0.16 generic owner-only config source editing — pending live cutover
+
+Confige feat/source-config-editor-v016 commit 4647d9d, GitHub main remains 0b0390e and the running M4I_TEST source remains 0.15.0-alpha. Local-only systemd sidecar m4i-confige-file-editor.service installed and tested as m4i_core_test, 127.0.0.1:39931. Owner-only extra ACE and token configured privately; backup under /root/m4i-confige-v016-backup-20261024. Tests: CI 20/20, real resource HTTP read/no-op save, Python source guard and mocked Chromium editing PASS. One player connected during zero-player cutover preflight, therefore no FXServer resource reload was performed. Script source modifications are staged only. Momo service remains off. No automatic restart or editing of sensitive configs permitted.
