@@ -287,3 +287,32 @@ momo_v1.1 remains disabled/stopped. This validates *server publication*,
 not asynchronous per-client receipt; later client ACK and in-game owner
 acceptance are still required. Other scripts and protected third-party Lua
 configs are NOT automatically hot-editable.
+
+## 2026-10-24 V2.0.0-alpha.3 — Four SQL live settings pilots deployed
+
+M4I_TEST has migrated typed, reviewed live settings for m4i_store,
+m4i_hud, m4i_ledgegrab and m4i_radialmenu to SQL as the authoritative
+store. The final revision of each resource is 2. Other V1 typed adapters
+remain unchanged. An independent source file editor still requires a
+controlled restart for unsupported config.lua values.
+
+The new two resources were checked against their original Lua defaults.
+The test host had zero connected players for cutover, with checksum-verified
+Confige source, private owner configuration and MySQL tables archived
+under /root/m4i-v2-four-pilot-cutover-20261024. A separate verification
+checkpoint is in /root/m4i-v2-four-pilot-smoke-20261024.
+
+A guarded one-time SQL smoke updated m4i_ledgegrab RequireForwardIntent
+(false -> true) and reset it to false. It also updated m4i_radialmenu
+MaxRootItems (10 -> 11) and reset it to 10. Both tests committed two
+revisions, were independently journaled, and published the expected
+StateBag values. Their test flag was disabled after the test. A subsequent
+clean full FXServer start loaded four resources at SQL revision 2.
+Resource count was 40, service active, and momo.v1.1 stopped.
+
+V2 server validation also rejects Store configurations with a prompt
+draw distance lower than the actual interaction distance. Local CI:
+28/28; isolated MariaDB transactions: 3/3. This verifies the SQL and
+server-side publication pipeline; it is NOT a per-client ACK. Connected
+player testing and other resource adapters remain for a stable release.
+Current Confige main commit: fdd18f0.

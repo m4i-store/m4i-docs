@@ -165,3 +165,14 @@ cfg backups checksum verified at /root/m4i-v2-multi-cutover-20261024 and
 /root/m4i-v2-hud-live-smoke-checkpoint-20261024. CI 27/27; 3 isolated
 MariaDB tests PASS. Finance/other resources unaffected; momo service stopped.
 Actual game-client ACK/performance/owner UX not yet accepted as stable.
+
+## 2026-10-24 Confige alpha.3 — Store, HUD, LedgeGrab and RadialMenu SQL
+
+M4I_TEST Confige main fdd18f0, 2.0.0-alpha.3. Four SQL pilots at revision 2;
+Store/HUD preserved, LedgeGrab and RadialMenu migrated and live SQL
+edit/reset/publish smoke passed. Confige CI 28/28, MariaDB stage integration
+3/3, final clean boot 40 resources. One-time selftest flag disabled.
+Backup and checksum at /root/m4i-v2-four-pilot-cutover-20261024 and
+/root/m4i-v2-four-pilot-smoke-20261024. momo server still disabled/stopped.
+Other scripts remain V1 and no unreviewed bulk conversion was attempted.
+Client ACK and in-game owner acceptance remain pending.
