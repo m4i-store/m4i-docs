@@ -1,5 +1,14 @@
 # m4i_garage — Changelog
 
+## 0.1.122-alpha — 2026-11-03 (staged TEST VPS source)
+
+- Bridge-driven target and radial provider selection, no hard dependencies on `m4i_target` or `m4i_radialmenu` in Garage manifest.
+- Framework-qualified persistent Garage identity mapping table for Qbox, QBCore, ESX, Ox Core; native M4I identity unchanged.
+- Added read-only server `GetGarageCharacterId` export for trusted server-side integration.
+- Added Bridge ox_target/qb-target local NPC entity adapters and QB/QBX radial adapters (source-level tested; real runtime acceptance pending).
+- Existing five-use Cover still requires an inventory adapter with atomic receipt semantics; support for third-party inventory not certified.
+- Separate [Five Frameworks and Bridge Providers](framework-compatibility.md) documentation and installation guide.
+
 ## 0.1.121-alpha — 2026-11-03 (staged TEST VPS source)
 
 - Introduced editable `client/exports.lua` and `server/exports.lua` public API facades.
