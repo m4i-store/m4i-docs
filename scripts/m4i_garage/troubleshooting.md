@@ -1,6 +1,6 @@
 # m4i_garage — Troubleshooting
 
-This page covers the public Client/Server API delivered in TEST VPS source `v0.1.121-alpha`.
+This page covers the public Client/Server API delivered in TEST VPS source `v0.1.122-alpha`.
 
 | Symptom | Likely cause | Safe check |
 | --- | --- | --- |
@@ -16,6 +16,14 @@ This page covers the public Client/Server API delivered in TEST VPS source `v0.1
 | `RegisterOwnedVehicle() -> UNTRUSTED_RESOURCE` | Resource not on registrar allowlist | Verify actual invoking resource, review rights, then configure allowlist |
 | Full repair appears to restore old dents later | Unverified repair, stale client mesh or missing trusted permit | Follow `BeginFullRepair` trusted flow; do not clear SQL damage manually |
 | Extra detached doors on observer | Local GTA synthetic deformation replay or custom model debris | Check the updated observer guard and test two real clients; door guard does not necessarily protect custom bumper/fender fragments |
+
+## Cross-framework provider and identity issues
+
+If a Garage script works on native M4I but owner-related operations fail on Qbox/QBCore/ESX/Ox Core, confirm Bridge is explicitly set to the correct Framework and that the `m4ig_identity_map` table exists. Invoke `GetGarageCharacterId(source)` only from a server resource after player character load; clients use the server-published `m4igCharacterId` state. Never cast the raw string citizenid to a number or directly edit garage ownership SQL.
+
+If the Garage F1 menu/Impound attendant disappears, confirm the configured Bridge `radial` / `target` provider is installed, started and actually provides Add/Remove APIs. Unsupported/custom adapters need implementation before claiming compatibility.
+
+If a five-use vehicle cover cannot be applied with ox_inventory/qb_inventory, that currently requires a matching atomic `ChargeVehicleCover`/`RefundVehicleCover`/`FinalizeVehicleCover` Bridge inventory integration; don't bypass this safety contract.
 
 ## Important distinction: IDs
 
