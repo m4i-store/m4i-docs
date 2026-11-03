@@ -1,14 +1,14 @@
 # m4i_garage — Installation
 
-**Source status:** TEST VPS package `v0.1.121-alpha`, November 2026. Earlier `m4i_garage` GitHub source snapshots and this GitBook page are not evidence that every historical build exposes the new API.
+**Source status:** TEST VPS package `v0.1.122-alpha`, November 2026. Earlier `m4i_garage` GitHub source snapshots and this GitBook page are not evidence that every historical build exposes the new API.
 
 ## Requirements
 
 - FXServer with OneSync and Lua 5.4-compatible resource runtime
 - `oxmysql`
 - `m4i_bridge` (all framework and player/provider interactions)
-- `m4i_radialmenu`
-- `m4i_target`
+- A radial provider configured and supported by `m4i_bridge` (e.g. `m4i_radialmenu`, `qb-radialmenu`, `qbx_radialmenu`)
+- A target provider configured and supported by `m4i_bridge` (e.g. `m4i_target`, `ox_target`, `qb-target`)
 - The Garage-owned SQL schema from `sql/install.sql`
 - Optional integrations such as LB Phone and image lookup depend on their respective configured resources.
 
@@ -16,11 +16,13 @@
 
 ```cfg
 ensure oxmysql
-ensure m4i_bridge
 ensure m4i_radialmenu
 ensure m4i_target
+ensure m4i_bridge
 ensure m4i_garage
 ```
+The native M4I example above uses M4I's default radial and target; on a third-party framework choose installed Bridge-supported provider resource names as documented in [Five Frameworks and Bridge Providers](framework-compatibility.md).
+
 Load core/registry providers before the bridge per the selected framework's documented startup sequence. Do not reorder the internal `client_scripts` or `server_scripts` entries arbitrarily: `server/exports.lua` and `client/exports.lua` are loaded after their underlying services.
 
 ## fxmanifest and editable files
