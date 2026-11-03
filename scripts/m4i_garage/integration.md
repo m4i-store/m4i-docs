@@ -4,7 +4,7 @@
 
 `m4i_garage` is the authority for Garage-specific parking, car custody, vehicle condition snapshots, temporary/permanent keys, impound, Police Seized, insurance, cover objects and Garage Creator. It is **not** the source of truth for Core player identities, jobs, finances or inventory frameworks.
 
-`text
+```text
 External script
   |-- Garage-specific read/export --> m4i_garage
   |                                    |
@@ -13,8 +13,7 @@ External script
   |                                    +--> m4i_bridge --> selected provider
   |
   +-- general player/job/inventory/money operations --> m4i_bridge
-`
-
+```
 Never call QBCore, Qbox, ESX, or Ox Core directly from an M4I gameplay module when a Bridge capability exists. New bridge capabilities should be implemented there rather than building a parallel framework integration.
 
 ## Safe integration flow
@@ -31,14 +30,13 @@ Never call QBCore, Qbox, ESX, or Ox Core directly from an M4I gameplay module wh
 
 `GetVehicleCondition` is deliberately exported on **both sides**. On the client it receives a local GTA vehicle handle and returns live native readings from a signed, hydrated vehicle. On the server it receives a persistent Garage vehicle ID and returns the last saved SQL snapshot.
 
-`lua
+```lua
 -- client.lua
 local live, why = exports['m4i_garage']:GetVehicleCondition(vehicleHandle)
 
 -- server.lua
 local saved, why = exports['m4i_garage']:GetVehicleCondition(garageVehicleId)
-`
-
+```
 Passing a Network ID as a persistent Garage database ID is incorrect. Use `GetVehicleEntity` server-side to obtain the current entity handle and Network ID for a known Garage ID.
 
 ## Security
