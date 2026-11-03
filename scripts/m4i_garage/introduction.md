@@ -1,6 +1,6 @@
 # m4i_garage
 
-**Current verified development source:** TEST Roleplay VPS `m4i_garage v0.1.122-alpha`, inspected and source-tested on **3 November 2026**.
+**Current verified development source:** TEST Roleplay VPS `m4i_garage v0.1.123-alpha`, inspected and source-tested on **3 November 2026**.
 
 **Historical source snapshot:** The private `m4i-store/m4i_garage` GitHub repository had a much older `0.1.3` snapshot on 21 October 2026. Do **not** confuse that historical snapshot with the TEST VPS copy. The canonical `m4i-docs` repository documents the verified TEST version here; public documentation updates do not automatically publish or install source.
 
