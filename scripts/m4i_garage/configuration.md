@@ -1,6 +1,6 @@
 # m4i_garage — Configuration
 
-**Applies to:** staged TEST VPS source `v0.1.122-alpha`. Configuration availability may differ in older snapshots or future releases.
+**Applies to:** staged TEST VPS source `v0.1.123-alpha`. Configuration availability may differ in older snapshots or future releases.
 
 ## Editable files and Asset Escrow
 
@@ -58,3 +58,7 @@ Do not add any generic net event or insecure resource that can be invoked from c
 Garage Creator and live configuration support server-validated settings for Garage Spawn, Cover and delivery behavior. Changing a public `GetGarage()` snapshot does **not** save these settings. Use the actual authorized admin/Creator flow.
 
 For API use, see [Exports](exports.md). For resource dependencies, see [Installation](installation.md).
+
+## Preconfigured Bridge installer profiles
+
+Set the replicated `server.cfg` convar `setr m4i_bridge_profile qbcore` (or `m4i`, `qbox`, `esx`, `ox_core`) before `ensure m4i_bridge`. This updates the installed Bridge's provider selection and prevents fallback to another provider. You can still edit Bridge provider settings when using non-standard resources. The native Garage `config.lua` does **not** directly select Qbox/QBCore/ESX/Ox Core.
