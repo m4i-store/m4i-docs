@@ -1,6 +1,6 @@
 # m4i_garage — Five Frameworks and Bridge Providers
 
-**Source version:** `m4i_garage v0.1.122-alpha` on the M4I TEST VPS, 3 November 2026. The bridge provider adapters were source-level tested, **not** validated in live Qbox/QBCore/ESX/Ox Core player sessions. This is an integration configuration guide, not an unconditional compatibility certification.
+**Source version:** `m4i_garage v0.1.123-alpha` on the M4I TEST VPS, 3 November 2026. The bridge provider adapters were source-level tested, **not** validated in live Qbox/QBCore/ESX/Ox Core player sessions. This is an integration configuration guide, not an unconditional compatibility certification.
 
 ## Design contract
 
@@ -110,3 +110,46 @@ Make this call only after the framework has finished loading the selected charac
 6. Test actual two-client OneSync vehicle damage and full-repair persistence; automated tests do not guarantee exact custom-model debris at 200 real clients.
 
 **Status:** bridge/garage Lua source contract tests passed on M4I TEST VPS. No live Qbox, QBCore, ESX or Ox Core session has yet been validated, so those integrations are not production-certified.
+
+## One-setting installation profiles (Bridge 1.5.2 integration build)
+
+This integration build supports an explicit **replicated server.cfg convar**. Set ONE profile **before** starting Bridge and Garage. Unknown profile names fail closed rather than accidentally using another Framework's player/money provider. If omitted, native M4I defaults remain unchanged:
+
+```cfg
+# Select exactly one on your server, do not uncomment all four:
+setr m4i_bridge_profile qbox
+# setr m4i_bridge_profile qbcore
+# setr m4i_bridge_profile esx
+# setr m4i_bridge_profile ox_core
+# setr m4i_bridge_profile m4i
+```
+
+Predefined Bridge provider selections (all other `m4i_bridge/config/providers.lua` options still configurable):
+
+| Profile | Framework | Inventory | Target | Radial | UI / Notify / Progress |
+| --- | --- | --- | --- | --- | --- |
+| `m4i` | `m4i` | `m4i_inventory` | `m4i_target` | `m4i_radialmenu` | Existing M4I defaults (unchanged) |
+| `qbox` | `qbox` | `ox_inventory` | `ox_target` | `qbx_radialmenu` | Native TextUI, framework notify, native progress |
+| `qbcore` | `qbcore` | `qb_inventory` | `qb_target` | `qb_radialmenu` | Native TextUI, framework notify, native progress |
+| `esx` | `esx` | `ox_inventory` | `ox_target` | `m4i_radialmenu` | Native TextUI, framework notify, native progress |
+| `ox_core` | `ox_core` | `ox_inventory` | `ox_target` | `m4i_radialmenu` | Native TextUI/notify/progress |
+
+These profiles are **explicit example defaults**, not dependency installers. They require you to install the listed radial, target, inventory and their prerequisites. On ESX/Ox Core, the M4I radial is an additional dependency unless you install another supported Bridge radial and override the selection. The native UI/notify/progress adapters do not require `m4i_hud` or `ox_lib` inside Bridge. Other installed resources, especially Ox Core/Ox Inventory, can require `ox_lib` independently.
+
+External Framework profile selection also restricts provider fallback priority to that same provider. If unavailable, Bridge fails safely instead of changing to native M4I or another inventory and risking ownership/payment misrouting.
+
+### Console diagnostics
+
+After the resources start, issue `m4ig_doctor` in **FXServer/txAdmin console** (not in Linux shell). It performs read-only checks for Bridge readiness and selected resource state; it never creates accounts, charges money or migrates vehicles. A healthy dependency report is **not** a substitute for actual in-game testing.
+
+### Bank and payments
+
+The Bridge now contains server money adapters for Qbox (`qbx_core`), QBCore (player Functions), ESX (`xPlayer` accounts) and Ox Core (default `OxAccount` balance). Their bank-charge/refund/insufficient-funds paths passed mocked Lua integration tests. Ox Core **cash** is not silently mapped to `bank`—Garage's fee paths use `bank`. Database SQL edits to framework money columns are neither necessary nor supported. The existing Garage payment ledger controls when a charge or refund may occur; the underlying framework money APIs are not promised globally idempotent.
+
+### Existing owned vehicles and duplicate garage providers
+
+**Installing Garage does not automatically import** vehicles already stored in `player_vehicles`, `owned_vehicles`, Qbox garages or Ox Core's own vehicle store. Existing dealership and purchase scripts need a trusted server-side registration integration using `GetGarageCharacterId(source)` and the allowlisted `RegisterOwnedVehicle` export. Deduplicate by plate and do not bulk overwrite the original framework vehicle database. Existing `qb-garages`, `qbx_garages` or ESX garage resources can cause double storage/spawn if the same vehicle is managed in two systems: decide which garage provider owns each vehicle before release.
+
+### Five-use Cover constraint
+
+The five-use `vehicle_cover` uses a three-stage charge/refund/finalize receipt workflow currently implemented in `m4i_inventory`. The Garage refuses the workflow when an external inventory lacks those atomic receipt operations. Other Garage functions can operate, but do **not** advertise five-use Cover as supported on an unvalidated Ox/QB inventory.
