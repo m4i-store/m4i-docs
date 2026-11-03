@@ -1,6 +1,6 @@
 # m4i_garage — Configuration
 
-**Applies to:** staged TEST VPS source `v0.1.121-alpha`. Configuration availability may differ in older snapshots or future releases.
+**Applies to:** staged TEST VPS source `v0.1.122-alpha`. Configuration availability may differ in older snapshots or future releases.
 
 ## Editable files and Asset Escrow
 
@@ -19,6 +19,8 @@ escrow_ignore {
 }
 ```
 Game-critical custody, key validation, anti-duplication, automatic condition saving, deformation reconstruction and police Seize algorithms are **not** globally escrow-ignored. Do not add `server/*.lua` or `client/*.lua` wholesale to `escrow_ignore` when distributing this resource unless you deliberately intend to expose all of that source.
+
+The framework, target, radial and inventory providers are selected in `m4i_bridge/config/providers.lua` (its existing `providers.selected` table), **not** through `m4i_garage/config.lua`. See [Five Frameworks and Bridge Providers](framework-compatibility.md).
 
 ## Main settings relevant to integrations
 
