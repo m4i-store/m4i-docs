@@ -47,4 +47,6 @@ Never expose `GetVehicleStatus`'s raw SQL result to NUI or a generic client call
 
 ## Limitations
 
+The source ships a provider-qualified persistent Garage ID for Qbox, QBcore, ESX, and Ox Core, and uses the explicit Bridge target/radial provider selection. See [Five Frameworks and Bridge Providers](framework-compatibility.md). Some optional integrations (notably five-use Cover) remain dependent on specific inventory provider contracts.
+
 The test VPS source is staged at `0.1.121-alpha`. Automated Lua/JavaScript regression tests cover source-level contracts; full real-game provider, Escrow distribution, and 200-client visual consistency remain separate release acceptance steps.
