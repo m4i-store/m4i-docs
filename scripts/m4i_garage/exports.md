@@ -1,6 +1,6 @@
 # m4i_garage — Client and Server Exports
 
-**Source:** TEST VPS `m4i_garage v0.1.122-alpha` (3 November 2026). The public API below is implemented and validated with automated Lua tests. A real in-game integration acceptance test is still required. This page is not a claim that the older public GitHub source repository contains this code.
+**Source:** TEST VPS `m4i_garage v0.1.123-alpha` (3 November 2026). The public API below is implemented and validated with automated Lua tests. A real in-game integration acceptance test is still required. This page is not a claim that the older public GitHub source repository contains this code.
 
 `m4i_garage` owns vehicle storage, damage snapshots, keys, cover, seizure and garage records. Use `m4i_bridge` for framework identity, jobs, groups, player/financial operations. Use the Garage exports below for **Garage-specific** operations only; never write directly to Garage's SQL tables from other scripts.
 
