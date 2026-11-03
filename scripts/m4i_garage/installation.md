@@ -1,6 +1,6 @@
 # m4i_garage — Installation
 
-**Source status:** TEST VPS package `v0.1.122-alpha`, November 2026. Earlier `m4i_garage` GitHub source snapshots and this GitBook page are not evidence that every historical build exposes the new API.
+**Source status:** TEST VPS package `v0.1.123-alpha`, November 2026. Earlier `m4i_garage` GitHub source snapshots and this GitBook page are not evidence that every historical build exposes the new API.
 
 ## Requirements
 
@@ -63,3 +63,20 @@ bash /tmp/m4ig-audit-suite.sh
 The `audit-suite.sh` path above is part of the TEST VPS operator environment and not promised as a portable packaged release file.
 
 See [Exports](exports.md) and [Integration](integration.md).
+
+## Quick profile and doctor
+
+Pick a profile in `server.cfg` before loading the Bridge:
+
+```cfg
+setr m4i_bridge_profile qbcore
+ensure oxmysql
+ensure qb-core
+ensure qb-inventory
+ensure qb-target
+ensure qb-radialmenu
+ensure m4i_bridge
+ensure m4i_garage
+```
+
+The other profiles are `m4i`, `qbox`, `esx`, and `ox_core`. Replace dependencies for your chosen Framework. Run `m4ig_doctor` in FXServer console. Read the [complete five-framework installation guide](framework-compatibility.md) for each profile, external vehicle ownership migration, banking and Cover limitations.
