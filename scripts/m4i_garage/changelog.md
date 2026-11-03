@@ -1,5 +1,13 @@
 # m4i_garage — Changelog
 
+## 0.1.123-alpha — 2026-11-03 (staged TEST VPS source)
+
+- Added external Framework **bank money adapters** in Bridge for Qbox, QBCore, ESX and Ox Core, with invalid/insufficient-funds/refund source-contract tests.
+- Added explicit `setr m4i_bridge_profile ...` installer profiles (default native M4I unchanged); profile provider priorities cannot fall back to another Framework.
+- Added native TextUI, notification and progress Bridge providers for bases without `m4i_hud`.
+- Added Garage console-only `m4ig_doctor` to inspect provider readiness without touching player data.
+- Installation docs updated; full real-provider and existing-vehicle migration QA remain mandatory.
+
 ## 0.1.122-alpha — 2026-11-03 (staged TEST VPS source)
 
 - Bridge-driven target and radial provider selection, no hard dependencies on `m4i_target` or `m4i_radialmenu` in Garage manifest.
