@@ -1,6 +1,6 @@
 # m4i_garage — Troubleshooting
 
-This page covers the public Client/Server API delivered in TEST VPS source `v0.1.122-alpha`.
+This page covers the public Client/Server API delivered in TEST VPS source `v0.1.123-alpha`.
 
 | Symptom | Likely cause | Safe check |
 | --- | --- | --- |
@@ -38,3 +38,7 @@ If a five-use vehicle cover cannot be applied with ox_inventory/qb_inventory, th
 5. For visual fidelity, check the **same car** with two actual GTA clients. StateBag simulations do not validate 3D rendering or loose debris.
 
 No troubleshooting procedure here authorizes changing another player's vehicle ownership, money or police custody through SQL.
+
+## `m4ig_doctor` / missing provider
+
+Issue `m4ig_doctor` in the **txAdmin/FiveM server console**. It prints the selected framework, inventory, target and radial resource states, Bridge/Garage readiness and explicit warnings for missing vehicle classification or five-use Cover inventory receipts. It makes no database mutations. Verify `setr m4i_bridge_profile qbcore` (or your chosen profile) is set **before** loading `m4i_bridge`; an unknown profile intentionally fails to initialize.
