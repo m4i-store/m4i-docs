@@ -92,6 +92,7 @@
       - [Installation](scripts/m4i_garage/installation.md)
       - [Configuration](scripts/m4i_garage/configuration.md)
       - [Integration](scripts/m4i_garage/integration.md)
+      - [Five Frameworks and Bridge Providers](scripts/m4i_garage/framework-compatibility.md)
       - [Client and Server Exports](scripts/m4i_garage/exports.md)
       - [Troubleshooting](scripts/m4i_garage/troubleshooting.md)
       - [Changelog](scripts/m4i_garage/changelog.md)
