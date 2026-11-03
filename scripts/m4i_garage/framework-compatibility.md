@@ -111,7 +111,7 @@ Make this call only after the framework has finished loading the selected charac
 
 **Status:** bridge/garage Lua source contract tests passed on M4I TEST VPS. No live Qbox, QBCore, ESX or Ox Core session has yet been validated, so those integrations are not production-certified.
 
-## One-setting installation profiles (Bridge 1.5.2 integration build)
+## One-setting installation profiles (Bridge 1.5.3-rc.1 integration build)
 
 This integration build supports an explicit **replicated server.cfg convar**. Set ONE profile **before** starting Bridge and Garage. Unknown profile names fail closed rather than accidentally using another Framework's player/money provider. If omitted, native M4I defaults remain unchanged:
 
@@ -137,6 +137,10 @@ Predefined Bridge provider selections (all other `m4i_bridge/config/providers.lu
 These profiles are **explicit example defaults**, not dependency installers. They require you to install the listed radial, target, inventory and their prerequisites. On ESX/Ox Core, the M4I radial is an additional dependency unless you install another supported Bridge radial and override the selection. The native UI/notify/progress adapters do not require `m4i_hud` or `ox_lib` inside Bridge. Other installed resources, especially Ox Core/Ox Inventory, can require `ox_lib` independently.
 
 External Framework profile selection also restricts provider fallback priority to that same provider. If unavailable, Bridge fails safely instead of changing to native M4I or another inventory and risking ownership/payment misrouting.
+
+### Packaged Bridge and Garage releases
+
+Matching distributions are staged in the seller VPS under `/var/www/store m4i fivem/{escrow,open-source}/`. Each variant has a separate `m4i_bridge [variant].zip` and `m4i_garage [variant].zip`, plus uncompressed folders. ZIPs contain the correctly named inner resources `m4i_bridge/` and `m4i_garage/`. The Escrow ZIPs are **not encrypted until uploaded via the official Cfx Asset Escrow distribution flow**; the Garage Escrow web JS is minified/hashing only and cannot be fully encrypted like eligible Lua. Install both matching resources, then all selected upstream dependencies. Do not mix these Bridge adapters with an old `m4i_bridge` installation.
 
 ### Console diagnostics
 
