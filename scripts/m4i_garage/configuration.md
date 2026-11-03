@@ -6,7 +6,7 @@
 
 `config.lua` is the script's local configuration. The following integration/config files are listed in the manifest's `escrow_ignore`:
 
-`lua
+```lua
 escrow_ignore {
     'config.lua',
     'data/*.json',
@@ -17,8 +17,7 @@ escrow_ignore {
     'client/exports.lua',
     'server/exports.lua',
 }
-`
-
+```
 Game-critical custody, key validation, anti-duplication, automatic condition saving, deformation reconstruction and police Seize algorithms are **not** globally escrow-ignored. Do not add `server/*.lua` or `client/*.lua` wholesale to `escrow_ignore` when distributing this resource unless you deliberately intend to expose all of that source.
 
 ## Main settings relevant to integrations
@@ -41,7 +40,7 @@ All player identity, job, group and inventory integration continues through `m4i
 
 ## Integration allowlists
 
-`lua
+```lua
 -- Example ONLY: enable after the resource has been reviewed and tested.
 Config.TrustedVehicleRegistrars = {
     ['m4i_store'] = true
@@ -49,8 +48,7 @@ Config.TrustedVehicleRegistrars = {
 
 -- Trusted repair allowlists must match GetInvokingResource() exactly.
 -- Review Config.RepairTrustedResources in the installed version.
-`
-
+```
 Do not add any generic net event or insecure resource that can be invoked from clients to these allowlists.
 
 ## Global settings
