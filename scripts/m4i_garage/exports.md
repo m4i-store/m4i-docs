@@ -1,6 +1,6 @@
 # m4i_garage — Client and Server Exports
 
-**Source:** TEST VPS `m4i_garage v0.1.121-alpha` (3 November 2026). The public API below is implemented and validated with automated Lua tests. A real in-game integration acceptance test is still required. This page is not a claim that the older public GitHub source repository contains this code.
+**Source:** TEST VPS `m4i_garage v0.1.122-alpha` (3 November 2026). The public API below is implemented and validated with automated Lua tests. A real in-game integration acceptance test is still required. This page is not a claim that the older public GitHub source repository contains this code.
 
 `m4i_garage` owns vehicle storage, damage snapshots, keys, cover, seizure and garage records. Use `m4i_bridge` for framework identity, jobs, groups, player/financial operations. Use the Garage exports below for **Garage-specific** operations only; never write directly to Garage's SQL tables from other scripts.
 
@@ -63,9 +63,12 @@ All new server exports require a real **invoking server resource**; invalid call
 | `GetVehicleByPlate` | `GetVehicleByPlate(plate: string)` | `vehicle?, reason?` | Normalizes uppercase, supports 1–8 alphanumeric/space/hyphen characters; parameterized SQL; no owner/props |
 | `GetVehicleCondition` | `GetVehicleCondition(vehicleId: number)` | `condition?, reason?` | **Persisted** snapshot; may lag live physics until autosave/Store |
 | `IsVehicleStored` | `IsVehicleStored(vehicleId: number)` | `boolean, reason?` | Only true for exact `physical_status == "stored"` |
+| `GetGarageCharacterId` | `GetGarageCharacterId(playerSource: number)` | `numericGarageId?, reason?` | Trusted server-to-server lookup of stable provider-qualified numeric Garage identity for dealer registration |
 | `GetVehicleEntity` | `GetVehicleEntity(vehicleId: number)` | `entity?, netIdOrReason?` | Currently live signed network entity only |
 
 `GetVehicleByPlate` returns `{ id, plate, model, category, physicalStatus, garageId, legalHold }`. `GetVehicleCondition` returns `{ vehicleId, physicalStatus, garageId, fuel, engine, body }`. Both omit owner identity and raw properties. The entity returned by `GetVehicleEntity` is a **server-side entity handle**; use its Network ID to communicate with clients and revalidate state before performing mutations.
+
+When the selected Framework uses external string character IDs, **do not call** `RegisterOwnedVehicle` with the raw Qbox/ESX string. Use `GetGarageCharacterId(playerSource)` after login and pass the returned mapped numeric ID to the already restricted registration export. See [Five Frameworks and Bridge Providers](framework-compatibility.md).
 
 ### Existing server exports (backward compatible)
 
