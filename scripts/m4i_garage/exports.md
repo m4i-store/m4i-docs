@@ -23,7 +23,7 @@ Public Garage fields: `id`, `label`, `kind`, `category`, `storageMode`, `network
 
 ### Client example: open at the current zone
 
-`lua
+```lua
 local here = exports['m4i_garage']:GetCurrentGarage()
 
 if here and exports['m4i_garage']:IsPlayerInGarage(here.id) then
@@ -33,13 +33,12 @@ if here and exports['m4i_garage']:IsPlayerInGarage(here.id) then
         print(('Garage rejected UI request: %s'):format(reason))
     end
 end
-`
-
+```
 Final access and proximity checks remain on the server. `OpenGarage` does not bypass police NPC interaction, garage job requirements, vehicle keys, or the asynchronous `vehicles` callback. It returns `false` with a reason such as `UNKNOWN_GARAGE`, `UI_ALREADY_OPEN`, `NOT_AT_GARAGE`, `USE_GARAGE_SERVICE` or `INVALID_GARAGE_ID` for client-side validation errors.
 
 ### Client example: local, hydrated condition
 
-`lua
+```lua
 local veh = GetVehiclePedIsIn(PlayerPedId(), false)
 local condition, err = exports['m4i_garage']:GetVehicleCondition(veh)
 
@@ -49,8 +48,7 @@ if condition then
 else
     print('No signed, ready Garage vehicle:', err)
 end
-`
-
+```
 Possible failures: `INVALID_VEHICLE`, `NOT_REGISTERED`, `NOT_HYDRATED` or `CONDITION_UNAVAILABLE`. Local health is a *live native reading*, not a confirmed database write.
 
 ## Server exports
@@ -84,7 +82,7 @@ All new server exports require a real **invoking server resource**; invalid call
 
 ### Server example: inspect a stored vehicle
 
-`lua
+```lua
 local record, err = exports['m4i_garage']:GetVehicleByPlate('M4I 88')
 
 if record then
@@ -95,11 +93,10 @@ if record then
 else
     print('Garage lookup failed:', err)
 end
-`
-
+```
 ### Server example: check access before integration
 
-`lua
+```lua
 local canAccess, kind = exports['m4i_garage']:HasVehicleAccess(source, 88, true)
 
 if canAccess then
@@ -107,15 +104,14 @@ if canAccess then
 end
 
 local canUseGarage = exports['m4i_garage']:CanPlayerAccessGarage(source, 'public_1')
-`
-
+```
 Access results are advisory for third-party UI; **Garage itself always revalidates** signed entity, plate/model, real physical zone, player identity, SQL custody, legal hold and money before any Store/Spawn/Seize action.
 
 ## Repair integration (security boundary)
 
 A trusted mechanic/server script should first request a permit **on the server**, perform its actual repair on the client, then report success via the existing verified repair flow; do not send `vehicleFullyRepaired` or `trustedRepairApplied` from unrelated client scripts just to erase old dents.
 
-`lua
+```lua
 -- server.lua, in a resource explicitly allowed by Config.RepairTrustedResources
 local permitted, reason = exports['m4i_garage']:BeginFullRepair(playerSource, vehicleNetId)
 
@@ -125,8 +121,7 @@ end
 
 -- Your own verified mechanic flow now performs the physical repair.
 -- After success use m4i_garage's documented trusted-repair notification.
-`
-
+```
 Client `NotifyVehicleRepaired(vehicle, 'partial')` must not be used to claim a full repair. Damage resurrection prevention relies on signed repair evidence.
 
 ## Errors and operational notes
