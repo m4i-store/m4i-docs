@@ -87,6 +87,7 @@ Changes merged to the Git-synced branch are intended to become the canonical doc
 - [m4i_bridge](core/m4i_bridge/introduction.md)
 - [Bridge Exports](core/m4i_bridge/exports.md)
 - [m4i_admin](core/m4i_admin.md)
+- [m4i_garage — Public Client and Server Exports](scripts/m4i_garage/exports.md)
 - [m4i_rental — V4 review documentation / توثيق الكراء](scripts/m4i_rental/introduction.md)
 - [Rental version and source status](scripts/m4i_rental/source-status.md)
 - [Universal Core Contract v4](core/m4i_bridge/universal-core-contract-v4.md)
