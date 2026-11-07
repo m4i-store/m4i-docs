@@ -20,7 +20,9 @@
   - m4i_bridge
     - [Introduction](core/m4i_bridge/introduction.md)
     - [Installation](core/m4i_bridge/installation.md)
+    - [Framework Setup & Selector](core/m4i_bridge/setup-selector.md)
     - [Configuration](core/m4i_bridge/configuration.md)
+    - [Third-Party Providers](core/m4i_bridge/third-party-providers.md)
     - [Architecture](core/m4i_bridge/architecture.md)
     - [Providers](core/m4i_bridge/providers.md)
     - [Universal Core Contract v4](core/m4i_bridge/universal-core-contract-v4.md)
@@ -90,6 +92,8 @@
     - m4i_garage
       - [Introduction](scripts/m4i_garage/introduction.md)
       - [Installation](scripts/m4i_garage/installation.md)
+      - [Five-Framework Installation](scripts/m4i_garage/framework-installation.md)
+      - [Integration Recipes](scripts/m4i_garage/integration-recipes.md)
       - [Configuration](scripts/m4i_garage/configuration.md)
       - [Integration](scripts/m4i_garage/integration.md)
       - [Five Frameworks and Bridge Providers](scripts/m4i_garage/framework-compatibility.md)
@@ -98,7 +102,10 @@
       - [Changelog](scripts/m4i_garage/changelog.md)
     - [m4i_hud](scripts/m4i_hud/introduction.md)
     - [m4i_inventory](scripts/m4i_inventory/introduction.md)
-  - [M4I Upload](scripts/m4i_upload/introduction.md)
+  - m4i_upload
+    - [Introduction](scripts/m4i_upload/introduction.md)
+    - [Installation](scripts/m4i_upload/installation.md)
+    - [Image Integrations](scripts/m4i_upload/integration.md)
     - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
     - [m4i_livingworld](scripts/m4i_livingworld/introduction.md)
     - [m4i_mechanic](scripts/m4i_mechanic/introduction.md)
@@ -112,6 +119,7 @@
 
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)
+  - [FiveM Acceptance Checklist](shared/fivem-qa-checklist.md)
   - [Naming Conventions](shared/naming-conventions.md)
   - [Integration Rules](shared/integration-rules.md)
   - [M4I Data Access Policy](shared/data-access-policy.md)
