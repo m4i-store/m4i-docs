@@ -1,5 +1,8 @@
 # M4I Bridge — Installation & Framework Selector
 
+> **CURRENT INSTALLATION — READ FIRST:** [Full installation and every third-party script edit](complete-provider-setup.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 **Applies to:** `m4i_bridge 1.5.19-rc.1`, `m4i_garage 0.1.139-alpha`, `m4i_upload 0.2.1-alpha` (source reviewed 7 November 2026).
 
 This guide lets a server owner **choose their existing framework and installed scripts**. You do **not** have to replace your inventory, target, radial, notifications, phone, or banking system to install M4I. Each optional integration works only if a matching Bridge adapter exists and the resource passes readiness tests.
