@@ -1,5 +1,8 @@
 # M4I Bridge — Choose Third-Party Providers & Custom Integrations
 
+> **CURRENT INSTALLATION — READ FIRST:** [Full installation and every third-party script edit](complete-provider-setup.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 **Bridge:** `1.5.19-rc.1` · **Audience:** owners of existing QBCore, QBX/Qbox, ESX, M4I, and Ox Core bases.
 
 **Rule:** keep the installed framework and its data. Bridge translates M4I calls into the **configured adapter**. Do not randomly rename a third-party resource or paste its direct exports into Garage. Different versions/forks may expose different APIs; an adapter must match the real export signatures and return values.
