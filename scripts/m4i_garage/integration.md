@@ -1,5 +1,8 @@
 # m4i_garage — Integration
 
+> **CURRENT GARAGE INTEGRATION GUIDE:** [Required External Script Edits](integrations.md) with real dealership, keys, Cover, phone and mechanic methods; [Client Exports](client-exports.md) and [Server Exports](server-exports.md) for the current `0.1.139-alpha` API. This older page remains for old links.
+
+
 ## Ownership of responsibilities
 
 `m4i_garage` is the authority for Garage-specific parking, car custody, vehicle condition snapshots, temporary/permanent keys, impound, Police Seized, insurance, cover objects and Garage Creator. It is **not** the source of truth for Core player identities, jobs, finances or inventory frameworks.
