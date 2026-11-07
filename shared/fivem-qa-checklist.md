@@ -48,3 +48,12 @@
 - [ ] Do not call deployment production-verified until real server + two-client gameplay tests pass.
 
 **Primary guides:** [Bridge selector](../core/m4i_bridge/setup-selector.md), [Third-party adapters](../core/m4i_bridge/third-party-providers.md), [Garage install](../scripts/m4i_garage/framework-installation.md), [Upload install](../scripts/m4i_upload/installation.md).
+## Source-audited feature gates (do not skip)
+
+- [ ] Read [the actual installation limitations](fivem-install-known-limitations.md) before enabling or selling optional features; currently the paid AI Valet/Delivery payment path has missing `m4ig_valet_payments` schema in the installer and direct `m4i_account_ledger` dependency.
+- [ ] Confirm Garage's extra runtime-created SQL tables are present and DB schema installation privileges were handled by a trusted migration account.
+- [ ] If using Garage Phone or AI Valet, confirm the player owns an item literally named `phone`; the phone resource alone is not enough.
+- [ ] If using Ox Inventory Cover, ensure a **customer** companion client item-use adapter exists; `m4i_test_compat` is TEST-only.
+- [ ] On external frameworks, keep paid Delivery disabled until its schema and framework-neutral ledger/refund path pass real crash/restart and two-client tests.
+- [ ] Old garage/phone/house/keys APIs have been inventoried and required shims implemented before stopping vendor garage gameplay.
+
