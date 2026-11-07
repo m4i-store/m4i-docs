@@ -1,5 +1,8 @@
 # M4I Garage — Install on M4I, QBCore, Qbox/QBX, ESX or Ox Core
 
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Garage installation — all required external edits](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 **Current release:** `m4i_garage 0.1.139-alpha`, `m4i_bridge 1.5.19-rc.1` (7 Nov 2026). Use this guide instead of older 0.1.12x deployment notes.
 
 **You choose your own installed resources.** The Garage does not force its own radial, inventory, phone, notification, or progress bar. Those are selected in **Bridge `config.lua`**. The Garage still owns vehicle custody, 3D zone checks, storage, damage, cover, impound/seize, and server-side authorization.
