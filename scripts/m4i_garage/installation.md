@@ -1,115 +1,201 @@
-# M4I Garage — Install on M4I, QBCore, Qbox/QBX, ESX or Ox Core
+# Installation — From Zero to a Working Garage
 
-> **CURRENT INSTALLATION — READ FIRST:** [Complete Garage installation — all required external edits](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+This is the **customer installation path for M4I Garage**, from a clean framework to a safe, tested parking location. Follow the steps in order, then select the dedicated framework guide for your actual server.
 
+**Release:** `m4i_garage 0.1.139-alpha`. This document is derived from the resource on the M4I Roleplay test VPS on 7 November 2026. A green startup message is not proof that every optional vendor or gameplay flow works.
 
-**Current release:** `m4i_garage 0.1.139-alpha`, `m4i_bridge 1.5.19-rc.1` (7 Nov 2026). Use this guide instead of older 0.1.12x deployment notes.
+## Step 0 — Choose your framework
 
-**You choose your own installed resources.** The Garage does not force its own radial, inventory, phone, notification, or progress bar. Those are selected in **Bridge `config.lua`**. The Garage still owns vehicle custody, 3D zone checks, storage, damage, cover, impound/seize, and server-side authorization.
+| Framework actually running | Bridge `Framework` ID | Install guide |
+| --- | --- | --- |
+| M4I Core | `m4i` | [M4I installation](frameworks/m4i.md) |
+| QBCore (`qb-core`) | `qbcore` | [QBCore installation](frameworks/qbcore.md) |
+| Qbox / QBX (`qbx_core`) | `qbox` | [Qbox installation](frameworks/qbox.md) |
+| ESX Legacy (`es_extended`) | `esx` | [ESX installation](frameworks/esx.md) |
+| Ox Core (`ox_core`) | `ox_core` | [Ox Core installation — extra live QA required](frameworks/ox-core.md) |
 
-## Step-by-step installer
+The exact provider ID matters. **`qbox` is correct; `qbx` is not.** A resource name such as `qb-target` is not the same as Bridge's adapter ID `qb_target`.
 
-1. **Back up:** your full database, `server.cfg`, framework-owned vehicle data, existing Garage resource and `m4i_upload/data` if you use it. Test on staging first.
-2. Ensure your existing framework works normally and `oxmysql` is installed.
-3. Install the inner resource folders `m4i_bridge`, `m4i_garage` and optionally `m4i_upload` under `resources/[m4i]/`. Do not rename these folders or install nested ZIP wrapper directories.
-4. Open `m4i_bridge/config.lua`; set **`Framework`**, then **`Inventory`, `UI`, `Notify`, `Progress`, `Radial`, `Target`, `Phone`, `Keys`** to installed, supported adapters or to profile defaults.
-5. For regular garage interaction choose `Config.InteractionMode='radial'` **if a compatible radial is active**, or `'keys'` (E to Open, H to Store) in `m4i_garage/config.lua`. In keys mode, Garage target NPC actions still require a real compatible Target provider.
-6. Review the SQL file `m4i_garage/sql/install.sql` and import it into **this framework's database after a backup**. This defines Garage-owned tables; it does not automatically transfer legacy owned vehicles.
-7. Start framework → installed inventory/UI/radial/target dependencies → `m4i_bridge` → optional `m4i_upload` → `m4i_garage`. Load `m4i_registry` before native `m4i_core`; on external bases add it only if your chosen vehicle classification source requires it.
-8. Set up Garage Creator zones and safe spawn points; imported reference test zones are not your production Garage map.
-9. Integrate vehicle purchasing/registration, keys, insurance banking, vehicle cover, optional phone, and existing garage compatibility separately (see [Integration Recipes](integration-recipes.md)).
-10. Join with at least two players and follow the [acceptance checklist](../../shared/fivem-qa-checklist.md).
+## Step 1 — Verify dependencies
 
-## Copy the profile matching YOUR base
+**Mandatory:** a healthy single framework, current compatible FXServer with OneSync enabled, `oxmysql`, `m4i_bridge`, and `m4i_garage`. Their resource names must not be changed.
 
-| Real framework | `Framework=` in Bridge | Typical inventory | Typical radial | Typical target | Garage interaction |
-| --- | --- | --- | --- | --- | --- |
-| Native M4I | `'m4i'` | `m4i_inventory` | `m4i_radialmenu` | `m4i_target` | `radial` |
-| QBCore | `'qbcore'` | `qb_inventory` | `qb_radialmenu` | `qb_target` | `radial` or `keys` |
-| Qbox / QBX | `'qbox'` | `ox_inventory` | `qbx_radialmenu` | `ox_target` | `radial` or `keys` |
-| ESX Legacy | `'esx'` | `esx_inventory` or `ox_inventory` | `m4i_radialmenu` or another implemented adapter | `ox_target` | `keys` or compatible `radial` |
-| Ox Core | `'ox_core'` | `ox_inventory` | installed compatible adapter | `ox_target` | `keys` or compatible `radial` |
+**Select providers, don't duplicate them:** the framework might use `qb-inventory`, `ox_inventory`, `m4i_inventory`, `ox_target`, `qb-target`, `qbx_radialmenu` or `qb-radialmenu`. Only install resources that match your framework and are actually part of your server. Garage gets them through Bridge.
 
-These are recommended *examples*, not commands to install every listed third-party plugin. Real-world compatibility with modified versions and forks must be checked. **QBX's Bridge framework identifier is `qbox`, not `qbx`.**
+**Optional:** `m4i_upload` for global images, `vehicle_cover` for cover actions, LB/QS phone custom app, external keys, dealer, repair, dispatch, a supported Target if NPC interactions are wanted.
 
-### Example QBCore `server.cfg`
+**Never install** `m4i_test_compat`, test-bank data, test player/money helpers or cloned test servers in a customer's production installation.
 
-```cfg
-ensure oxmysql
-ensure qb-core
-ensure qb-inventory
-ensure qb-target
-ensure qb-radialmenu
-ensure m4i_bridge
-ensure m4i_upload
-ensure m4i_garage
+## Step 2 — Back up before import
+
+Back up (1) the **entire existing database**, especially `player_vehicles` on QB/QBX or `owned_vehicles` on ESX, (2) any old Garage script and its configuration, (3) `server.cfg`, (4) any modified inventory item catalogs, (5) uploaded images and saved Garage state. Prefer a **staging copy of the database** to initial production testing.
+
+**Migration warning:** Existing framework vehicle rows do **not** automatically become M4I Garage-owned vehicles. Native SQL compatibility is a one-way **projection of Garage-owned records** to framework-readable tables, not a magic import of pre-existing cars. Do not stop the old garage without an inventory and compatibility plan. [Details and rollback](updating.md).
+
+## Step 3 — Unzip the actual resource folders
+
+A typical package may contain a distributable wrapper named `m4i_garage [open-source]` or `[escrow]`. **Only the inner folder named exactly `m4i_garage`** goes into the resources directory.
+
+```text
+your-server/
+  server.cfg
+  resources/
+    [m4i]/
+      m4i_bridge/
+        fxmanifest.lua
+        config.lua
+        adapters/
+      m4i_garage/
+        fxmanifest.lua
+        config.lua
+        client/
+        server/
+        shared/
+        sql/install.sql
+        web/
+        stream/
+        docs/
+      m4i_upload/          # OPTIONAL; omit if not using shared pictures
 ```
 
-If you do not have `qb-radialmenu`, remove that line and set Garage `Config.InteractionMode='keys'`. Do **not** add a placeholder `ensure`. Configure Bridge `Framework='qbcore'`; its default UI is `qb_textui`. A different installed Inventory or Target needs the appropriate **Bridge adapter**.
+Do not rename `m4i_garage` or `m4i_bridge`: their cross-resource exports, shared loader and NUI use these names. Do not replace your framework core with a second framework to satisfy the docs.
 
-### Example Qbox / QBX
+**Distribution note:** a ZIP called `[escrow]` does not by itself prove Cfx.re Asset Escrow encryption. Verify the protected artifact separately if you need escrowed distribution.
 
-```cfg
-ensure oxmysql
-ensure ox_lib
-ensure qbx_core
-ensure ox_inventory
-ensure ox_target
-ensure qbx_radialmenu
-ensure m4i_bridge
-ensure m4i_upload
-ensure m4i_garage
+## Step 4 — Prepare the Garage SQL, not your framework's vehicle table
+
+Open `m4i_garage/sql/install.sql`. Import it using your DB administration tool into the **same database that `oxmysql` uses for the running framework**. All statements in the current installer use **`CREATE TABLE IF NOT EXISTS`**; first review the SQL and snapshot your existing data before executing.
+
+The current installer defines these Garage-owned tables:
+
+| Table | What Garage stores |
+| --- | --- |
+| `m4ig_garages` | Garage ID, zones, spawn bays, type, access, blip/NPC, revision |
+| `m4ig_vehicles` | Registered Garage vehicles, owner, plate, condition, legal/physical status |
+| `m4ig_cases` | Police Seize/hold cases and release fees |
+| `m4ig_audit` | Authenticated action history |
+| `m4ig_temp_keys` | Temporary Garage vehicle keys |
+| `m4ig_access` | Permanent shared vehicle access |
+| `m4ig_identity_map` | Numeric Garage surrogate for external framework character IDs |
+| `m4ig_native_vehicle_links` | Optional mapping to native framework vehicle rows |
+
+**Do not drop or rewrite** the existing framework player or vehicle tables. Some optional Garage modules also create **extra support tables on startup**. If runtime DB credentials cannot create tables, a DBA must pre-apply their exact reviewed schemas with a migration account; do not grant unrestricted permanent DDL privileges solely to mask missing installer steps.
+
+**Known optional blocker:** AI Valet's `m4ig_valet_payments` path is not fully covered by the reviewed installer and has native-M4I ledger coupling. Keep `Config.DeliveryEnabled=false` outside a verified compatible setup; see [Known Limitations](../../shared/fivem-install-known-limitations.md).
+
+## Step 5 — Select your actual framework and providers
+
+In **`m4i_bridge/config.lua`**, edit the existing table (do not replace it with a new invented schema):
+
+```lua
+M4IBridgeConfig = {
+    Framework = 'qbcore',  -- CHANGE to m4i / qbcore / qbox / esx / ox_core
+    Inventory = 'framework',
+    UI = 'framework',
+    Notify = 'framework',
+    Progress = 'framework',
+    Radial = 'framework',
+    Target = 'framework',
+    Phone = 'auto',
+    Vehicles = 'auto',
+    Keys = 'framework',
+    Dispatch = 'framework',
+    Banking = 'framework',
+    Appearance = 'framework',
+    Database = 'framework'
+}
 ```
 
-Set `Framework='qbox'` in Bridge. QBX/Qbox's callable exports and `ox_lib` TextUI are supported by the shipped adapter, but a custom radial fork may need a new adapter.
+Change **only the `Framework` value** to your actual installed framework as a starting point, then pick explicit adapter IDs where the framework default differs from your installed vendors. A legacy `setr m4i_bridge_profile` line in `server.cfg` may override the Lua framework setting; **search your existing server.cfg before troubleshooting a wrong profile**.
 
-### Example ESX Legacy
+Provider mapping and custom vendor APIs belong to the [M4I Bridge Provider Manual](../../core/m4i_bridge/complete-provider-setup.md). This Garage guide tells you which provider Garage needs; it does **not** duplicate the entire Bridge product documentation.
 
-```cfg
-ensure oxmysql
-ensure es_extended
-# ensure your chosen, installed ESX or Ox inventory
-# ensure your target (e.g. ox_target) and its dependencies
-ensure m4i_bridge
-ensure m4i_upload
-ensure m4i_garage
+## Step 6 — Configure Garage interactions and security
+
+Open `m4i_garage/config.lua`. For the **easiest first test on an unknown vendor mix**, use keys mode:
+
+```lua
+Config.InteractionMode = 'keys'
+Config.InteractionOpenKey = 'E'
+Config.InteractionStoreKey = 'H'
+Config.InteractionPrompt = true
+
+-- Disable optional paid AI delivery until its full finance/schema
+-- integration is positively verified on YOUR framework.
+Config.DeliveryEnabled = false
 ```
 
-Set `Framework='esx'`. Choose `Inventory='esx_inventory'` **only when `esx_inventory` is installed and ready**; otherwise use the supported `ox_inventory` adapter if that is what your server runs. ESX does not supply a universal target, radial or phone. If there is no supported radial, use Garage **keys** interaction. Ensure the intended TextUI provider is actually available. Default Garage `keys` mode is suitable when you do not have a radial.
+These are **existing keys** in the resource, not a full replacement `config.lua`. In keys mode a radial resource is **not required for basic Open/Store**. The chosen Bridge TextUI provider displays the prompt. NPC-specific interactions can still require a Target provider.
 
-### Example native M4I
+If using a verified radial, set `Config.InteractionMode='radial'` and choose the actual registered Bridge radial adapter. If the menu does not appear, don't invent new API names: check [Radial troubleshooting](troubleshooting.md).
+
+For creator/admin access, grant a **trusted group** the exact ACE and ensure your real player is assigned to that group:
 
 ```cfg
-ensure oxmysql
-ensure m4i_registry
-ensure m4i_core
-# start configured native inventory / UI / target / radial
-ensure m4i_bridge
-ensure m4i_upload
-ensure m4i_garage
+add_ace group.admin m4i.garage.admin allow
 ```
 
-Keep `Framework='m4i'`. Do not replace native character IDs with QB or ESX identifiers.
+The command **`/garagecreator`** opens the editor only for a server-authorized admin. Bridge's `IsAdmin` can also grant access; never open a privileged Creator page to all players.
 
-### Ox Core
+## Step 7 — Put resources in the right server.cfg order
 
-Select `Framework='ox_core'`, set the actual installed inventory, target and optional radial/keys. The adapter is included, but this is **not** a claim of full live test coverage; accept it only after the same SQL, payment, player identity and multi-client tests.
+Do **not** paste all examples at once. Choose **one profile**:
 
-## Native-owned vehicles, keys and ownership
+- [M4I native order](frameworks/m4i.md)
+- [QBCore order](frameworks/qbcore.md)
+- [Qbox/QBX order](frameworks/qbox.md)
+- [ESX order](frameworks/esx.md)
+- [Ox Core order](frameworks/ox-core.md)
 
-M4I Garage currently maintains its own `m4ig_*` tables. Framework-native `player_vehicles` (QB/Qbox) and `owned_vehicles` (ESX) are not magically the same table or auto-imported. Its `Config.NativeVehicleCompatibility` is a controlled, opt-in framework compatibility/projection facility, **not** a direct-native-table storage guarantee. Current recommended event-driven setting is `SyncIntervalMs=0` (not full-table 15s polling); validate the initial data and compatibility **before** enabling projection. Do not run `qb-garages`, `qbx_garages`, `esx_garage` and M4I Garage as competing owners for the same vehicles.
+The invariant, regardless of other installed resources:
 
-For a newly purchased car, the trusted server script must call `exports.m4i_garage:GetGarageCharacterId(playerSource)` after authentication; authorize the caller in `Config.TrustedVehicleRegistrars` and register the vehicle using the documented `RegisterOwnedVehicle` export with validated model, plate, category, props, garage and GTA class. Do not pass the player's OneSync source ID as a persistent owner ID.
+```text
+oxmysql
+  → one chosen framework
+  → vendor-specific inventory / TextUI / radial / target / keys as required
+  → m4i_bridge
+  → optional m4i_upload
+  → m4i_garage
+  → custom addons relying on Garage's exports (where applicable)
+```
 
-## Cover, impound and damage
+In an existing server `ensure [qb]` or similar grouped loading, **avoid starting an individual resource twice**. Keep every vendor's declared dependency loaded before the vendor itself.
 
-- Create the `vehicle_cover` item in the **actual** inventory and wire its usable item callback. Never auto-remove on initial Use; Garage manages the five-use charge/commit/refund path. ESX default inventory and Ox/QB slot metadata behave differently—see [recipes](integration-recipes.md).
-- `Config.CoverActionCooldownSeconds=15` restricts repeated Cover / Uncover on the **same** vehicle (0 disables; maximum 3600). Server owns the timer; it persists over restarts.
-- Police seize, impound retrieval, insurance and transfer payments must pass through Bridge's real **personal account** provider, not raw SQL assumptions.
-- Deformation, body, engine, fuel, doors and glass need two-client verification after full/partial repair. Do not use test-only admin money in a customer deployment.
+## Step 8 — Create your first safe test Garage
 
-## Quick diagnostics
+After FXServer starts:
 
-In console: `refresh` then `ensure m4i_bridge` (or `restart m4i_bridge` during controlled testing), followed by `ensure m4i_garage`. Check `m4i_bridge` framework and provider availability before blaming Garage. A missing Radial option can mean the selected vendor is offline, its required add/remove API differs, Garage is outside the PolyZone, or the nearest bay is too far. Use [Troubleshooting QA](../../shared/fivem-qa-checklist.md) and [Provider Selector](../../core/m4i_bridge/third-party-providers.md).
+1. Run **`m4ig_doctor` in FXServer console**, not in player chat. Confirm Bridge, `oxmysql`, framework and relevant selected providers are started, and that Garage is ready.
+2. Connect with an authorized admin player. Run **`/garagecreator`**.
+3. Choose **+ New Garage**; give a unique ID and human-readable label; type **Public**, category **Land**, storage mode **Independent / Locked**.
+4. Select **Car/SUV/Truck** and/or **Motorcycle**, based on the intended vehicle classes.
+5. Use Free Cam to place a valid 3D **PolyZone** and at least one clear **spawn bay** with heading. Check Z height, distance from walls, NPCs and other cars.
+6. Choose an optional blip and save via **Save Garage**. Refresh the list; verify the saved/active state is returned from the server.
+7. **Register an eligible vehicle** through an already integrated trusted dealership server export, or use the admin-only `/garageadopt` workflow for an actual nearby, previously unregistered car in a staging test. Do not insert made-up ownership rows by hand.
+8. Stand in the zone near the saved bay. Press **E to Open**, inspect the vehicle, **Retrieve**, then return and press **H to Store** in keys mode.
+9. Repeat with a second player, relog, and a server restart in a planned test window; confirm no duplication and persistent fuel/engine/body state.
 
-**Release note:** `[escrow]` filenames and an `escrow_ignore` manifest do not imply Cfx.re encryption. Check your real escrow build before sale.
+![Real Garage Creator overview — sample garage records](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-creator-overview.svg)
+
+Full illustrated control walkthrough: [Garage Creator Screenshots](visual-setup-guide.md).
+
+## Step 9 — Turn on optional Garage features one at a time
+
+| Feature | Additional work required | Guide |
+| --- | --- | --- |
+| Vehicle Cover | Define `vehicle_cover` item and real usable-item hook; select object rules | [Cover setup](vehicle-cover.md) |
+| Police Seize / Impound | Create valid facility zones, police jobs/grades, real banking and target where used | [Police & Impound](police-impound.md) |
+| Insurance / GPS / Transfer | Validate real personal money provider, locations and available vehicles | [Insurance & GPS](insurance-transfer.md) |
+| Dealership sales | Register vehicle through **trusted server export**, correct mapped Garage character ID | [Integrations](integrations.md) |
+| External mechanic | Verify paid repair's trusted server permit and durable damage change | [Damage & Repair](damage-persistence.md) |
+| Global vehicle images | Optional Upload ID plus Garage UI consumer integration | [Garage image integration](integrations.md#vehicle-images-optional) |
+| LB/QS phone | Supported Bridge phone adapter plus actual `phone` inventory item | [Integrations](integrations.md#phone-companion-optional) |
+| Old QB/ESX phone/house garage list | Check exact callbacks; optional one-way native SQL compatibility, missing shims as needed | [Legacy migration](updating.md) |
+
+If a third-party script uses **unmatched APIs**, customers may need to edit that script or implement a provider adapter. This is explicitly described in [Required External Edits](integrations.md). The installer does not claim to edit private vendor code automatically.
+
+## Step 10 — Final acceptance / rollback
+
+Do not say “installed successfully” until these pass: no manifest/SQL/provider error, at least one active zone with clear spawns, correct character mapping, vehicle registered/visible, Open/Store/Retrieve successful, condition saved after reconnect, keys & group denied properly, money charged exactly once, Cover/Police only if enabled, and a planned restart with no duplicated vehicles.
+
+**Go-live checklist:** [Verification and acceptance](verification.md) · **Problems:** [Troubleshooting](troubleshooting.md) · **Backups:** [Updating](updating.md).
