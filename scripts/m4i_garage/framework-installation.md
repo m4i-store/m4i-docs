@@ -1,5 +1,8 @@
 # M4I Garage — Install on M4I, QBCore, Qbox/QBX, ESX or Ox Core
 
+> **PICTURE GUIDES:** [Creator and Garage UI screenshots](visual-setup-guide.md), [configuration option-by-option](customization-reference.md), and [Mechanic / Finance integration screenshot](mechanic-visual-guide.md). Start with the [complete installer](complete-installation.md) for all script edits.
+
+
 > **CURRENT INSTALLATION — READ FIRST:** [Complete Garage installation — all required external edits](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
 
 
