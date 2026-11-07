@@ -1,5 +1,10 @@
 # M4I Garage — Complete Installation, External Script Edits & Go-Live Guide
 
+> **VISUAL STEP-BY-STEP:** [Garage Creator screenshots and clickable-field explanations](visual-setup-guide.md) · [Every editable Garage setting](customization-reference.md) · [Mechanic/Finance invoice UI screenshot and repair setup](mechanic-visual-guide.md). The images show actual frontend UI with **sample data**, not a production game session.
+
+![Real Garage Creator screenshot — illustrative location data](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-creator-overview.svg)
+
+
 **Current source:** Garage `0.1.139-alpha`, Bridge `1.5.19-rc.1`, Upload `0.2.1-alpha`. Reviewed against the M4I / QBCore / ESX / Qbox test resources on **7 November 2026**. This is the **master customer checklist**, replacing historical versioned test reports as installation guidance.
 
 **Scope:** This guide identifies every installation-time configuration and supported external script change found in these shipped resources. A third-party fork may use different functions or paths: follow its own documentation and implement/test a matching Bridge adapter; no finite guide guarantees every unknown vendor API.
