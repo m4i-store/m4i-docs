@@ -1,5 +1,8 @@
 # M4I Bridge — Complete Installation and Editing Third-Party Scripts
 
+> **SCREEN-BY-SCREEN CONTEXT:** After selecting a provider, inspect the [actual Garage Creator and player Garage screenshots](../../scripts/m4i_garage/visual-setup-guide.md). For real repair integration use the [Mechanic/Finance screenshot guide](../../scripts/m4i_garage/mechanic-visual-guide.md). Bridge itself is configured in Lua and does not ship a standalone setup wizard.
+
+
 **Shipped revision:** `m4i_bridge 1.5.19-rc.1` · **Garage:** `0.1.139-alpha` · 7 November 2026. Start here if your FiveM server has non-M4I inventory, radial, target, phone, keys, banking, dispatch, progress, text UI, or custom scripts.
 
 ## 1. Mandatory versus optional
