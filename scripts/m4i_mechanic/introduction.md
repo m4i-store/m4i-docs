@@ -1,6 +1,6 @@
 # m4i_mechanic
 
-> **NEW PRACTICAL GUIDE:** [Mechanic settings and real Finance billing UI screenshot](../m4i_garage/mechanic-visual-guide.md). The source `m4i_mechanic` is a backend fulfilment script, not a separate mechanic NUI. The example screenshot belongs to `m4i_finance` **development preview**. Includes exact configuration keys, allowed jobs, service availability, Garage repair persistence and framework compatibility cautions.
+> **ILLUSTRATED MECHANIC GUIDE:** [Mechanic settings and real Finance billing UI screenshot](finance-integration.md). The source `m4i_mechanic` is a backend fulfilment script, not a separate mechanic NUI. The example screenshot belongs to `m4i_finance` **development preview**. Includes exact configuration keys, allowed jobs, service availability, Garage repair persistence and framework compatibility cautions.
 
 ![M4I Finance mechanic billing interface — demo preview, not real payments](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/mechanic-invoice-finance-preview.svg)
 
@@ -21,7 +21,7 @@ The VPS copy at resources/[m4i]/m4i_mechanic was treated as the most current can
 
 ## Integration and configuration
 
-The shipped Mechanic code currently calls `m4i_core` for character identity and accepts trusted invoice calls from `m4i_finance`. It uses `m4i_garage:AuthorizeFullRepair` for signed cars and `oxmysql` for persistence. **It is native-M4I-specific without an external-framework adapter.** Confige validates four runtime settings; jobs, service allowlists and vehicle class filters remain file/server controlled. [Read the full illustrated source-derived setup and field-by-field explanation](../m4i_garage/mechanic-visual-guide.md).
+The shipped Mechanic code currently calls `m4i_core` for character identity and accepts trusted invoice calls from `m4i_finance`. It uses `m4i_garage:AuthorizeFullRepair` for signed cars and `oxmysql` for persistence. **It is native-M4I-specific without an external-framework adapter.** Confige validates four runtime settings; jobs, service allowlists and vehicle class filters remain file/server controlled. [Read the full illustrated source-derived setup and field-by-field explanation](finance-integration.md).
 
 ## Documentation status
 
