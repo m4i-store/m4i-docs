@@ -1,5 +1,10 @@
 # m4i_mechanic
 
+> **NEW PRACTICAL GUIDE:** [Mechanic settings and real Finance billing UI screenshot](../m4i_garage/mechanic-visual-guide.md). The source `m4i_mechanic` is a backend fulfilment script, not a separate mechanic NUI. The example screenshot belongs to `m4i_finance` **development preview**. Includes exact configuration keys, allowed jobs, service availability, Garage repair persistence and framework compatibility cautions.
+
+![M4I Finance mechanic billing interface — demo preview, not real payments](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/mechanic-invoice-finance-preview.svg)
+
+
 **Source inventory:** confirmed in the live Roleplay VPS filesystem on 2026-10-21. This page is a source-derived inventory, not a claim of runtime test coverage.
 
 **Manifest description:** M4I Mechanic — paid service fulfillment and persistent engine state
