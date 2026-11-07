@@ -96,4 +96,11 @@ Main concepts:
 
 Each image is from the actual delivered HTML/CSS/JS NUI version, **captured outside FiveM with synthetic example data**. It demonstrates the controls and flow, not successful server-side permissions, database writes, actual GTA vehicle physics, or customer-specific addons. Confirm the real interactions and saved values in a live FiveM session.
 
-Next: [Full Installer](complete-installation.md), [Configuration Reference](customization-reference.md), [Mechanic/Billing Visual Setup](mechanic-visual-guide.md), [Bridge Providers](../../core/m4i_bridge/complete-provider-setup.md), [Final Acceptance QA](../../shared/fivem-qa-checklist.md).
+Next: [Full Installer](complete-installation.md), [Configuration Reference](customization-reference.md), [Garage Vehicle Damage and Repairs](damage-persistence.md), [Bridge Providers](../../core/m4i_bridge/complete-provider-setup.md), [Final Acceptance QA](../../shared/fivem-qa-checklist.md).
+
+### More Garage feature screenshots
+
+- [Vehicle Cover Rules, loaded and editable](vehicle-cover.md) — real NUI screenshot with sample rules
+- [Police Seizure](police-impound.md) — actual officer's Seize form and custody explanation
+- [Insurance, GPS and Transfer](insurance-transfer.md) — actual Garage Insurance interface
+- [Player's vehicle list](player-guide.md) — search, conditions, ownership and Store/Retrieve
