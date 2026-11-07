@@ -1,5 +1,8 @@
 # Vehicle Cover Item — Add It to Your Existing Inventory
 
+> **VISUAL LOCATION OF COVER CONFIG:** Open `/garagecreator` → **Vehicle Covers**. See the [actual Garage Creator screenshots and Cover explanation](visual-setup-guide.md), plus the [complete editable options reference](customization-reference.md). The Ox client Use adapter below remains required where the inventory does not register the item event itself.
+
+
 **Applies to** M4I Garage 0.1.139-alpha + M4I Bridge 1.5.19-rc.1. These instructions apply to the optional **Vehicle Cover** feature. No vehicle-cover item is required merely to install and use the ordinary Open/Store Garage feature.
 
 ## Do customers need to create an item?
