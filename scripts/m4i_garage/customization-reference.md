@@ -114,7 +114,7 @@ Use the [real Garage Editor screenshots](visual-setup-guide.md) for ID, Name, St
 | `VehicleDeformation.plateBlacklist` | empty | Exclude special plates for validated reasons |
 | `RepairTrustedResources` | `m4i_mechanic`, `m4i_admin_next` | Trusted **server resource names** allowed to issue the full-repair permit |
 
-**Mechanic example:** a custom mechanic must first have a real trusted **server-side completed repair** event, call the Garage permit contract and be in `Config.RepairTrustedResources`. A client-only full repair may look clean until Store, but later retrieve old deformation. See [Mechanic screenshot and integration](mechanic-visual-guide.md).
+**Mechanic example:** a custom mechanic must first have a real trusted **server-side completed repair** event, call the Garage permit contract and be in `Config.RepairTrustedResources`. A client-only full repair may look clean until Store, but later retrieve old deformation. See [Garage damage/repair](damage-persistence.md).
 
 ## 7. Fees, insurance, impound, police and delivery
 
@@ -187,4 +187,4 @@ Defaults: `drivingStyle='normal'` (`passive,normal,aggressive,very_aggressive`),
 5. Verify with `m4ig_doctor`, actual in-game screen, two clients, real permissions, payment and image/vehicle persistence.
 6. On failure, restore matching config/SQL backup; do not blindly reset live vehicle/cover state.
 
-**Related:** [Real UI screenshots](visual-setup-guide.md) · [Mechanic invoice screenshots](mechanic-visual-guide.md) · [Complete Installation](complete-installation.md) · [Vehicle Cover Item](vehicle-cover-item.md) · [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+**Related:** [Real UI screenshots](visual-setup-guide.md) · [Garage damage/repair](damage-persistence.md) · [Complete Installation](complete-installation.md) · [Vehicle Cover Item](vehicle-cover-item.md) · [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
