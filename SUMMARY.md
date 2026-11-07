@@ -94,6 +94,7 @@
       - [Installation](scripts/m4i_garage/installation.md)
       - [Five-Framework Installation](scripts/m4i_garage/framework-installation.md)
       - [Integration Recipes](scripts/m4i_garage/integration-recipes.md)
+      - [How to Add Vehicle Cover Item](scripts/m4i_garage/vehicle-cover-item.md)
       - [Configuration](scripts/m4i_garage/configuration.md)
       - [Integration](scripts/m4i_garage/integration.md)
       - [Five Frameworks and Bridge Providers](scripts/m4i_garage/framework-compatibility.md)
