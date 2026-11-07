@@ -1,5 +1,8 @@
 # m4i_garage — Changelog
 
+> **HISTORICAL CHANGELOG:** For the currently documented `0.1.139-alpha` source and supported customer workflows, start at [Garage Overview](introduction.md), [Installation](installation.md) and [Client/Server APIs](exports.md). Individual older milestone entries do not certify current live compatibility.
+
+
 ## 0.1.123-alpha — 2026-11-03 (staged TEST VPS source)
 
 - Added external Framework **bank money adapters** in Bridge for Qbox, QBCore, ESX and Ox Core, with invalid/insufficient-funds/refund source-contract tests.
