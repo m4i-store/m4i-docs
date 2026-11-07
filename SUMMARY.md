@@ -19,6 +19,7 @@
     - [Changelog](core/m4i_core/changelog.md)
   - m4i_bridge
     - [Introduction](core/m4i_bridge/introduction.md)
+    - [Full Installation — All Provider Edits](core/m4i_bridge/complete-provider-setup.md)
     - [Installation](core/m4i_bridge/installation.md)
     - [Framework Setup & Selector](core/m4i_bridge/setup-selector.md)
     - [Configuration](core/m4i_bridge/configuration.md)
@@ -91,6 +92,7 @@
     - [m4i_gameplay](scripts/m4i_gameplay/introduction.md)
     - m4i_garage
       - [Introduction](scripts/m4i_garage/introduction.md)
+      - [Complete Installation — All Scripts & SQL](scripts/m4i_garage/complete-installation.md)
       - [Installation](scripts/m4i_garage/installation.md)
       - [Five-Framework Installation](scripts/m4i_garage/framework-installation.md)
       - [Integration Recipes](scripts/m4i_garage/integration-recipes.md)
@@ -105,6 +107,7 @@
     - [m4i_inventory](scripts/m4i_inventory/introduction.md)
   - m4i_upload
     - [Introduction](scripts/m4i_upload/introduction.md)
+    - [Full Installation — Consumer UI Edits](scripts/m4i_upload/complete-installation.md)
     - [Installation](scripts/m4i_upload/installation.md)
     - [Image Integrations](scripts/m4i_upload/integration.md)
     - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
@@ -121,6 +124,7 @@
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)
   - [FiveM Acceptance Checklist](shared/fivem-qa-checklist.md)
+  - [Installation Limitations & Required Fixes](shared/fivem-install-known-limitations.md)
   - [Naming Conventions](shared/naming-conventions.md)
   - [Integration Rules](shared/integration-rules.md)
   - [M4I Data Access Policy](shared/data-access-policy.md)
