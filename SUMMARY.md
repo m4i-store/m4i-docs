@@ -93,6 +93,9 @@
     - m4i_garage
       - [Introduction](scripts/m4i_garage/introduction.md)
       - [Complete Installation — All Scripts & SQL](scripts/m4i_garage/complete-installation.md)
+      - [Visual UI Walkthrough — Screenshots](scripts/m4i_garage/visual-setup-guide.md)
+      - [Every Setting Explained — Customization](scripts/m4i_garage/customization-reference.md)
+      - [Mechanic & Finance — Illustrated Integration](scripts/m4i_garage/mechanic-visual-guide.md)
       - [Installation](scripts/m4i_garage/installation.md)
       - [Five-Framework Installation](scripts/m4i_garage/framework-installation.md)
       - [Integration Recipes](scripts/m4i_garage/integration-recipes.md)
