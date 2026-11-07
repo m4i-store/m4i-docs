@@ -1,5 +1,8 @@
 # M4I Upload — Installation on Any Framework
 
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Upload installation — consumer UI code and permissions](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 **Resource:** `m4i_upload` · **Version:** `0.2.1-alpha` · **Updated:** 7 November 2026.
 
 M4I Upload is a **central image asset library**, independent of QBCore/Qbox/ESX/M4I/Ox Core player frameworks. Upload a file once and resolve its image ID in any compatible item, vehicle, phone or UI script. Categories are **organisational only**, not permission barriers. Consumers should integrate **through M4I Bridge**; legacy direct Upload exports remain for compatibility.
