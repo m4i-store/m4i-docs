@@ -1,183 +1,77 @@
-# Providers
-
-## Provider system overview
-
-A provider is a concrete integration for a bridge domain such as framework, inventory, UI, target, or database access.
-
-`m4i_bridge` isolates provider-specific logic in adapters so M4I scripts remain provider-neutral.
-
-Provider selection is driven by `config/providers.lua`.
-
-## Supported provider matrix
-
-### Framework
-
-- `m4i` -> FiveM resource name exactly `m4i_core`
-- `qbox`
-- `qbcore`
-- `esx`
-- `ox_core`
-
-### Inventory
-
-- `ox_inventory`
-- `qb_inventory`
-
-### UI
-
-- `ox_lib`
-- `qb_menu`
-- `custom`
-
-### Notify
-
-- `ox_lib`
-- `framework`
-- `custom`
-
-### Progress
-
-- `ox_lib`
-- `progressbar`
-- `custom`
-
-### Target
-
-- `ox_target`
-- `qb_target`
-- `custom`
-
-### Dispatch
-
-- `none`
-- `ps_dispatch`
-- `cd_dispatch`
-- `qs_dispatch`
-
-### Database
-
-- `oxmysql`
-
-## Current framework defaults
-
-Native M4I is now the default framework mode:
-
-```lua
-framework = "m4i"
-```
-
-The default automatic framework priority is intentionally M4I-only:
-
-```lua
-framework = { "m4i" }
-```
-
-This means the normal M4I configuration will **not silently fall back** to QBCore, Qbox, ESX, or Ox Core if `m4i_core` becomes unavailable.
-
-Autodetect remains disabled by default. External framework adapters remain installed for explicit compatibility mode, and an operator can intentionally select one of them through configuration or a profile-scoped provider override.
-
-## M4I provider readiness
-
-The native `m4i` provider is implemented by the resource named exactly `m4i_core`.
-
-The adapter does not consider it healthy merely because the resource is started. The normalized provider surface must be available and `IsReady()` must report ready. Bridge framework-domain recovery handles late Core readiness/resource restart without changing the default provider to another core.
-
-## Universal v4 capability semantics
-
-Framework providers do not all expose identical concepts.
-
-The v4 contract reports capabilities for operations such as:
-
-- canonical character identity
-- money accounts
-- idempotent money mutations
-- primary job
-- duty
-- metadata
-- groups
-
-M4I scripts must not assume that a capability exists just because a provider is selected.
-
-Use:
-
-```lua
-local info = exports.m4i_bridge:GetFrameworkCapabilities()
-```
-
-Unsupported semantics should fail explicitly.
-
-## Native M4I Data Layer capabilities
-
-The following capabilities are native to provider `m4i` / resource `m4i_core`:
-
-```text
-nativeDataLayer
-playerSnapshot
-bulkPlayerSnapshot
-dataLayerState
-dataSubscriptions
-```
-
-They expose the shipped M4I Data Layer snapshot/subscription/observability contract through `m4i_bridge`.
-
-They are **not** universal framework features. For `qbox`, `qbcore`, `esx`, and `ox_core`, these flags remain false/unsupported unless a future contract explicitly defines otherwise.
-
-The bridge must not emulate native M4I Data Layer capabilities by caching/intercepting another framework's data.
-
-## Data ownership rule
-
-Provider selection does **not** mean the bridge owns provider persistence.
-
-- `m4i`: `m4i_core` owns the M4I Data Layer.
-- `qbox`: Qbox owns its framework data/cache/persistence.
-- `qbcore`: QBCore owns its framework data/cache/persistence.
-- `esx`: ESX owns its framework data/cache/persistence.
-- `ox_core`: Ox Core owns its framework data/cache/persistence.
-
-There is no M4I Data Proxy layered over the non-M4I frameworks.
-
-## Native subscription ownership
-
-When an M4I gameplay resource subscribes through `m4i_bridge` while provider `m4i` is selected:
-
-1. bridge captures the gameplay resource with `GetInvokingResource()`
-2. bridge delegates that resource name to `m4i_core`
-3. Core applies per-owner limits and cleanup to the gameplay resource
-4. direct owner unsubscribe and resource stop remove the delegated bookkeeping
-5. bridge stop/crash triggers defensive cleanup of all delegated callback references
-
-Only the resource named exactly `m4i_bridge` can use the Core owner-delegation override. This is a narrow native integration contract, not a generic provider feature.
-
-## Resolution and fallback
-
-With the default M4I configuration:
-
-1. selected framework provider `m4i` is attempted
-2. default framework priority contains only `m4i`
-3. autodetect is disabled
-4. registered-provider fallback is disabled
-5. if M4I is temporarily unavailable, the framework domain can soft-disable and recover when `m4i_core` becomes healthy; it does not silently become another framework
-
-If an operator explicitly selects or enables another compatibility provider, that is a deliberate deployment choice and its own data architecture remains authoritative.
-
-## Health checks
-
-Resolver health behavior includes:
-
-- periodic health checks
-- failure counting per provider
-- disable-after-threshold behavior
-- recovery/reselection paths
-
-Provider health is visible through bridge debug/metrics snapshots.
-
-## Adding a new provider
-
-1. implement the adapter for the required domain/side
-2. declare exact dependencies and capabilities
-3. register it through the bridge registry
-4. add it to provider configuration where appropriate
-5. run conformance tests for every capability it advertises
-6. test stop/restart/recovery behavior
-
-Provider logic stays inside adapters. M4I gameplay scripts stay provider-neutral.
+# M4I Bridge — Choose Third-Party Providers & Custom Integrations
+
+**Bridge:** \`1.5.19-rc.1\` · **Audience:** owners of existing QBCore, QBX/Qbox, ESX, M4I, and Ox Core bases.
+
+**Rule:** keep the installed framework and its data. Bridge translates M4I calls into the **configured adapter**. Do not randomly rename a third-party resource or paste its direct exports into Garage. Different versions/forks may expose different APIs; an adapter must match the real export signatures and return values.
+
+## Provider selector: choose what you already use
+
+| Function | Shipped adapter IDs (not necessarily resource names) | Notes |
+| --- | --- | --- |
+| Framework | \`m4i\`, \`qbcore\`, \`qbox\`, \`esx\`, \`ox_core\` | Select exactly one; no silent change of core |
+| Inventory | \`m4i_inventory\`, \`ox_inventory\`, \`qb_inventory\`, \`esx_inventory\` | \`esx_inventory\` requires its matching installed resource, not just ESX Core |
+| UI/TextUI | \`m4i_hud\`, \`ox_lib\`, \`qb_textui\`, \`esx_textui\`, \`qb_menu\`, \`native\`, \`custom\` | Check context/input versus TextUI support; these are not interchangeable |
+| Notify | \`framework\`, \`m4i_hud\`, \`ox_lib\`, \`native\`, \`custom\` | Framework mapping is QB/ESX/Qbox aware |
+| Progress | \`ox_lib\`, \`progressbar\`, \`esx_progressbar\`, \`native\`, \`custom\` | Select an installed provider |
+| Radial | \`m4i_radialmenu\`, \`qb_radialmenu\`, \`qbx_radialmenu\`, \`qs_radialmenu\`, \`custom\` | No bundled \`ox_lib\` radial adapter; source-tested, fork-specific runtime QA required |
+| Target | \`m4i_target\`, \`ox_target\`, \`qb_target\`, \`custom\` | Verify local-entity/zone registration and remove calls |
+| Phone custom app | \`lb_phone\`, \`qs_smartphone\`; \`auto\` or \`disabled\` | \`qb-phone\` is **not** an embeddable custom app provider |
+| Keys | \`qb_vehiclekeys\`, \`qbx_vehiclekeys\`, framework/custom with adapter | Vehicle keys need real server-side grant/verify |
+| Banking | Framework account; shipped \`qb_banking\` / \`renewed_banking\` adapters | Use **personal** balance via framework, not society bank SQL |
+| Dispatch | \`none\`, \`ps_dispatch\`, \`cd_dispatch\`, \`qs_dispatch\` | Only compatible versions of those resources |
+| Database | \`oxmysql\` | Never redirect arbitrary SQL to the player's framework table |
+| Vehicles | \`auto\`, \`manual\`/registered vehicle adapter | Classification needs a valid source; consider \`m4i_registry\` |
+
+**Adapter ID ≠ actual resource folder name:** \`qb_target\` -> \`qb-target\`; \`qb_radialmenu\` -> \`qb-radialmenu\`; \`qbox\` -> \`qbx_core\`; \`lb_phone\` -> \`lb-phone\`; \`qs_smartphone\` -> \`qs-smartphone\`. The implementation in \`adapters/<domain>/<id>/\` is the authority.
+
+## Pick an alternative without touching the framework
+
+In \`m4i_bridge/config.lua\`, retain your \`Framework\` and choose, for example:
+
+\`\`\`lua
+Inventory = 'ox_inventory',
+UI = 'ox_lib',
+Notify = 'framework',
+Progress = 'ox_lib',
+Radial = 'qb_radialmenu',
+Target = 'ox_target',
+Phone = 'lb_phone',
+\`\`\`
+
+This **illustrates values inside** \`M4IBridgeConfig\`, not a complete file. Only select a provider if its adapter matches your installed resource. For an unsupported radial, use Garage keys mode until you write a matching adapter; no runtime guessing.
+
+## Integrating a small script (notifications, UI, one NPC)
+
+Prefer Bridge's public exports in your own resource. Example server-side notification:
+
+\`\`\`lua
+-- server.lua in YOUR resource (declare dependency 'm4i_bridge')
+local ok,err = exports.m4i_bridge:NotifyPlayer(sourceId,{
+    title='Vehicle', description='Action completed', type='success'
+})
+if ok==false then print('Bridge Notify failed: '..tostring(err)) end
+\`\`\`
+
+Calls that display UI/NUI must use the **client** Bridge API. Do not call client-only exports from a server file. For a simple command, start with a Bridge framework, notify, or progress adapter; no direct QB/ESX imports into the M4I script.
+
+## Integrating a large script (inventory, phone, dealership, mechanic, police)
+
+- **Inventory/item:** match your inventory's metadata/slot semantics; for \`vehicle_cover\`, **do not consume the item when Use first fires**. Garage commits its five-use receipt only after a validated action.
+- **Dealership:** register a new Garage-owned vehicle from a **trusted server resource**; use \`GetGarageCharacterId\`, allowlist \`Config.TrustedVehicleRegistrars\`, validate plate/model/class and garage. Do not assume native ownership SQL rows have been imported.
+- **Mechanic:** integrate repair through the Garage server authority; allowlist only exact trusted repair resources in \`Config.RepairTrustedResources\`. External full/partial repairs need test coverage for deformation, windows and tank damage.
+- **Phone:** LB Phone and QS Smartphone custom-app providers are available. For QB Phone use a verified compatibility callback/backend, not a non-existent \`AddCustomApp\` export. NPWD requires its own companion adapter.
+- **Keys:** Bridge/server validates plate, caller and vehicle access; do not issue keys solely on an untrusted client event.
+- **Bank/insurance:** check/refund using framework personal bank accounts through Bridge; avoid writing \`players\`, \`owned_vehicles\` or \`player_vehicles\` balances directly.
+- **Jobs/Police:** Bridge normalizes job data, while Garage enforces seizure and custody permissions server-side.
+
+## A genuinely new vendor: custom adapter recipe
+
+1. Verify the vendor resource actually has the documented client/server exports and that it starts correctly.
+2. Copy a matching template under \`m4i_bridge/adapters/_templates/<domain>/\` to \`adapters/<domain>/my_vendor/client.lua\` or \`server.lua\`.
+3. Set \`meta={domain='<domain>',provider='my_vendor',side='client' or 'server',implemented=true,dependencies={'real-resource-name'}}\` **only after implementing** all required methods. Use \`Bridge.registerAdapter(domain,'my_vendor',side,adapter)\`.
+4. Configure \`Radial='my_vendor'\`, \`Target='my_vendor'\`, etc. in the customer \`config.lua\`, not in internal framework code. The wildcard \`adapters/**/client.lua\` and \`adapters/**/server.lua\` scripts must load your implementation.
+5. Verify **both** add and remove paths, callback payloads, error reporting, resource restart, reconnect, invalid permissions and multi-player concurrency.
+
+The shipped \`adapters/radial/custom/client.lua\` allows configuring a vendor \`resource\`, \`addExport\` and \`removeExport\` **inside that adapter**; \`adapters/target/custom/client.lua\` similarly configures add/remove entity, zone and model exports. These simple adapters are **not** generic converters for all fork APIs. If the vendor returns a different payload, implement a dedicated adapter instead. Do not return \`true\` for failed registration.
+
+**Read next:** [Installation](setup-selector.md) · [Garage recipes](../../scripts/m4i_garage/integration-recipes.md) · [Troubleshooting](../../shared/fivem-qa-checklist.md).
