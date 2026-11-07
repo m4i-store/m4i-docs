@@ -1,5 +1,12 @@
 # M4I Upload — Complete Install and Wiring Images into Any Script
 
+> **VISUAL TUTORIAL:** This screenshot comes from the shipped Upload UI in an empty **sample catalog**, not a live store. It shows the exact fields a customer changes. Do not confuse `Image key` with a local file name.
+
+![Actual M4I Upload image manager screen — sample empty catalog](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/upload-image-form-ui.svg)
+
+**Image upload walkthrough:** (1) Open `/m4iupload` with `m4i.upload` ACE; (2) click **Upload image**; (3) choose a globally unique **Image key** such as `vehicle_sultan`; (4) enter the **Display name**; (5) choose the **Image file**; (6) choose **Save original** if animation and source quality must be preserved, or **Optimize image** for a deliberately converted WebP preview; (7) save and verify it appears in **Image gallery**; (8) use that image ID in the Inventory/Garage/Phone consumer through its real Bridge/NUI adapter. A global ID alone does not edit every vendor's UI.
+
+
 **Release:** `m4i_upload 0.2.1-alpha`, with `m4i_bridge 1.5.19-rc.1`, reviewed 7 November 2026.
 
 ## 1. Mandatory files and prerequisites
