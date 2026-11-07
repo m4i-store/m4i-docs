@@ -1,5 +1,8 @@
 # M4I Garage — Install on M4I, QBCore, Qbox/QBX, ESX or Ox Core
 
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Garage installation — all required external edits](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 > **Vehicle Cover item setup:** The item is not injected into customer inventories. Read [how to add `vehicle_cover` to M4I, QBCore, Ox/QBX or ESX](vehicle-cover-item.md), including the Ox client adapter and five-use behaviour.
 
 
