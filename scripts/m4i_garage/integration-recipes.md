@@ -1,5 +1,8 @@
 # M4I Garage — Practical Integrations (small scripts to full systems)
 
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Garage installation — all required external edits](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 > **Ready-to-copy item definitions:** [Vehicle Cover for QBCore, Ox/QBX, ESX and M4I](vehicle-cover-item.md). The generic inventory table below does not by itself create the item or wire the Ox client Use event.
 
 
