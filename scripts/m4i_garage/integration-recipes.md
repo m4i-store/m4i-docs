@@ -1,5 +1,8 @@
 # M4I Garage — Practical Integrations (small scripts to full systems)
 
+> **Ready-to-copy item definitions:** [Vehicle Cover for QBCore, Ox/QBX, ESX and M4I](vehicle-cover-item.md). The generic inventory table below does not by itself create the item or wire the Ox client Use event.
+
+
 **Version:** Garage `0.1.139-alpha`, Bridge `1.5.19-rc.1`. Every integration chooses the customer's **installed, adapter-supported** resources. Neither M4I Garage nor Bridge should rewrite a vendor framework or database table just to make an unsupported export appear to exist.
 
 ## 1. A small script: show Garage UI from another resource
