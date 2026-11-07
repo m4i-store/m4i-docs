@@ -1,44 +1,91 @@
-# m4i_garage — Troubleshooting
+# Troubleshooting — Garage Errors and Fixes
 
-This page covers the public Client/Server API delivered in TEST VPS source `v0.1.123-alpha`.
+**Current source:** `m4i_garage 0.1.139-alpha` · M4I Bridge `1.5.19-rc.1`. Troubleshoot **the failing layer** before changing code or deleting SQL.
 
-| Symptom | Likely cause | Safe check |
-| --- | --- | --- |
-| Export `No such export` | Wrong resource version or `m4i_garage` not started | Check `ensure m4i_garage`, `fxmanifest.lua` and script load order |
-| `GetCurrentGarage()` returns `nil` | Client has not received synced garages or is outside a normal configured polygon | Confirm a valid Garage Creator zone, not Impound/Seized/Cover-only |
-| `OpenGarage() -> false, NOT_AT_GARAGE` | Caller is physically outside the configured 3D Garage zone | Walk into the correct zone; do not bypass server location checks |
-| `OpenGarage() -> true, REQUESTED` but no UI | Initial client request succeeded, later server validation rejected it | Inspect client F8 and server logs for `vehicles` action result |
-| `OpenGarage('wrong-id')` | Invalid explicitly named garage | API now refuses unknown IDs instead of falling back to another nearby garage |
-| `GetVehicleCondition(handle) -> NOT_HYDRATED` | The vehicle's OneSync restoration has not finished | Wait for signed `m4iGarageHydrated=true`; do not treat blank natives as full repair |
-| `GetVehicleEntity(id) -> NOT_IN_WORLD` | Car is stored, outside world, or no longer a signed live network entity | Read `GetVehicleCondition(id).physicalStatus` server-side |
-| `GetVehicleByPlate() -> INVALID_PLATE` | Invalid characters/length; plate may be unregistered | Normalize player input and supply 1–8 valid characters |
-| `HasVehicleAccess() -> NO_ACCESS` | Player is not the canonical owner or shared/temporary key holder | Use Bridge-backed identity and Garage's canonical key access |
-| `RegisterOwnedVehicle() -> UNTRUSTED_RESOURCE` | Resource not on registrar allowlist | Verify actual invoking resource, review rights, then configure allowlist |
-| Full repair appears to restore old dents later | Unverified repair, stale client mesh or missing trusted permit | Follow `BeginFullRepair` trusted flow; do not clear SQL damage manually |
-| Extra detached doors on observer | Local GTA synthetic deformation replay or custom model debris | Check the updated observer guard and test two real clients; door guard does not necessarily protect custom bumper/fender fragments |
+## First diagnosis in 60 seconds
 
-## Cross-framework provider and identity issues
+1. Check resource names and states: `oxmysql`, your one chosen framework, `m4i_bridge` and `m4i_garage`. Do not leave an old garage controlling the same vehicles.
+2. Run **`m4ig_doctor` in FXServer console**, not in game chat. It prints framework/inventory/target/radial readiness and Garage `ready`.
+3. Check actual selected provider IDs in `m4i_bridge/config.lua` and legacy `setr m4i_bridge_profile` overrides.
+4. Check **F8** and FXServer console for the exact error or request rejection.
+5. Open `/garagecreator` with admin rights; confirm at least one **enabled zone with valid spawn bay**, and test the easiest `InteractionMode='keys'` baseline.
+6. Make one change at a time and retry with an authorized Garage-owned test vehicle. Avoid production SQL resets.
 
-If a Garage script works on native M4I but owner-related operations fail on Qbox/QBCore/ESX/Ox Core, confirm Bridge is explicitly set to the correct Framework and that the `m4ig_identity_map` table exists. Invoke `GetGarageCharacterId(source)` only from a server resource after player character load; clients use the server-published `m4igCharacterId` state. Never cast the raw string citizenid to a number or directly edit garage ownership SQL.
+## Installation and provider problems
 
-If the Garage F1 menu/Impound attendant disappears, confirm the configured Bridge `radial` / `target` provider is installed, started and actually provides Add/Remove APIs. Unsupported/custom adapters need implementation before claiming compatibility.
+| Symptom | Most likely cause / what to do |
+| --- | --- |
+| **Could not find resource `m4i_garage`** | ZIP wrapper nested incorrectly or folder renamed. Need `resources/[m4i]/m4i_garage/fxmanifest.lua`. |
+| **Missing `@m4i_bridge/shared/zones.lua`** | Bridge resource missing, renamed, old release, or started after Garage; install real Bridge and use correct name. |
+| **Database setup missing** | `oxmysql` wrong DB connection, Garage `sql/install.sql` not imported, table permission/migration issue. |
+| **Doctor: Bridge not ready** | Wrong framework, missing resource or provider adapter. Check Bridge config and startup states, not Garage HTML. |
+| **Doctor says radial missing** | In `radial` mode start the selected real radial; alternatively use `Config.InteractionMode='keys'` with E/H. |
+| **Selected framework not what expected** | Legacy `setr m4i_bridge_profile` may override `M4IBridgeConfig.Framework`. Qbox ID is `qbox` not `qbx`. |
+| **ESX has no `esx_inventory` resource** | Do not ensure a fictitious inventory; select actual Ox Inventory or installed ESX provider in Bridge. |
+| **Ox Core reports startup but gameplay fails** | Ox Core live end-to-end tests are not completed; verify identity/jobs/bank/inventory or do not declare certified support. |
 
-If a five-use vehicle cover cannot be applied with ox_inventory/qb_inventory, that currently requires a matching atomic `ChargeVehicleCover`/`RefundVehicleCover`/`FinalizeVehicleCover` Bridge inventory integration; don't bypass this safety contract.
+## UI, zoning, radial, target
 
-## Important distinction: IDs
+| Problem | How to isolate / fix |
+| --- | --- |
+| **Garage radial menu absent on Qbox** | Check `qbx_radialmenu` **actual resource and adapter ID**, icon schema and add/remove methods. Switch to keys mode to prove Garage works; fix Bridge adapter only after. |
+| **QB radial icon appears but clicking does nothing** | Wrong selected provider, export callback signature, or action removed outside zone. Verify `qb-radialmenu` API version and Garage near saved bay. |
+| **E/H prompt missing** | Must use keys mode, be inside valid PolyZone and close to bay; TextUI provider must actually be running and not hidden by overlapping cover/target overlay. |
+| **Open/Store no action** | Garage disabled or no valid spawn bay, category mismatch, permission denied, unregistered car, player too far, passenger in vehicle, or NUI callback rejected. |
+| **Target NPC not clickable** | Target adapter add/remove entity callback mismatch, NPC not streamed, `Config.NpcModel` invalid or player outside allowed range. |
+| **Garage Creator does not open** | Missing `m4i.garage.admin` ACE or Bridge IsAdmin false; use `/garagecreator` in game, not FXServer console. |
+| **Can't save Garage zone** | Check min 3 polygon points, non-self-intersecting geometry, valid minZ/maxZ, enabled status, spawn count and overlapping invalid area; inspect server rejection. |
+| **Zone visible on wrong height** | Free Cam Z/minZ/maxZ or incorrect terrain/raycast. Test in actual GTA world, not just flat 2D map. |
+| **Blip wrong color/icon or missing** | Individual garage blip visibility, sprite/color/scale, job access and category. Public garages can share legend while having individual map pins. |
+| **Creator says stale revision** | Another admin/refresh updated authoritative record. Reload latest version, reapply only intended changes and save. |
 
-`vehicleId` is the persistent numeric Garage database ID. `vehicleHandle` is a local Client GTA entity handle. `netId` is a network ID. Passing one in place of another can query the wrong vehicle or fail to find it.
+## Cars, ownership and spawning
 
-## Safe debug sequence
+| Problem | Check |
+| --- | --- |
+| **My old QB/ESX vehicles don't appear** | They exist in original `player_vehicles`/`owned_vehicles`, not Garage's `m4ig_vehicles`. Separate migration required. |
+| **GetGarageCharacterId returns nil** | Framework character not loaded; source ID invalid; Bridge framework mapping not ready. Use trusted server export after login. |
+| **Dealer registration fails UNTRUSTED_RESOURCE** | Exact dealership resource name missing from `Config.TrustedVehicleRegistrars`; do not use a client direct call. |
+| **Dealer says INVALID_GARAGE / class mismatch** | Destination Garage category/vehicle group does not match real GTA class, `spawnType`, model or legal kind. |
+| **Two cars spawn / duplicate after relog** | Both old and M4I Garage controllers own same vehicle, or duplicate callback/repair of a failed spawn. Stop conflicting controller after migration verification. |
+| **Can't retrieve due to spawn clearance** | Every configured bay is too close to another vehicle/person/cover or has invalid Z. Add safe bays/change live spawn policy via Creator. |
+| **Passenger car disappears when storing** | Critical safety failure; verify passenger exit logic, server occupied-state checks and installed build; do not use unsafe manual delete script. |
+| **Keys work in QB but not Qbox** | Plate-based QB keys API differs from entity/network-based Qbox keys contract; use a matching provider. |
+| **Car condition resets to 0 / old dents return** | Hydration, tank and deformation observation, or full repair permit didn't persist; follow [Damage Guide](damage-persistence.md). |
 
-1. Check that `m4i_bridge`, `oxmysql` and `m4i_garage` are started, in order.
-2. Use the existing read-only exports to inspect current Garage ID, vehicle status and vehicle condition.
-3. Review F8/client and FXServer logs without dumping framework secrets, entire `props` JSON or raw player identity into public logs.
-4. Run `tests/public_exports_contract_v0221.lua` and `tests/manifest_exports_escrow_v0221.lua` on a staging copy.
-5. For visual fidelity, check the **same car** with two actual GTA clients. StateBag simulations do not validate 3D rendering or loose debris.
+## Covers, police, insurance and money
 
-No troubleshooting procedure here authorizes changing another player's vehicle ownership, money or police custody through SQL.
+| Problem | Check |
+| --- | --- |
+| **Cover item does nothing in Ox Inventory** | Define client Use event + companion resource; `consume=0`, correct slot ID; [Cover Item Recipe](vehicle-cover-item.md). |
+| **Cover item disappears after click** | Vendor inventory auto-consumption or wrong metadata receipt integration; don't deduct immediately on Use. |
+| **Cover disappears a moment after spawn** | Cover Allow/Deny zones, 3D ground and saved rules, visibility streaming and restart policy; confirm prop exists. |
+| **Can't immediately re-cover same car** | Server-enforced **15s cooldown** on success; edit `Config.CoverActionCooldownSeconds` only if desired. |
+| **Solid Cover prop launches car** | Verify early collision disable, prop removal order and vehicle freeze; use Pass-through while debugging. |
+| **Seize menu empty** | Stand near a valid eligible car (~3m), use Refresh Nearby Vehicles, ensure police job/grade and Seized facility. |
+| **Police can't release despite paying** | Check legal hold vs Impound state; seizure requires authenticated release, not ordinary owner pickup. |
+| **Insurance claim fails** | Must have current policy, valid out/occupied status, safe removal, sufficient real money; cannot bypass Police legal hold. |
+| **Money refused despite adequate player cash/bank** | Selected Bridge Banking adapter reading wrong framework account or a society balance; test personal bank get/debit/refund. |
+| **Phone Garage app missing** | LB/QS actual custom-app API mismatch, wrong Bridge Phone adapter or no `phone` inventory item. QB Phone/NPWD need dedicated adapter. |
+| **AI Delivery fails/payments table missing** | Optional feature currently has source-known schema/ledger portability issues; set `Config.DeliveryEnabled=false` until fixed/verified. |
 
-## `m4ig_doctor` / missing provider
+## Key source-verified errors
 
-Issue `m4ig_doctor` in the **txAdmin/FiveM server console**. It prints the selected framework, inventory, target and radial resource states, Bridge/Garage readiness and explicit warnings for missing vehicle classification or five-use Cover inventory receipts. It makes no database mutations. Verify `setr m4i_bridge_profile qbcore` (or your chosen profile) is set **before** loading `m4i_bridge`; an unknown profile intentionally fails to initialize.
+| Code | Meaning / expected correction |
+| --- | --- |
+| `UNTRUSTED_RESOURCE` | Dealership registrar isn't explicitly allowed by trusted server resource name |
+| `INVALID_GARAGE` | Destination ID missing, wrong type/category/class or disallowed kind |
+| `VEHICLE_GTA_CLASS_REQUIRED` | Addon vehicle class unknown or doesn't match garage category |
+| `NOT_HYDRATED` | Client attempted to inspect/repair signed car before damage state loaded |
+| `RESOURCE_NOT_ALLOWED` | Mechanic server resource absent from `RepairTrustedResources` |
+| `NOT_SIGNED` | Wrong physical vehicle/network ID, owner access or distance in repair permit |
+| `PLAYER_NOT_LOADED` | Trusted identity mapping request before framework character ready |
+| `NOT_IN_WORLD` | `GetVehicleEntity` requested stored/unspawned car |
+| `NO_ACCESS` | No Garage-owned vehicle/garage access, even if client UI renders an option |
+| `STALE_REVISION` | Admin saved against an old Garage Creator revision |
+
+## Safe evidence to collect in a support ticket
+
+Send **resource versions**, selected framework and adapter IDs, which feature fails, the relevant F8/FXServer errors, an image of the current Garage Creator tab and steps to reproduce on a test car. **Do not send DB passwords, license tokens, OAuth credentials or private player identifiers.**
+
+**Related:** [Installation](installation.md) · [Configuration](customization-reference.md) · [Five Frameworks](framework-installation.md) · [Verification](verification.md) · [Known Limitations](../../shared/fivem-install-known-limitations.md).
