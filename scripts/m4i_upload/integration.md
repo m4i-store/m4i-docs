@@ -1,5 +1,8 @@
 # M4I Upload — Global Images in Inventory, Garage, Phone and Any NUI
 
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Upload installation — consumer UI code and permissions](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+
+
 **Version:** `m4i_upload 0.2.1-alpha` · Use the **M4I Bridge** image service for new integrations. It gives every script a shared ID namespace without requiring the image to be stored once per inventory/vehicle/phone category.
 
 ## Architecture
