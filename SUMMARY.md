@@ -43,14 +43,50 @@
   - [GitHub and VPS Sync Status](core/m4i_github_sync_status.md)
 
 - Scripts
-  - Script Template
-    - [Introduction](scripts/_template/introduction.md)
-    - [Installation](scripts/_template/installation.md)
-    - [Configuration](scripts/_template/configuration.md)
-    - [Integration](scripts/_template/integration.md)
-    - [Exports](scripts/_template/exports.md)
-    - [Troubleshooting](scripts/_template/troubleshooting.md)
-    - [Changelog](scripts/_template/changelog.md)
+  - [m4i_appearance](scripts/m4i_appearance/introduction.md)
+
+  - [m4i_appearance_assets](scripts/m4i_appearance_assets/introduction.md)
+
+  - [m4i_chat](scripts/m4i_chat/introduction.md)
+
+  - [m4i_dls](scripts/m4i_dls/introduction.md)
+
+  - [m4i_finance](scripts/m4i_finance/introduction.md)
+
+  - [m4i_gameplay](scripts/m4i_gameplay/introduction.md)
+
+  - m4i_garage
+    - [Overview & Features](scripts/m4i_garage/introduction.md)
+    - Installation
+      - [Installation — Start to Finish](scripts/m4i_garage/installation.md)
+      - [Choose Your Framework](scripts/m4i_garage/framework-installation.md)
+      - [M4I Core](scripts/m4i_garage/frameworks/m4i.md)
+      - [QBCore](scripts/m4i_garage/frameworks/qbcore.md)
+      - [Qbox / QBX](scripts/m4i_garage/frameworks/qbox.md)
+      - [ESX Legacy](scripts/m4i_garage/frameworks/esx.md)
+      - [Ox Core — Extra QA](scripts/m4i_garage/frameworks/ox-core.md)
+      - [Go-Live Verification](scripts/m4i_garage/verification.md)
+    - Features & Usage
+      - [Player Guide — Open, Store, Retrieve](scripts/m4i_garage/player-guide.md)
+      - [Garage Creator — Screenshots](scripts/m4i_garage/visual-setup-guide.md)
+      - [Vehicle Covers](scripts/m4i_garage/vehicle-cover.md)
+      - [Cover Item — Every Inventory](scripts/m4i_garage/vehicle-cover-item.md)
+      - [Police Seized & Impound](scripts/m4i_garage/police-impound.md)
+      - [Insurance, GPS & Transfers](scripts/m4i_garage/insurance-transfer.md)
+      - [Vehicle Damage & Repairs](scripts/m4i_garage/damage-persistence.md)
+    - Configuration & Development
+      - [Every Setting Explained](scripts/m4i_garage/customization-reference.md)
+      - [Required External Script Edits](scripts/m4i_garage/integrations.md)
+      - [Client Exports](scripts/m4i_garage/client-exports.md)
+      - [Server Exports](scripts/m4i_garage/server-exports.md)
+      - [Commands & Permissions](scripts/m4i_garage/commands.md)
+    - Maintenance & Support
+      - [Updating & Migration](scripts/m4i_garage/updating.md)
+      - [Troubleshooting](scripts/m4i_garage/troubleshooting.md)
+      - [Changelog](scripts/m4i_garage/changelog.md)
+
+  - [m4i_hud](scripts/m4i_hud/introduction.md)
+
   - m4i_identity
     - [Introduction](scripts/m4i_identity/introduction.md)
     - [Installation](scripts/m4i_identity/installation.md)
@@ -59,6 +95,7 @@
     - [Exports](scripts/m4i_identity/exports.md)
     - [Troubleshooting](scripts/m4i_identity/troubleshooting.md)
     - [Changelog](scripts/m4i_identity/changelog.md)
+
   - m4i_interface
     - [Introduction](scripts/m4i_interface/introduction.md)
     - [Installation](scripts/m4i_interface/installation.md)
@@ -69,6 +106,23 @@
     - [Testing](scripts/m4i_interface/testing.md)
     - [Troubleshooting](scripts/m4i_interface/troubleshooting.md)
     - [Changelog](scripts/m4i_interface/changelog.md)
+
+  - [m4i_inventory](scripts/m4i_inventory/introduction.md)
+
+  - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
+
+  - [m4i_livingworld](scripts/m4i_livingworld/introduction.md)
+
+  - m4i_mechanic
+    - [Overview](scripts/m4i_mechanic/introduction.md)
+    - [Finance & Mechanic UI — Illustrated](scripts/m4i_mechanic/finance-integration.md)
+
+  - [m4i_multicharacter](scripts/m4i_multicharacter/introduction.md)
+
+  - [m4i_quickmenu](scripts/m4i_quickmenu/introduction.md)
+
+  - [m4i_radialmenu](scripts/m4i_radialmenu/introduction.md)
+
   - m4i_rental
     - [Introduction — مقدمة](scripts/m4i_rental/introduction.md)
     - [Version and Sources — حالة النسخة](scripts/m4i_rental/source-status.md)
@@ -83,61 +137,28 @@
     - [Troubleshooting — حل المشاكل](scripts/m4i_rental/troubleshooting.md)
     - [Changelog — سجل التغييرات](scripts/m4i_rental/changelog.md)
 
-  - Additional VPS M4I Scripts (source inventories)
-    - [m4i_appearance](scripts/m4i_appearance/introduction.md)
-    - [m4i_appearance_assets](scripts/m4i_appearance_assets/introduction.md)
-    - [m4i_chat](scripts/m4i_chat/introduction.md)
-    - [m4i_dls](scripts/m4i_dls/introduction.md)
-    - [m4i_finance](scripts/m4i_finance/introduction.md)
-    - [m4i_gameplay](scripts/m4i_gameplay/introduction.md)
-    - m4i_garage
-      - [Overview & Features](scripts/m4i_garage/introduction.md)
-      - Installation
-        - [Installation — Start to Finish](scripts/m4i_garage/installation.md)
-        - [Choose Your Framework](scripts/m4i_garage/framework-installation.md)
-        - [M4I Core](scripts/m4i_garage/frameworks/m4i.md)
-        - [QBCore](scripts/m4i_garage/frameworks/qbcore.md)
-        - [Qbox / QBX](scripts/m4i_garage/frameworks/qbox.md)
-        - [ESX Legacy](scripts/m4i_garage/frameworks/esx.md)
-        - [Ox Core — Extra QA](scripts/m4i_garage/frameworks/ox-core.md)
-        - [Go-Live Verification](scripts/m4i_garage/verification.md)
-      - Features & Usage
-        - [Player Guide — Open, Store, Retrieve](scripts/m4i_garage/player-guide.md)
-        - [Garage Creator — Screenshots](scripts/m4i_garage/visual-setup-guide.md)
-        - [Vehicle Covers](scripts/m4i_garage/vehicle-cover.md)
-        - [Cover Item — Every Inventory](scripts/m4i_garage/vehicle-cover-item.md)
-        - [Police Seized & Impound](scripts/m4i_garage/police-impound.md)
-        - [Insurance, GPS & Transfers](scripts/m4i_garage/insurance-transfer.md)
-        - [Vehicle Damage & Repairs](scripts/m4i_garage/damage-persistence.md)
-      - Configuration & Development
-        - [Every Setting Explained](scripts/m4i_garage/customization-reference.md)
-        - [Required External Script Edits](scripts/m4i_garage/integrations.md)
-        - [Client Exports](scripts/m4i_garage/client-exports.md)
-        - [Server Exports](scripts/m4i_garage/server-exports.md)
-        - [Commands & Permissions](scripts/m4i_garage/commands.md)
-      - Maintenance & Support
-        - [Updating & Migration](scripts/m4i_garage/updating.md)
-        - [Troubleshooting](scripts/m4i_garage/troubleshooting.md)
-        - [Changelog](scripts/m4i_garage/changelog.md)
-    - [m4i_hud](scripts/m4i_hud/introduction.md)
-    - [m4i_inventory](scripts/m4i_inventory/introduction.md)
+  - [m4i_store](scripts/m4i_store/introduction.md)
+
+  - [m4i_target](scripts/m4i_target/introduction.md)
+
+  - [m4i_underworld](scripts/m4i_underworld/introduction.md)
+
   - m4i_upload
     - [Introduction](scripts/m4i_upload/introduction.md)
     - [Full Installation — Consumer UI Edits](scripts/m4i_upload/complete-installation.md)
     - [Installation](scripts/m4i_upload/installation.md)
     - [Image Integrations](scripts/m4i_upload/integration.md)
-    - [m4i_ledgegrab](scripts/m4i_ledgegrab/introduction.md)
-    - [m4i_livingworld](scripts/m4i_livingworld/introduction.md)
-    - m4i_mechanic
-      - [Overview](scripts/m4i_mechanic/introduction.md)
-      - [Finance & Mechanic UI — Illustrated](scripts/m4i_mechanic/finance-integration.md)
-    - [m4i_multicharacter](scripts/m4i_multicharacter/introduction.md)
-    - [m4i_quickmenu](scripts/m4i_quickmenu/introduction.md)
-    - [m4i_radialmenu](scripts/m4i_radialmenu/introduction.md)
-    - [m4i_store](scripts/m4i_store/introduction.md)
-    - [m4i_target](scripts/m4i_target/introduction.md)
-    - [m4i_underworld](scripts/m4i_underworld/introduction.md)
-    - [m4i_weathersync](scripts/m4i_weathersync/introduction.md)
+
+  - [m4i_weathersync](scripts/m4i_weathersync/introduction.md)
+
+  - Script Template
+    - [Introduction](scripts/_template/introduction.md)
+    - [Installation](scripts/_template/installation.md)
+    - [Configuration](scripts/_template/configuration.md)
+    - [Integration](scripts/_template/integration.md)
+    - [Exports](scripts/_template/exports.md)
+    - [Troubleshooting](scripts/_template/troubleshooting.md)
+    - [Changelog](scripts/_template/changelog.md)
 
 - Shared Standards
   - [Installation Standards](shared/installation-standards.md)
