@@ -1,6 +1,10 @@
 # Verification Checklist — Ready for Your Server?
 
-**Product:** M4I Garage `0.1.139-alpha`. A healthy `m4ig_doctor` result is **necessary but not sufficient**. Real in-game behavior and DB state still have to pass the acceptance plan.
+
+> **New optional native deletion check for 0.1.140-alpha:** Test `DeleteOnNativeRowMissing=false` (preserves Garage car), and `true` only on a disposable linked stored car after backup. Confirm no deletion before 180 seconds, protected `out`/covered/seized/impounded cars stay untouched, and archive+audit exist after an eligible delete. [Detailed QA behavior](sql-ownership-and-deletion.md).
+
+
+**Product:** M4I Garage `0.1.140-alpha`. A healthy `m4ig_doctor` result is **necessary but not sufficient**. Real in-game behavior and DB state still have to pass the acceptance plan.
 
 ## Installation baseline
 
