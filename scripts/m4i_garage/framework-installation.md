@@ -1,5 +1,8 @@
 # Framework Installation Selector — M4I Garage
 
+> **Customer-owned native row deletion setting (new in 0.1.140-alpha):** QBCore, Qbox and ESX can select `DeleteOnNativeRowMissing = false/true` under `Config.NativeVehicleCompatibility` in Garage's `config.lua`. **`Enabled=true` is required**, and only cars with verified prior native links qualify. The default is **false**. See [SQL Ownership and Admin Deletion](sql-ownership-and-deletion.md).
+
+
 **Start here:** [Complete Garage Installation from Zero](installation.md).
 
 Choose the ONE core actually installed on your FiveM server. Each framework page tells you exactly which resource to install, which `server.cfg` lines to keep/add, which Bridge provider ID to select and which Inventory/phone/keys/vehicle-table integration may require changes.
