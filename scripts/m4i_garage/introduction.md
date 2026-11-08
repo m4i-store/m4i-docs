@@ -1,8 +1,12 @@
 # M4I Garage
 
+
+**New in 0.1.140-alpha:** The optional `Config.NativeVehicleCompatibility.DeleteOnNativeRowMissing = true/false` lets customers decide whether verified native QB/Qbox/ESX SQL deletions should also remove an eligible *normally stored* Garage-owned car. Default **false**; verified 3-minute grace + archive/audit safeguards. [Full guide](sql-ownership-and-deletion.md).
+
+
 **A complete vehicle-custody and garage system for FiveM.** Create parking locations in-game, manage who can use them, store and retrieve registered vehicles, operate Impound and Police Seized yards, protect cars with covers, and retain real vehicle condition across sessions.
 
-**Documented build:** `m4i_garage 0.1.139-alpha` · verified against shipped source on 7 November 2026. **Supported Bridge profiles:** M4I, QBCore, Qbox/QBX, ESX and Ox Core. An Ox Core adapter exists but live five-framework acceptance is **not** yet complete: see the [Ox Core guide](frameworks/ox-core.md).
+**Documented build:** `m4i_garage 0.1.140-alpha` · verified against shipped source on 7 November 2026. **Supported Bridge profiles:** M4I, QBCore, Qbox/QBX, ESX and Ox Core. An Ox Core adapter exists but live five-framework acceptance is **not** yet complete: see the [Ox Core guide](frameworks/ox-core.md).
 
 ![M4I Garage Creator interface — current frontend with sample location data](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-creator-overview.svg)
 
