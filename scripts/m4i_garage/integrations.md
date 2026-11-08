@@ -1,5 +1,7 @@
 # Garage Integrations — Required Changes in Other Resources
 
+> **Vehicle SQL authority and deletions:** [What happens if an admin deletes from `player_vehicles` or `owned_vehicles`](sql-ownership-and-deletion.md). There is no public `DeleteOwnedVehicle` export in this Garage release.
+
 This is an **M4I Garage** integration reference: it tells you **exactly what to modify outside Garage when you enable a Garage feature**, while leaving other products' own unrelated functionality to their respective documentation.
 
 **Source:** Garage `0.1.139-alpha`, Bridge `1.5.19-rc.1`, reviewed 7 November 2026. Third-party forks may use different APIs.
