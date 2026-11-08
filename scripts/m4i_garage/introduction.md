@@ -25,6 +25,7 @@
 | Call the Garage from your own client Lua | [Client Exports](client-exports.md) |
 | Call the Garage from trusted server Lua | [Server Exports](server-exports.md) |
 | Find admin commands and permissions | [Commands and Permissions](commands.md) |
+| Understand deleting native / Garage SQL rows | [SQL Ownership & Admin Deletion](sql-ownership-and-deletion.md) |
 | Upgrade without losing vehicles | [Updating and Migrating](updating.md) |
 | Resolve a startup, UI or SQL error | [Troubleshooting](troubleshooting.md) |
 
