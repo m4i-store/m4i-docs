@@ -1,6 +1,6 @@
 # Exports — Client and Server APIs
 
-**Current source:** `m4i_garage 0.1.139-alpha`. The original combined page for `0.1.123` has been replaced with **two separate current API references**, each grounded in the shipped Lua code.
+**Current source:** `m4i_garage 0.1.140-alpha`. The original combined page for `0.1.123` has been replaced with **two separate current API references**, each grounded in the shipped Lua code.
 
 ## <u>Client-side</u> exports
 
