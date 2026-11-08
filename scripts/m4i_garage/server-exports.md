@@ -1,5 +1,7 @@
 # Server Exports — M4I Garage
 
+> **No public vehicle deletion export:** See [SQL Ownership, Native Sync and Admin Deletion](sql-ownership-and-deletion.md). `RegisterOwnedVehicle` cannot be used to remove a registered car.
+
 **Documented source:** `m4i_garage 0.1.139-alpha`, `server/exports.lua`, `server/registry.lua`, `server/keys.lua`, `server/repair.lua` (7 November 2026).
 
 These functions must be called from the **SERVER Lua of another genuine FiveM resource**. Most validate `GetInvokingResource()`; vehicle mutations use additional **strict allowlists**. Do not invoke them from browser JavaScript or an untrusted client event.
