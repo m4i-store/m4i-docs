@@ -1,8 +1,12 @@
 # Server Exports — M4I Garage
 
+
+> **New optional SQL deletion mirror is a CONFIG setting, not a Server Export:** `DeleteOnNativeRowMissing=true` opt-in checks previously linked QB/Qbox/ESX records and removes only safe normally stored cars after an archive and a 3-minute grace. There is still **no** arbitrary public `DeleteOwnedVehicle` export. [Read the feature's contract](sql-ownership-and-deletion.md).
+
+
 > **No public vehicle deletion export:** See [SQL Ownership, Native Sync and Admin Deletion](sql-ownership-and-deletion.md). `RegisterOwnedVehicle` cannot be used to remove a registered car.
 
-**Documented source:** `m4i_garage 0.1.139-alpha`, `server/exports.lua`, `server/registry.lua`, `server/keys.lua`, `server/repair.lua` (7 November 2026).
+**Documented source:** `m4i_garage 0.1.140-alpha`, `server/exports.lua`, `server/registry.lua`, `server/keys.lua`, `server/repair.lua` (7 November 2026).
 
 These functions must be called from the **SERVER Lua of another genuine FiveM resource**. Most validate `GetInvokingResource()`; vehicle mutations use additional **strict allowlists**. Do not invoke them from browser JavaScript or an untrusted client event.
 
