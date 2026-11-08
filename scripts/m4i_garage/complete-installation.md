@@ -1,5 +1,9 @@
 # Complete Installation — M4I Garage
 
+
+> **Native row deletion TRUE/FALSE:** `0.1.140-alpha` has an opt-in mirror for QBCore/Qbox/ESX: `Config.NativeVehicleCompatibility.DeleteOnNativeRowMissing`. Default false; true requires native compatibility enabled and archives a safe stored Garage vehicle after repeated native-row absence checks. [Exact setup](sql-ownership-and-deletion.md).
+
+
 **Official full customer installer:** **[Installation — From Zero to a Working Garage](installation.md)**.
 
 The latest documentation is now organized by Garage feature rather than mixing full manuals of other M4I scripts into this product. Every framework has its own step-by-step guide and independent dependency choices.
@@ -26,4 +30,4 @@ See [Garage Integrations](integrations.md) for the precise **external file to ed
 
 [Client Exports](client-exports.md) · [Server Exports](server-exports.md) · [Commands](commands.md) · [Updating](updating.md) · [Troubleshooting](troubleshooting.md) · [Go-Live Checklist](verification.md).
 
-**Build:** `m4i_garage 0.1.139-alpha`. Scope here is Garage, not a complete manual for Bridge/Upload/Mechanic/Finance.
+**Build:** `m4i_garage 0.1.140-alpha`. Scope here is Garage, not a complete manual for Bridge/Upload/Mechanic/Finance.
