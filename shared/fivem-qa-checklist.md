@@ -1,6 +1,6 @@
 # M4I FiveM — Customer Installation, Compatibility & Acceptance Checklist
 
-> **CURRENT INSTALLATION — READ FIRST:** [Complete Upload installation — consumer UI code and permissions](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](../../shared/fivem-install-known-limitations.md).
+> **CURRENT INSTALLATION — READ FIRST:** [Complete Upload installation — consumer UI code and permissions](complete-installation.md). This page is a companion guide; the full guide includes SQL, items, third-party script edits, provider compatibility and go-live steps. Also review [Source-audited limitations](./fivem-install-known-limitations.md).
 
 
 **Applies to:** Bridge `1.5.19-rc.1`, Garage `0.1.139-alpha`, Upload `0.2.1-alpha` (7 November 2026). For customer QBCore/Qbox/ESX/Ox Core forks, source-level tests are not proof of end-to-end compatibility.
