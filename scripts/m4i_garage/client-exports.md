@@ -1,6 +1,6 @@
 # Client Exports — M4I Garage
 
-**Current code:** `m4i_garage 0.1.139-alpha` · implementation files `client/exports.lua` and `client/vehicle_condition.lua` verified on 7 November 2026.
+**Current code:** `m4i_garage 0.1.140-alpha` · implementation files `client/exports.lua` and `client/vehicle_condition.lua` verified on 7 November 2026.
 
 These functions are called from a **client Lua script running on the player's machine**. They are intended for read-only location/UI status and controlled Garage UI requests. **Client exports do not grant keys, ownership, money or permissions.**
 
