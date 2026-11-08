@@ -2,7 +2,7 @@
 
 M4I Garage has separate **Impound** and **Police Seized** custody. They are not synonyms: a car with an active legal hold cannot be released merely by paying a normal impound fee.
 
-**Source:** `m4i_garage 0.1.139-alpha`.
+**Source:** `m4i_garage 0.1.140-alpha`.
 
 ![Police Seizure interface from current Garage NUI, illustrative vehicle identities](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-police-seize-ui.svg)
 
