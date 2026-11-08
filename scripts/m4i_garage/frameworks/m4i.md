@@ -1,6 +1,6 @@
 # Install M4I Garage on M4I Core
 
-**Framework ID:** `m4i` · **Core resource:** `m4i_core` · **Garage version:** `0.1.139-alpha`.
+**Framework ID:** `m4i` · **Core resource:** `m4i_core` · **Garage version:** `0.1.140-alpha`.
 
 ## Requirements and recommended load order
 
