@@ -1,6 +1,6 @@
 # Configuration — M4I Garage
 
-**Current version:** `0.1.139-alpha` · This page is the short route to the complete, current field-by-field documentation.
+**Current version:** `0.1.140-alpha` · This page is the short route to the complete, current field-by-field documentation.
 
 ## Where do you change Garage behavior?
 
@@ -16,6 +16,19 @@
 **Complete table of Garage settings, shipped defaults, accepted ranges and effects:** [Every Setting Explained](customization-reference.md).
 
 ![Garage Editor from the current resource UI, illustrative data](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-creator-editor-ui.svg)
+
+## Native SQL deletion TRUE / FALSE
+
+The customer controls this **in `m4i_garage/config.lua`**, under `Config.NativeVehicleCompatibility`:
+
+```lua
+Enabled = true, -- required for native records and links
+DeleteOnNativeRowMissing = false, -- default; set true if wanted
+```
+
+**False:** deleting a QBCore/Qbox `player_vehicles` or ESX `owned_vehicles` row does **not** remove the car from `m4ig_vehicles`. **True:** a previously linked native row missing for at least 3 minutes causes an eligible **stored** Garage car to be archived, audited and removed. Out/covered/impounded/seized/delivering cars are protected. Server restarts are required; not a live Confige setting.
+
+[Full SQL Ownership & Admin Deletion documentation](sql-ownership-and-deletion.md).
 
 ## Recommended first configuration
 
