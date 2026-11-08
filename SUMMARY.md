@@ -77,6 +77,7 @@
     - [Config & API · Client Exports](scripts/m4i_garage/client-exports.md)
     - [Config & API · Server Exports](scripts/m4i_garage/server-exports.md)
     - [Config & API · Commands & Permissions](scripts/m4i_garage/commands.md)
+    - [Support · SQL Ownership & Vehicle Deletion](scripts/m4i_garage/sql-ownership-and-deletion.md)
     - [Support · Updating & Migration](scripts/m4i_garage/updating.md)
     - [Support · Troubleshooting](scripts/m4i_garage/troubleshooting.md)
     - [Support · Changelog](scripts/m4i_garage/changelog.md)
