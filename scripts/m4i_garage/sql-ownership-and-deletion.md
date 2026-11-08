@@ -1,100 +1,118 @@
-# Vehicle SQL Ownership, Native Sync and Admin Deletion
+# Vehicle SQL Ownership, Native Synchronization and Deletion
 
-**M4I Garage:** `0.1.139-alpha` · source-verified against the installed `m4i_garage/server/native_vehicle_compat.lua` and `server/exports.lua` on 8 November 2026.
+**M4I Garage `0.1.140-alpha`** · Source: `server/native_vehicle_compat.lua`, `server/native_vehicle_deletion.lua`, `config.lua` and `sql/install.sql` · Updated 8 November 2026.
 
-**Most important rule:** **`m4ig_vehicles` is the authoritative Garage-owned vehicle table.** On supported external frameworks, `player_vehicles` (QBCore/Qbox) and `owned_vehicles` (ESX) may be optional **native compatibility projections**, not automatic ownership sources for Garage.
+**Core principle:** `m4ig_vehicles` is always Garage's authoritative vehicle table. QB/Qbox `player_vehicles` and ESX `owned_vehicles` are optional native compatibility tables; M4I Garage does not blindly import old framework cars.
 
-## Which database table controls the Garage vehicle?
+## 1 — Which table holds vehicles?
 
-| Framework | Garage-owned record | Native framework record |
-| --- | --- | --- |
-| M4I Core | `m4ig_vehicles` | No QB/ESX native projection |
-| QBCore | **`m4ig_vehicles`** | Optional `player_vehicles` |
-| Qbox / QBX | **`m4ig_vehicles`** | Optional `player_vehicles` |
-| ESX Legacy | **`m4ig_vehicles`** | Optional `owned_vehicles` |
-| Ox Core | **`m4ig_vehicles`** | No native projection implemented by the reviewed compatibility code |
+| Framework | Garage authoritative table | Optional native read-compatible table | Native deletion mirror? |
+| --- | --- | --- | --- |
+| M4I Core | `m4ig_vehicles` | None from this module | Not applicable |
+| QBCore | **`m4ig_vehicles`** | `player_vehicles` | Supported, opt-in |
+| Qbox / QBX | **`m4ig_vehicles`** | `player_vehicles` | Supported, opt-in |
+| ESX Legacy | **`m4ig_vehicles`** | `owned_vehicles` | Supported, opt-in |
+| Ox Core | `m4ig_vehicles` | No native projection in reviewed module | Not applicable |
 
-The optional `m4ig_identity_map` associates a Garage numeric character ID with the native external player identifier, and `m4ig_native_vehicle_links` records any existing Garage↔native vehicle mapping.
+The existing `m4ig_native_vehicle_links` associates each Garage-owned vehicle with a **specific previously verified native row**. `m4ig_identity_map` maps QB/ESX/Qbox string character IDs into Garage's persistent numeric ID.
 
-## Scenario A — Admin deletes the car only from `player_vehicles`
+## 2 — Customer config: TRUE / FALSE
 
-Example: the Garage has a Sultan registered to the player in `m4ig_vehicles`, but an administrator deletes the matching `player_vehicles` row using phpMyAdmin.
-
-- **Current default, `NativeVehicleCompatibility.Enabled=false`:** the native row disappears, but the Garage's authoritative record remains. If otherwise eligible, the player can still see, Store and Retrieve that Garage-owned car. An older QB Phone, Housing, Dealership or Keys system that reads only `player_vehicles` may instead show the car missing.
-- **When `Enabled=true` and an old native link exists:** the next Garage projection detects the previously linked native row is gone and returns **`PREVIOUS_NATIVE_ROW_MISSING`**. It **does not blindly recreate the deleted native vehicle**. The Garage-owned `m4ig_vehicles` row still remains.
-- **When `Enabled=true` but no previous native link exists:** a projection may **create a native row** if it can validate the owner, plate, model and destination table schema. Therefore do not assume that every native-table deletion will stay deleted.
-- **External SQL DELETE is not a Garage-owned delete event.** Garage has no reason to treat an unrelated native row removal as authority to remove an owner's registered Garage vehicle.
-
-**Observed code:** `server/native_vehicle_compat.lua` checks `m4ig_native_vehicle_links` before creating a missing native row. If a prior link exists, it returns `PREVIOUS_NATIVE_ROW_MISSING` rather than resurrecting the row.
-
-## Scenario B — Admin deletes the car only from `m4ig_vehicles`
-
-This is **dangerous** and is **not** the supported administrative deletion workflow.
-
-- Garage may no longer find the authoritative owner/plate/condition record. Player-facing Garage vehicle lists and Store/Retrieve will no longer treat that deleted record as a normal Garage-owned car.
-- The original native `player_vehicles` / `owned_vehicles` row may **still exist**. The compatibility layer is **one-way from Garage to native**, and is not a guaranteed synchronized-delete mechanism.
-- Related rows may exist in `m4ig_access`, `m4ig_temp_keys`, `m4ig_cases`, `m4ig_audit`, `m4ig_native_vehicle_links` and other installed modules. Deleting only the Garage row can leave inconsistent references or historical records. Whether database foreign keys cascade depends on the installed schema.
-- An actively spawned vehicle could still exist in the GTA world or another resource's state. A bare SQL DELETE does not perform safe entity removal.
-
-**Never instruct customers to run an unreviewed manual DELETE on a live server.** Back up the DB, inspect legal holds and active world entities, and perform any migration or cleanup through a documented, audited, server-authoritative process.
-
-## Scenario C — Admin wants to delete a vehicle permanently everywhere
-
-As of this documented Garage release, **there is no public `DeleteOwnedVehicle` / `RemoveOwnedVehicle` server export in the shipped Garage API**. Do not pretend an in-game button or API already implements complete deletion.
-
-A future safe admin-only deletion flow would need to:
-
-1. Authenticate the admin on the **server**; confirm intended vehicle ID, owner, plate and reason.
-2. Check ownership, legal/seized/impound state, active temporary access, any pending transfer or claim and whether the vehicle currently exists in-world or has occupants.
-3. Take a transactionally consistent snapshot/backup; record an audit entry with who initiated the action.
-4. Safely remove the live entity **after** occupants and outstanding actions are handled; prevent duplicate Store/Spawn operations.
-5. Update/remove the **authoritative `m4ig_vehicles` record and related access/keys/native-link records** according to a documented deletion/retention policy, in a controlled DB transaction wherever possible.
-6. Update the native projection target (`player_vehicles` / `owned_vehicles`) **only if the installed integration owns that native record**, while respecting other resources' dependencies.
-7. Check vehicle lists, keys, phone apps, police/impound cases and concurrent player sessions afterward.
-
-**This is a design/implementation checklist, not a claim that the current release already has the feature.** Until that workflow is implemented and tested, do not promise customers a fully synchronized cross-framework Delete button.
-
-## How to inspect a car safely in phpMyAdmin (read-only)
-
-Always select the **correct framework database** first, and take a backup before changing anything.
-
-```sql
--- Change the example plate to your real normalized plate.
-SELECT id, character_id, plate, model, garage_id, physical_status
-FROM m4ig_vehicles
-WHERE plate = 'ABC123';
-
--- QBCore/Qbox only:
-SELECT id, citizenid, plate, vehicle, garage, state
-FROM player_vehicles
-WHERE plate = 'ABC123';
-
--- ESX only (run in ESX database, not in QB database):
-SELECT owner, plate, vehicle, stored, parking
-FROM owned_vehicles
-WHERE plate = 'ABC123';
-
--- Optional native compatibility link (when table is installed):
-SELECT *
-FROM m4ig_native_vehicle_links
-WHERE native_plate = 'ABC123';
-```
-
-These are **diagnostic SELECT statements only**; they do not delete, revive or migrate the vehicle. If a query fails with "unknown table" or "unknown column", inspect that particular framework/schema release instead of copying another framework's SQL.
-
-## Changing synchronization mode
-
-The installed Garage configuration uses:
+Open **`m4i_garage/config.lua`**, find the existing `Config.NativeVehicleCompatibility` table and edit its values. Do not create a second table or put this snippet in your Framework Core.
 
 ```lua
--- m4i_garage/config.lua
 Config.NativeVehicleCompatibility = {
-    Enabled = false,
+    Enabled = true,  -- REQUIRED to create and check native-linked records
+
+    -- FALSE (default): deleting player_vehicles / owned_vehicles
+    -- does NOT delete the matching m4ig_vehicles record.
+    -- TRUE: after verified native deletion, automatically delete
+    -- the eligible stored Garage record, with SQL archive + audit.
+    DeleteOnNativeRowMissing = false,
+
     SyncIntervalMs = 0,
     QbPhoneCallback = true,
 }
 ```
 
-When **false**, there is no automatic native table projection. When **true** on QBCore/Qbox/ESX, Garage performs one validated startup projection and event-driven updates at `SyncIntervalMs=0`; a positive interval enables periodic checks. It **does not import legacy native cars into Garage**, automatically delete all native rows when an M4I Garage car disappears or replace all old Garage/Phone/Housing exports.
+**Both `Enabled` and `DeleteOnNativeRowMissing` must be `true`** for this feature to run. If `Enabled=false`, toggling only `DeleteOnNativeRowMissing=true` does nothing. Do not enable native projection before migrating or auditing any existing framework ownership rows, phone/housing scripts and original Garage controller.
 
-**For developers:** [Server API](server-exports.md) · [External Integrations](integrations.md) · [Updating / Native Migration](updating.md) · [Troubleshooting](troubleshooting.md) · [Installation](installation.md).
+### Choose the behavior
+
+| `Enabled` | `DeleteOnNativeRowMissing` | Result |
+| --- | --- | --- |
+| `false` | `false` or `true` | No native projection/deletion mirror; Garage's own records remain authoritative |
+| `true` | **`false` (default)** | Native projection works; a native-row deletion is logged as missing/linked, but Garage-owned car stays |
+| `true` | **`true` (optional)** | Verified loss of a *previously linked* native row schedules protected deletion of an eligible **normally stored** Garage record |
+
+**Only QBCore, Qbox and ESX support this mirror**. The file still contains the setting on M4I/Ox Core, but those profiles have no relevant native table to monitor. Changes require a safe restart of `m4i_garage`; they are not a live Confige toggle.
+
+## 3 — What exactly happens when TRUE?
+
+Example: an administrator deletes `ABC123` from QBCore `player_vehicles` using phpMyAdmin. The car has an existing verified `m4ig_native_vehicle_links` entry.
+
+1. Garage's independent native-row monitor checks previously linked, missing records **every 60 seconds**, even when `SyncIntervalMs = 0`.
+2. The native row must remain absent for at least **180 seconds (3 minutes)** over repeated successful checks. If the row returns or the database check fails, the pending deletion is cancelled/reset.
+3. Garage revalidates the correct framework, owner/character identity, native row ID, **normalized plate**, Garage location/status, police legal holds, active cases, live entity and pending operations. An unrelated duplicate native plate or a reassigned native row stops deletion.
+4. Only a **normal `physical_status='stored'` vehicle with `legal_hold=0`**, no Cover metadata and no world/valet activity is eligible. `out`, `covered`, `impounded`, `seized`, `delivering` or active police cases are explicitly protected. If it becomes normally stored later while still truly missing, it can become eligible then.
+5. Before removal, the server writes the vehicle's row snapshot to `m4ig_native_delete_archive`. Its controlled **SQL transaction** deletes the eligible `m4ig_vehicles` row and dependent temporary-key/shared-access/native-link rows, plus present optional reminder/snapshot rows, and inserts a `native_delete_sync` audit entry.
+6. The default limit is **five deletions per 60-second pass** to avoid a large unexpected cascade. Player UI reflects the loss when it next requests the Garage list.
+
+**The archive is a backup, not a public Restore button.** The removed vehicle can be investigated in the SQL archive, but restoration requires an administrator to reconcile the native owner, link and Garage record from a tested backup or controlled restoration process. No customer-facing automatic restore export is provided.
+
+### Safeguards
+
+- No previous native link → **never delete** based on a native row not being found.
+- Native row reappeared, even under a new native ID with the **same normalized plate** → **do not delete**.
+- Legal hold, Police Seize, Impound, world vehicle, cover, active valet/charge → **do not delete**.
+- Missing native table / SQL error / interrupted database query → fail closed; the pending timer resets.
+- Manual `DELETE FROM m4ig_vehicles` does **not** delete the native table automatically. This option is deliberately **one-way** from a missing **linked native row** to a safe stored Garage car.
+- False by default for customer safety. It does not operate on native records from M4I Core or Ox Core.
+
+## 4 — Check the archive, linkage and audit in phpMyAdmin
+
+Use the correct QB/ESX/Qbox database. The following **SELECT** queries are safe and do not change player data.
+
+```sql
+-- Garage authoritative record:
+SELECT id, character_id, plate, model, garage_id, physical_status, legal_hold
+FROM m4ig_vehicles WHERE plate='ABC123';
+
+-- Previously linked native record, if any:
+SELECT *
+FROM m4ig_native_vehicle_links WHERE native_plate='ABC123';
+
+-- Archived records deleted by the optional monitor:
+SELECT m4ig_vehicle_id, framework, native_vehicle_id, native_owner,
+       plate, deleted_at
+FROM m4ig_native_delete_archive
+WHERE plate='ABC123';
+
+-- Who/what removed the car (system actor is NULL):
+SELECT vehicle_id, action, detail, created_at
+FROM m4ig_audit
+WHERE action='native_delete_sync'
+ORDER BY id DESC LIMIT 20;
+```
+
+For **QBCore/Qbox** also inspect `player_vehicles`; for **ESX** inspect `owned_vehicles` using that installed vendor's actual column names. Do **not** copy a native vendor's column names into another framework or attempt to repair a missing row by inserting fake Garage ownership SQL.
+
+## 5 — What if an Admin manually deletes from `m4ig_vehicles` instead?
+
+That is **not the same direction as this toggle**. It can leave native rows, orphaned access, case history and spawned world entities. Deleting an authoritative Garage row directly can break custody. This optional monitor does **not** propagate SQL deletions from Garage back to QB/ESX.
+
+There remains **no public `DeleteOwnedVehicle` / `RemoveOwnedVehicle` Server Export** or one-click admin GUI Delete workflow for arbitrary cars in this Garage release. The new feature is a bounded, automated reconciliation of a **previously linked native-row deletion**, not an unrestricted vehicle deletion API.
+
+## 6 — Before setting TRUE in production
+
+1. Take a **full SQL backup** of `m4ig_*` and native player vehicles, and back up your current `config.lua`.
+2. Confirm `NativeVehicleCompatibility.Enabled=true` is already safely in use and that the native Garage resource is not simultaneously controlling stored cars.
+3. Inspect `m4ig_native_vehicle_links` for actual verified associations, and resolve old missing native records before enabling. The 3-minute grace gives a warning window; it does not automatically make a contaminated migration safe.
+4. Change **only** `DeleteOnNativeRowMissing` to `true`, restart `m4i_garage` in a maintenance window, run console `m4ig_doctor`.
+5. Test **one disposable Garage-owned car**: delete its linked QB/ESX native row in the staging database; check log, archive, Garage vehicle absence and link cleanup after the verified grace.
+6. Also test that a currently `out`, covered, impounded or seized car is protected, and that restoring a native row before grace expiry cancels deletion.
+7. If behavior is unwanted, set **`DeleteOnNativeRowMissing=false`** and restart; this **stops future automatic deletions**, but does not resurrect previously deleted vehicles. Restore those from the archive/backup with an approved recovery workflow.
+
+**Source QA status:** The `0.1.140-alpha` implementation was validated with isolated MariaDB transaction cases (QB/ESX record missing/present, reassigned ID, legal hold, covered/out, active case) and Lua scheduler/grace tests. **Real multiplayer production deletion tests were not performed**, and customers should stage-test before enabling `true`.
+
+**Related:** [Full Installation](installation.md) · [Every Config Setting](customization-reference.md) · [Framework-Specific Installers](framework-installation.md) · [Server Exports](server-exports.md) · [Updating](updating.md) · [Troubleshooting](troubleshooting.md).
