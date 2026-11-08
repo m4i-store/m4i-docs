@@ -2,7 +2,7 @@
 
 These are **M4I Garage features** controlled by the Garage server and stored vehicle status. They use the selected framework's **personal-money adapter** through Bridge; they do not require installing M4I Finance on every external framework.
 
-**Current Garage:** `0.1.139-alpha`.
+**Current Garage:** `0.1.140-alpha`.
 
 ![M4I Garage vehicle insurance interface, sample policies](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-insurance-ui.svg)
 
