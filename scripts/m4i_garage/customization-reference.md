@@ -1,6 +1,6 @@
 # M4I Garage — Complete Settings and Customization Reference
 
-**Validated source:** `m4i_garage 0.1.139-alpha` on 7 November 2026. This page documents the editable top-level config values and server-validated runtime policy groups. It also explains **where each value is changed and what it affects**; it is not a request to replace the entire Lua file.
+**Validated source:** `m4i_garage 0.1.140-alpha` on 7 November 2026. This page documents the editable top-level config values and server-validated runtime policy groups. It also explains **where each value is changed and what it affects**; it is not a request to replace the entire Lua file.
 
 **Read with pictures:** [Garage UI Visual Walkthrough](visual-setup-guide.md). **Before installing:** [Complete Framework Install](complete-installation.md).
 
@@ -64,6 +64,28 @@ In keys mode, ordinary Open/Store no longer relies on a vendor radial; **NPC tar
 | `NativeVehicleCompatibility.QbPhoneCallback` | `true` | Register QB's narrow garage vehicle-list callback if native compatibility is enabled |
 
 **Change only after** creating and validating Garage ownership, backing up both databases/tables, and auditing old garage / phone / police / keys resources. Do not let original garage gameplay and M4I Garage both spawn/store the same vehicle. ESX `owned_vehicles` and QB `player_vehicles` are not automatically imported into `m4ig_vehicles`.
+
+
+### Native SQL deletion mirror — customer TRUE/FALSE
+
+In **`m4i_garage/config.lua`** the optional field `Config.NativeVehicleCompatibility.DeleteOnNativeRowMissing` defaults to **`false`**. It requires `Config.NativeVehicleCompatibility.Enabled = true` and previously verified QBCore/Qbox/ESX native vehicle links.
+
+```lua
+Config.NativeVehicleCompatibility = {
+    Enabled = true,
+    DeleteOnNativeRowMissing = false, -- change to true only if wanted
+    SyncIntervalMs = 0,
+    QbPhoneCallback = true,
+}
+```
+
+- **`false` (default):** deleting `player_vehicles`/`owned_vehicles` does not remove the authoritative `m4ig_vehicles` row.
+- **`true`:** the server checks missing, previously linked native rows every **60 seconds**, requires at least **180 seconds** of confirmed absence, then deletes eligible normally **stored** Garage cars with SQL archive and audit. Maximum **5 deletions/pass**. Live/out, impounded, seized, covered and delivering cars remain protected.
+- `SyncIntervalMs=0` still runs **deletion detection** when the toggle is true; it only disables periodic *native projection*.
+- A missing native row with no pre-existing `m4ig_native_vehicle_links` record cannot trigger deletion. M4I native and Ox Core are not supported by this mirror.
+- Restart `m4i_garage` after the file edit. Back up first. Recovery records: `m4ig_native_delete_archive`.
+
+**[Full behavior, tests, safeguards and SQL inspection](sql-ownership-and-deletion.md).**
 
 ## 4. Cover settings and 3D behaviour
 
