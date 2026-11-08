@@ -1,6 +1,6 @@
 # M4I Garage — Visual Setup and Every Editor Control
 
-**Applies to** M4I Garage `0.1.139-alpha` with M4I Bridge `1.5.19-rc.1`. The images below are **actual screenshots of the shipped Garage NUI frontend**, rendered in a browser with **illustrative sample locations/cars**; they are not screenshots of a live player's session. The buttons, tab labels and layouts come from the real release UI. Values on screenshots are examples and are not guaranteed to match your server.
+**Applies to** M4I Garage `0.1.140-alpha` with M4I Bridge `1.5.19-rc.1`. The images below are **actual screenshots of the shipped Garage NUI frontend**, rendered in a browser with **illustrative sample locations/cars**; they are not screenshots of a live player's session. The buttons, tab labels and layouts come from the real release UI. Values on screenshots are examples and are not guaranteed to match your server.
 
 For installation prerequisites and third-party edits, read [Complete Installation](complete-installation.md) first. This page covers **what each editor option does, how to change it, and where the resulting setting lives**.
 
