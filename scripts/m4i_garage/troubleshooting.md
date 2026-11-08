@@ -1,8 +1,12 @@
 # Troubleshooting — Garage Errors and Fixes
 
+
+> **Admin deleted a native SQL car?** Set `DeleteOnNativeRowMissing=false` to keep Garage custody unchanged, or set it `true` alongside `Enabled=true` to archive and remove a safely stored, previously linked Garage vehicle after at least 3 minutes. Check `m4ig_native_delete_archive` and audit action `native_delete_sync`. No automatic deletion for `out`, seized, covered, impounded or delivering cars. [Full diagnosis](sql-ownership-and-deletion.md).
+
+
 > **Admin deleted a car in phpMyAdmin?** Start at [SQL Ownership and Admin Deletion](sql-ownership-and-deletion.md). Native QB/ESX rows and Garage-owned rows have separate authority; never blindly delete both.
 
-**Current source:** `m4i_garage 0.1.139-alpha` · M4I Bridge `1.5.19-rc.1`. Troubleshoot **the failing layer** before changing code or deleting SQL.
+**Current source:** `m4i_garage 0.1.140-alpha` · M4I Bridge `1.5.19-rc.1`. Troubleshoot **the failing layer** before changing code or deleting SQL.
 
 ## First diagnosis in 60 seconds
 
