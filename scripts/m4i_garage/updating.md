@@ -1,8 +1,12 @@
 # Updating and Migrating Without Losing Vehicles
 
+
+> **0.1.140-alpha optional feature:** `NativeVehicleCompatibility.DeleteOnNativeRowMissing` defaults to `false`. Once native projection is verified and enabled on QB/Qbox/ESX, a customer may choose `true` to archive+remove a previously linked normal stored car only after repeated absence checks. Existing or historical missing native rows can become eligible after the grace period, so **audit missing links before enabling and take a full SQL backup**. [Complete safety guide](sql-ownership-and-deletion.md).
+
+
 > **Deleting a vehicle from `player_vehicles` or `owned_vehicles` is not the same as deleting it from Garage.** Read [SQL Ownership and Admin Deletion](sql-ownership-and-deletion.md), including `PREVIOUS_NATIVE_ROW_MISSING` and the missing public Delete export.
 
-**For:** `m4i_garage 0.1.139-alpha` and compatible Bridge. Production users must upgrade deliberately: vehicle custody is valuable persistent state, not disposable UI cache.
+**For:** `m4i_garage 0.1.140-alpha` and compatible Bridge. Production users must upgrade deliberately: vehicle custody is valuable persistent state, not disposable UI cache.
 
 ## Upgrade checklist
 
