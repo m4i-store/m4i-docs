@@ -1,6 +1,17 @@
 # m4i_garage — Changelog
 
-> **HISTORICAL CHANGELOG:** For the currently documented `0.1.139-alpha` source and supported customer workflows, start at [Garage Overview](introduction.md), [Installation](installation.md) and [Client/Server APIs](exports.md). Individual older milestone entries do not certify current live compatibility.
+
+## 0.1.140-alpha — 2026-11-08 (staged source, default OFF)
+
+- Added **`Config.NativeVehicleCompatibility.DeleteOnNativeRowMissing = false`** customer setting for QBCore, Qbox and ESX native vehicle table deletion.
+- When both `Enabled=true` and `DeleteOnNativeRowMissing=true`, verifies **previously linked** native rows missing for at least 180 seconds, checks once a minute (independent of native projection interval), and archives/removes eligible **normally stored** Garage cars. Max five deletions per minute.
+- Protected vehicles (`out`, `covered`, `impounded`, `seized`, `delivering`, legal hold, world entities, valet charges) cannot be automatically removed.
+- Added `m4ig_native_delete_archive` recovery snapshots, `native_delete_sync` audit, and transactional cleanup of access/temporary keys and existing auxiliary rows.
+- Updated installer, framework, configuration, SQL ownership and troubleshooting docs. **No public arbitrary vehicle Delete export** and **no production multiplayer deletion QA**; opt in only after staging.
+- Verified isolated MariaDB SQL transactions and Lua 3-minute grace/cancellation cases; default remains off on all distributed profiles.
+
+
+> **HISTORICAL CHANGELOG:** For the currently documented `0.1.140-alpha` source and supported customer workflows, start at [Garage Overview](introduction.md), [Installation](installation.md) and [Client/Server APIs](exports.md). Individual older milestone entries do not certify current live compatibility.
 
 
 ## 0.1.123-alpha — 2026-11-03 (staged TEST VPS source)
