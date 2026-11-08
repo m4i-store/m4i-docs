@@ -2,7 +2,7 @@
 
 This is the **customer installation path for M4I Garage**, from a clean framework to a safe, tested parking location. Follow the steps in order, then select the dedicated framework guide for your actual server.
 
-**Release:** `m4i_garage 0.1.139-alpha`. This document is derived from the resource on the M4I Roleplay test VPS on 7 November 2026. A green startup message is not proof that every optional vendor or gameplay flow works.
+**Release:** `m4i_garage 0.1.140-alpha`. This document is derived from the resource on the M4I Roleplay test VPS on 7 November 2026. A green startup message is not proof that every optional vendor or gameplay flow works.
 
 ## Step 0 — Choose your framework
 
@@ -178,6 +178,12 @@ After FXServer starts:
 ![Real Garage Creator overview — sample garage records](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-creator-overview.svg)
 
 Full illustrated control walkthrough: [Garage Creator Screenshots](visual-setup-guide.md).
+
+### Optional deletion sync for QB/Qbox/ESX
+
+As of `0.1.140-alpha`, set `DeleteOnNativeRowMissing = true/false` **inside the existing `Config.NativeVehicleCompatibility` table** in `m4i_garage/config.lua`. Default **false** preserves `m4ig_vehicles` when an Admin deletes a native QB/ESX car. **True** requires `Enabled = true`, a previously verified native link and at least 3 minutes of missing-row verification before archiving/deleting **only a safe stored car**.
+
+This is one-way, is not an arbitrary Delete Vehicle export, and must not be enabled before full vehicle SQL backups and framework migration checks. Read the [full safety guide](sql-ownership-and-deletion.md) and restart Garage to apply.
 
 ## Step 9 — Turn on optional Garage features one at a time
 
