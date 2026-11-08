@@ -1,6 +1,6 @@
 # Vehicle Covers — Installation, Rules and In-Game Use
 
-**M4I Garage `0.1.139-alpha`.** Vehicle Cover is an **optional Garage feature**, not a separate inventory system. It protects an eligible parked, Garage-owned car with a selected 3D cover prop. Visibility/removal policies, model alignment, allowed zones, animations and anti-launch behavior are configured inside Garage Creator.
+**M4I Garage `0.1.140-alpha`.** Vehicle Cover is an **optional Garage feature**, not a separate inventory system. It protects an eligible parked, Garage-owned car with a selected 3D cover prop. Visibility/removal policies, model alignment, allowed zones, animations and anti-launch behavior are configured inside Garage Creator.
 
 ![Real Vehicle Covers configuration UI with sample rules](https://raw.githubusercontent.com/m4i-store/m4i-docs/main/assets/ui/garage-cover-rules-ui.svg)
 
