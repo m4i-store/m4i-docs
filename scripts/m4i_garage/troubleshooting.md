@@ -1,5 +1,7 @@
 # Troubleshooting — Garage Errors and Fixes
 
+> **Admin deleted a car in phpMyAdmin?** Start at [SQL Ownership and Admin Deletion](sql-ownership-and-deletion.md). Native QB/ESX rows and Garage-owned rows have separate authority; never blindly delete both.
+
 **Current source:** `m4i_garage 0.1.139-alpha` · M4I Bridge `1.5.19-rc.1`. Troubleshoot **the failing layer** before changing code or deleting SQL.
 
 ## First diagnosis in 60 seconds
