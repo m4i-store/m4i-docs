@@ -1,6 +1,6 @@
 # Commands, Key Bindings and Permissions
 
-**Garage build:** `0.1.139-alpha`. Commands verified against `client/main.lua`, `server/admin.lua` and `server/doctor.lua`.
+**Garage build:** `0.1.140-alpha`. Commands verified against `client/main.lua`, `server/admin.lua` and `server/doctor.lua`.
 
 ## Player and admin commands
 
