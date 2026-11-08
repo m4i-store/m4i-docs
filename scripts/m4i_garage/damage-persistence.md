@@ -2,7 +2,7 @@
 
 M4I Garage is built around **server-owned, persistent vehicle custody**. When a signed vehicle is stored, retrieved or observed, its actual physical state matters. A client visually repairing the car does **not automatically clear all persisted damage**.
 
-**Validated against:** `m4i_garage 0.1.139-alpha` including `client/vehicle_condition.lua`, `server/repair.lua`, `shared/damage_persistence.lua`, and the embedded vehicle deformation code.
+**Validated against:** `m4i_garage 0.1.140-alpha` including `client/vehicle_condition.lua`, `server/repair.lua`, `shared/damage_persistence.lua`, and the embedded vehicle deformation code.
 
 ## 1. What Garage preserves
 
